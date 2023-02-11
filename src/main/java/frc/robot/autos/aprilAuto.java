@@ -38,8 +38,7 @@ public class aprilAuto extends CommandBase{
     public void execute(){
         NetTable instance = newNetT();
         //TODO confirm that it is corrected propperly
-        Translation2d translation = new Translation2d(Ry ,checkNetT(instance) + Rx ).times(Constants.Swerve.maxSpeed / 8); //the 8 can be reduced to go faster
-        Subsystems.swerveSubsystem.drive(translation, 0, true, true);
+        AprilDrive(instance);
     }
 
     @Override
@@ -52,12 +51,18 @@ public class aprilAuto extends CommandBase{
     }
 
     public void AprilDrive(NetTable instance){
-        if(instance.ID == (0|1|2|3|4)){
+        if( instance.ID == 1 ||
+            instance.ID == 2 ||
+            instance.ID == 3 ||
+            instance.ID == 4 ){
             //drive in pos way
             Translation2d translation = new Translation2d(Ry ,checkNetT(instance) + Rx ).times(Constants.Swerve.maxSpeed / 8); //the 8 can be reduced to go faster
             Subsystems.swerveSubsystem.drive(translation, 0, true, true);
         }
-        if(instance.ID == (5|6|7|8)){
+        if( instance.ID == 5 ||
+            instance.ID == 6 ||
+            instance.ID == 7 ||
+            instance.ID == 8 ){
             //drive in neg way
             Translation2d translation = new Translation2d(Ry ,-checkNetT(instance) + Rx ).times(Constants.Swerve.maxSpeed / 8); //the 8 can be reduced to go faster
             Subsystems.swerveSubsystem.drive(translation, 0, true, true);
