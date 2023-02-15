@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Ramp;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.DMS.LEDSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.subsystems.Pivot;
 
 /**
  * Global subsystem declaration and tracking to allow easier injection
@@ -23,7 +24,8 @@ public class Subsystems {
     public static Elevator elevator;
     public static Ramp ramp;
     public static Pivot pivot;
-
+    public static Intake intake;
+    
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
 
     private Subsystems() {
@@ -33,12 +35,14 @@ public class Subsystems {
         elevator = new Elevator();
         ramp = new Ramp();
         pivot = new Pivot();
+        intake = new Intake();
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
         lifecycleSubsystems.add(elevator);
         lifecycleSubsystems.add(ramp);
         lifecycleSubsystems.add(pivot);
+        lifecycleSubsystems.add(intake);
     }
 
     public static Subsystems getInstance() {

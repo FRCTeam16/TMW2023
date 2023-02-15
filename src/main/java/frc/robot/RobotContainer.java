@@ -45,6 +45,8 @@ public class RobotContainer {
     private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(1) < -0.10);
     private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
 
+    private final Trigger wristOpenLoopUp = new Trigger(() -> gamepad.getPOV() == 0);
+
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
