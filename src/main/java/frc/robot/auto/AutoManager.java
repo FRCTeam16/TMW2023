@@ -9,46 +9,38 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.strategies.DebugAuto;
 
 public class AutoManager {
+
     public enum AutoStrategies {
-        DebugAuto, DebugTimed, DebugPath, DebugRotate,
-        TwoBallRight, TwoBallHangar, TwoBallCenter, 
-        JustShoot,
-        ShootFirstBall5Ball, FiveBall, FiveBallStrategyPartDeux,RIGHT5ball,LEFT5ball,
-        ScrambleHangar, ScrambleHangarOneBall,
-        OneBall, BlockOpponentOneBall,
-        FourBall
+        DebugAuto
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
     private final HashMap<AutoStrategies, Command> strategyLookup = new HashMap<>();
 
     public AutoManager() {
-        chooser.addOption("Debug Auto", AutoStrategies.DebugAuto);
+        registerStrategy("Debug Auto", AutoStrategies.DebugAuto, new DebugAuto());
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.
         SmartDashboard.putData("Auto Selector", chooser);
-        initializeAuto();
     }
 
-    public void initializeAuto() {
-        strategyLookup.put(AutoStrategies.DebugAuto, new DebugAuto());
+    private void registerStrategy(String displayName, AutoStrategies strategyEnum, Command strategy) {
+        chooser.addOption(displayName, strategyEnum);
+        strategyLookup.put(strategyEnum, strategy);
     }
 
+    /**
+     * Returns the currently selected autonomous strategy
+     * @return the currently selected autonomous strategy
+     */
     public Command getSelectedCommand() {
         Command selected = null;
 
         if (strategyLookup.containsKey(chooser.getSelected())) {
             selected = strategyLookup.get(chooser.getSelected());
         } else {
-            switch (chooser.getSelected()) {
-    
-                case DebugAuto:
-                    selected = new DebugAuto();
-                    break;
-    
-                default:
-                    selected = new InstantCommand();
-            }
+            // Missing autonomous key in lookup map
+            selected = new InstantCommand(() -> System.out.println("ERROR: Could not find requested auto: " + chooser.getSelected()));
         }
         return selected;
     }

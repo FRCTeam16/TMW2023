@@ -1,7 +1,5 @@
 package frc.robot;
 
-import frc.robot.autos.boto;
-import frc.robot.autos.aprilAuto;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -9,7 +7,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.autos.exampleAuto;
+import frc.robot.auto.AutoManager;
+import frc.robot.autos.aprilAuto;
+import frc.robot.autos.boto;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
 
@@ -42,6 +42,7 @@ public class RobotContainer {
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
+    private final AutoManager autoManager = new AutoManager();
 
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -101,7 +102,8 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() { 
         // An ExampleCommand will run in autonomous
-        return new aprilAuto(right.getX(),right.getY());
+        // return new aprilAuto(right.getX(),right.getY());
+        return autoManager.getSelectedCommand();
     }
     
 }
