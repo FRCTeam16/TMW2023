@@ -1,7 +1,5 @@
 package frc.robot;
 
-import frc.robot.autos.boto;
-import frc.robot.autos.aprilAuto;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -9,7 +7,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.autos.exampleAuto;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.autos.aprilAuto;
+import frc.robot.autos.boto;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
 
@@ -30,14 +30,20 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(gamepad, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(right, 2);
 
-    private final JoystickButton elevatorForward = new JoystickButton(gamepad, XboxController.Button.kY.value);
-    private final JoystickButton elevatorReverse = new JoystickButton(gamepad, XboxController.Button.kX.value);
+    //private final JoystickButton elevatorForward = new JoystickButton(gamepad, XboxController.Button.kY.value);
+    //private final JoystickButton elevatorReverse = new JoystickButton(gamepad, XboxController.Button.kX.value);
 
     private final JoystickButton extendRamp = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
     private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
 
     private final JoystickButton april = new JoystickButton(right, 4);
     private final JoystickButton boto = new JoystickButton(right, 3);
+
+    private final Trigger gamepadRightYUp = new Trigger(() -> gamepad.getRawAxis(5) > 0.10);
+    private final Trigger gameadRightYDown = new Trigger(() -> gamepad.getRawAxis(5) < -0.10);
+
+    private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(1) < -0.10);
+    private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
 
 
     /* Subsystems */
@@ -85,6 +91,11 @@ public class RobotContainer {
 
         extendRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.forward()));
         retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
+
+        /* Pivot Controls */
+        gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.up())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
+        gameadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.down())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
+
     }
 
 

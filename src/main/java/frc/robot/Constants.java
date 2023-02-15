@@ -130,6 +130,23 @@ public final class Constants {
         }
     }
 
+    public static final class Elevator {
+        public static final int leftMotorId = 9;
+        public static final int rightMotorId = 10;
+    }
+
+    public static final class Pivot {
+        public static final int leftMotorId = 11;
+        public static final int rightMotorId = 12;
+    }
+
+    public static final class Intake {
+        public static final int leftMotorId = 13;
+        public static final int rightMotorId = 14;
+        public static final int wristMotorId = 15;
+    }
+
+
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double kMaxSpeedMetersPerSecond = 3;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;

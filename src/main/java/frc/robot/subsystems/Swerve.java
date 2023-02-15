@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import frc.robot.subsystems.gyro.BSGyro;
-import frc.robot.subsystems.gyro.NavXGyro;
+import frc.robot.subsystems.gyro.PigeonGyro;
 
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
@@ -21,8 +21,8 @@ public class Swerve extends SubsystemBase {
     public BSGyro gyro;
 
     public Swerve() {
-        // gyro = new PigeonGyro(Constants.Swerve.pigeonID);
-        gyro = new NavXGyro();
+         gyro = new PigeonGyro(Constants.Swerve.pigeonID);
+        
         zeroGyro();
 
         mSwerveMods = new SwerveModule[] {

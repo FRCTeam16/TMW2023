@@ -9,6 +9,7 @@ import frc.robot.subsystems.Ramp;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.DMS.LEDSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.Pivot;
 
 /**
  * Global subsystem declaration and tracking to allow easier injection
@@ -21,6 +22,7 @@ public class Subsystems {
     public static LEDSubsystem ledSubsystem;
     public static Elevator elevator;
     public static Ramp ramp;
+    public static Pivot pivot;
 
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
 
@@ -30,11 +32,13 @@ public class Subsystems {
         ledSubsystem = new LEDSubsystem();
         elevator = new Elevator();
         ramp = new Ramp();
+        pivot = new Pivot();
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);
         lifecycleSubsystems.add(elevator);
         lifecycleSubsystems.add(ramp);
+        lifecycleSubsystems.add(pivot);
     }
 
     public static Subsystems getInstance() {

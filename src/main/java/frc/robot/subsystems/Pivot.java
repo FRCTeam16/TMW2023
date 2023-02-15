@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Elevator extends SubsystemBase implements Lifecycle {
+public class Pivot extends SubsystemBase implements Lifecycle {
 
-    private TalonFX left = new TalonFX(Constants.Elevator.leftMotorId);
-    private TalonFX right = new TalonFX(Constants.Elevator.rightMotorId);
+    private TalonFX left = new TalonFX(Constants.Pivot.leftMotorId);
+    private TalonFX right = new TalonFX(Constants.Pivot.rightMotorId);
 
     private static double DEFAULT_OPENLOOP_SPEED = 0.25;
 
@@ -24,7 +24,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
 
 
-    public Elevator() {
+    public Pivot() {
         left.configFactoryDefault();
         right.configFactoryDefault();
         right.follow(left);
@@ -42,7 +42,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         right.configAllSettings(config);
                
 
-        this.zeroElevatorEncoder();
+        this.zeroPivotEncoder();
 
         openLoop = true;
         speed = 0.0;
@@ -57,17 +57,17 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.configMotionAcceleration(maxAccel);
 
 
-        SmartDashboard.setDefaultNumber("Elevator/kFF", kFF);
-        SmartDashboard.setDefaultNumber("Elevator/kP", kP);
-        SmartDashboard.setDefaultNumber("Elevator/kI", kI);
-        SmartDashboard.setDefaultNumber("Elevator/kD", kD);
-        SmartDashboard.setDefaultNumber("Elevator/MaxVel", maxVel);
-        SmartDashboard.setDefaultNumber("Elevator/MaxAcc", maxAccel);
+        SmartDashboard.setDefaultNumber("Pivot/kFF", kFF);
+        SmartDashboard.setDefaultNumber("Pivot/kP", kP);
+        SmartDashboard.setDefaultNumber("Pivot/kI", kI);
+        SmartDashboard.setDefaultNumber("Pivot/kD", kD);
+        SmartDashboard.setDefaultNumber("Pivot/MaxVel", maxVel);
+        SmartDashboard.setDefaultNumber("Pivot/MaxAcc", maxAccel);
 
-        SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
     }
 
-    public void zeroElevatorEncoder() {
+    public void zeroPivotEncoder() {
         this.left.setSelectedSensorPosition(0, 0, 20);
         this.right.setSelectedSensorPosition(0, 0, 20);
     }
@@ -79,20 +79,20 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
     public void forward() {
         openLoop = true;
-        speed = SmartDashboard.getNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        speed = SmartDashboard.getNumber("Pivot/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
     }
 
     public void reverse() {
         openLoop = true;
-        speed = -SmartDashboard.getNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        speed = -SmartDashboard.getNumber("Pivot/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
     }
 
-    public void extend() {
+    public void down() {
         openLoop = false;
         setpoint = 105.0;
     }
 
-    public void retract() {
+    public void up() {
         openLoop = false;
         setpoint = 0.0;
     }
@@ -103,12 +103,12 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         if (openLoop) {
             left.set(ControlMode.PercentOutput, speed);
         } else {
-            double ff = SmartDashboard.getNumber("Elevator/kFF", kFF);
-            double p = SmartDashboard.getNumber("Elevator/kP", kP);
-            double i = SmartDashboard.getNumber("Elevator/kI", kI);
-            double d = SmartDashboard.getNumber("Elevator/kD", kD);
-            double v = SmartDashboard.getNumber("Elevator/MaxVel", maxVel);
-            double a = SmartDashboard.getNumber("Elevator/MaxAcc", maxAccel);
+            double ff = SmartDashboard.getNumber("Pivot/kFF", kFF);
+            double p = SmartDashboard.getNumber("Pivot/kP", kP);
+            double i = SmartDashboard.getNumber("Pivot/kI", kI);
+            double d = SmartDashboard.getNumber("Pivot/kD", kD);
+            double v = SmartDashboard.getNumber("Pivot/MaxVel", maxVel);
+            double a = SmartDashboard.getNumber("Pivot/MaxAcc", maxAccel);
 
             left.config_kP(0, p);
             left.config_kF(0, ff);
@@ -122,14 +122,14 @@ public class Elevator extends SubsystemBase implements Lifecycle {
             left.set(ControlMode.MotionMagic, setpoint);
         }
 
-        SmartDashboard.putBoolean("Elevator/OpenLoop", openLoop);
-        SmartDashboard.putNumber("Elevator/Speed", speed);
-        SmartDashboard.putNumber("Elevator/LeftEnc", left.getSelectedSensorPosition());
-        SmartDashboard.putNumber("Elevator/LeftVel", left.getSelectedSensorVelocity());
+        SmartDashboard.putBoolean("Pivot/OpenLoop", openLoop);
+        SmartDashboard.putNumber("Pivot/Speed", speed);
+        SmartDashboard.putNumber("Pivot/LeftEnc", left.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Pivot/LeftVel", left.getSelectedSensorVelocity());
 
-        SmartDashboard.putNumber("Elevator/BusV", left.getBusVoltage());
-        SmartDashboard.putNumber("Elevator/OutAmp", left.getStatorCurrent());
-        SmartDashboard.putString("Elevator/LastError", left.getLastError().toString());
+        SmartDashboard.putNumber("Pivot/BusV", left.getBusVoltage());
+        SmartDashboard.putNumber("Pivot/OutAmp", left.getStatorCurrent());
+        SmartDashboard.putString("Pivot/LastError", left.getLastError().toString());
     }
     
 }
