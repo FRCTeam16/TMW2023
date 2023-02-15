@@ -19,6 +19,7 @@ public class Balance extends CommandBase implements Lifecycle {
     public Balance(WPI_Pigeon2 gyro){
         Rotation2d Rotation = ((BSGyro) gyro).getGyroscopeRotation();
         System.out.println(Rotation);
+        BalanceDrive(gyro);
     }
 
     public void BalanceDrive(WPI_Pigeon2 bird){

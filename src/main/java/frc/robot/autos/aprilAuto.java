@@ -31,7 +31,7 @@ public class aprilAuto extends CommandBase{
 
     @Override
     public void initialize() {
-        System.out.println("April Auto ");
+        System.out.println("April Auto Init");
     }
 
     @Override
