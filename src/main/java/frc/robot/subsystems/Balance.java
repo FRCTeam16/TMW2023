@@ -22,15 +22,15 @@ public class Balance extends CommandBase implements Lifecycle {
         BalanceDrive(gyro);
     }
 
-    public void BalanceDrive(WPI_Pigeon2 bird){
-        if(bird.getAngle() > 3){
+    public void BalanceDrive(WPI_Pigeon2 gyro){
+        if(gyro.getAngle() > 3){
             //DRIVE
             Translation2d test = new Translation2d(0,1).times(Constants.Swerve.maxSpeed / 8);
             Subsystems.swerveSubsystem.drive(test, 0, true, true);
         }
-        if(bird.getAngle() < 3){
+        if(gyro.getAngle() < 3){
             Translation2d test = new Translation2d(0,-1).times(Constants.Swerve.maxSpeed / 8);
-            Subsystems.swerveSubsystem.drive(test, 0, false, true);
+            Subsystems.swerveSubsystem.drive(test, 0, true, true);
         }
         else{
             System.out.println("BALANCE SUB-SYS LOG: FLAT");
