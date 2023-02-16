@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Ramp extends SubsystemBase implements Lifecycle {
     
-    private Solenoid solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 1);  // FIXME: Is this true
+    private Solenoid solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 3);  // FIXME: Is this true
     private boolean extended = false;
 
     public void forward() {

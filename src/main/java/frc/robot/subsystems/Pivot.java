@@ -20,9 +20,22 @@ public class Pivot extends SubsystemBase implements Lifecycle {
     private boolean openLoop = true;
     private double speed = 0.0;
 
-    private double kFF=0.0015, kP=0.00012, kI=0, kD=0, maxVel=2000, maxAccel=500;
+    private double kFF=0.00, kP=0.026, kI=0, kD=0, maxVel=2000, maxAccel=500;
     private double setpoint = 0.0;
 
+
+    public enum PivotPosition {
+        Vertical(0),
+        Horizontal(100),
+        FloorPickup(200);
+
+        public final double setpoint;
+
+        private PivotPosition(double setpoint) {
+            this.setpoint = setpoint;
+        }
+
+    }
 
 
     public Pivot() {
@@ -89,14 +102,17 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         speed = -SmartDashboard.getNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
-    public void down() {
-        openLoop = false;
-        setpoint = 105.0;
+    public void holdPosition() {
+        this.setPivotSetpoint(left.getSelectedSensorPosition());
     }
 
-    public void up() {
+    public void setPivotPosition(PivotPosition position) {
+        this.setPivotSetpoint(position.setpoint);
+    }
+
+    private void setPivotSetpoint(double setpoint) {
         openLoop = false;
-        setpoint = 0.0;
+        this.setpoint = setpoint;
     }
 
 
@@ -121,13 +137,15 @@ public class Pivot extends SubsystemBase implements Lifecycle {
             left.configMotionCruiseVelocity(v);
             left.configMotionAcceleration(a);
 
-            left.set(ControlMode.MotionMagic, setpoint);
+            // left.set(ControlMode.MotionMagic, setpoint);
+            left.set(ControlMode.Position, setpoint);
         }
 
         SmartDashboard.putBoolean("Pivot/OpenLoop", openLoop);
         SmartDashboard.putNumber("Pivot/Speed", speed);
         SmartDashboard.putNumber("Pivot/LeftEnc", left.getSelectedSensorPosition());
         SmartDashboard.putNumber("Pivot/LeftVel", left.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Pivot/setpoint", this.setpoint);
 
         SmartDashboard.putNumber("Pivot/BusV", left.getBusVoltage());
         SmartDashboard.putNumber("Pivot/OutAmp", left.getStatorCurrent());

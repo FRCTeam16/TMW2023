@@ -14,15 +14,27 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     private TalonFX left = new TalonFX(Constants.Elevator.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Elevator.rightMotorId);
 
-    private static double DEFAULT_OPENLOOP_SPEED = 0.1;
+    private static double DEFAULT_OPENLOOP_SPEED = 0.15;
 
     private boolean openLoop = true;
     private double speed = 0.0;
 
-    private double kFF=0.0015, kP=0.00012, kI=0, kD=0, maxVel=2000, maxAccel=500;
+    private double kFF=0.000, kP=0.00012, kI=0, kD=0, maxVel=2000, maxAccel=500;
     private double setpoint = 0.0;
 
 
+    public enum ElevatorPosition {
+        StartPosition(0),
+        Retracted(100),
+        LowConePlacement(200),
+        HightConePlacement(500);
+
+        public final double setpoint;
+
+        private ElevatorPosition(double setpoint) {
+            this.setpoint = setpoint;
+        }
+    }
 
     public Elevator() {
         left.configFactoryDefault();
@@ -73,8 +85,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     }
 
     public void stop() {
-        openLoop = true;
         speed = 0.0;
+        this.setElevatorSetpoint(this.left.getSelectedSensorPosition());
     }
 
     public void forward() {
@@ -87,16 +99,14 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         speed = -SmartDashboard.getNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
     }
 
-    public void extend() {
-        openLoop = false;
-        setpoint = 105.0;
+    public void setElevatorPosition(ElevatorPosition position) {
+        this.setElevatorSetpoint(position.setpoint);
     }
 
-    public void retract() {
+    private void setElevatorSetpoint(double setpoint) {
         openLoop = false;
-        setpoint = 0.0;
+        this.setpoint = setpoint;
     }
-
 
     @Override
     public void periodic() {
@@ -119,13 +129,15 @@ public class Elevator extends SubsystemBase implements Lifecycle {
             left.configMotionCruiseVelocity(v);
             left.configMotionAcceleration(a);
 
-            left.set(ControlMode.MotionMagic, setpoint);
+            left.set(ControlMode.Position, setpoint);
+            // left.set(ControlMode.MotionMagic, setpoint);  TODO: measure velocity and acceleration for motion magic
         }
 
         SmartDashboard.putBoolean("Elevator/OpenLoop", openLoop);
         SmartDashboard.putNumber("Elevator/Speed", speed);
         SmartDashboard.putNumber("Elevator/LeftEnc", left.getSelectedSensorPosition());
         SmartDashboard.putNumber("Elevator/LeftVel", left.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Elevator/setpoint", this.setpoint);
 
         SmartDashboard.putNumber("Elevator/BusV", left.getBusVoltage());
         SmartDashboard.putNumber("Elevator/OutAmp", left.getStatorCurrent());

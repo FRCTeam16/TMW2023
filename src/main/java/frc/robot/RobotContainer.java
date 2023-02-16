@@ -99,23 +99,23 @@ public class RobotContainer {
         retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
 
         /* Pivot Controls */
-        rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
-        rotateArmDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
+        rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
+        rotateArmDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
 
         /* Intake Controls */
         intake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         eject.onTrue(new InstantCommand(() -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
 
-        wristOpenLoopUp.onTrue(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.stopWrist()));
-        wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.stopWrist()));
+        wristOpenLoopUp.onTrue(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
+        wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
 
     }
 
 
     private void configureDashboardButtons() {
         SmartDashboard.putData("Zero Elevator Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.elevator.zeroElevatorEncoder()));
-        SmartDashboard.putData("Retract Elevator", new InstantCommand(() -> Subsystems.elevator.retract()));
-        SmartDashboard.putData("Extend Elevator", new InstantCommand(() -> Subsystems.elevator.extend()));
+        // SmartDashboard.putData("Retract Elevator", new InstantCommand(() -> Subsystems.elevator.retract()));
+        // SmartDashboard.putData("Extend Elevator", new InstantCommand(() -> Subsystems.elevator.extend()));
     }
 
     /**

@@ -12,10 +12,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+
 public class Intake extends SubsystemBase implements Lifecycle {
 
     private Solenoid upper = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
-    private Solenoid lower = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
+    private Solenoid lower = new Solenoid(PneumaticsModuleType.CTREPCM, 2);
     private Boolean Solstend = false;
 
     private TalonFX left = new TalonFX(Constants.Intake.leftMotorId);
@@ -29,8 +30,20 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private double intakeSpeed = 0.0;
 
-    private double kFF=0.0015, kP=0.00012, kI=0, kD=0, maxVel=2000, maxAccel=500;
+    private double kFF=0.00, kP=0.00012, kI=0, kD=0, maxVel=2000, maxAccel=500;
     private double setpoint = 0.0;
+
+
+    public enum WristPosition {
+        Vertical(0),
+        Down(100);
+
+        public final double setpoint;
+
+        private WristPosition(double setpoint) {
+            this.setpoint = setpoint;
+        }
+    }
 
 
 
@@ -101,31 +114,29 @@ public class Intake extends SubsystemBase implements Lifecycle {
     }
 
     public void intake() {
-        intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", 0.1);
+        intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", 0.25);
     }
 
     public void eject() {
-        intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeSpeed", 0.1);
+        intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeSpeed", 0.25);
     }
 
     public void stopIntake() {
         intakeSpeed = 0.0;
     }
 
-    public void lowerWrist() {
-        openLoop = false;
-        setpoint = 0.0;
-    }
-
-    public void raiseWrist() {
-        openLoop = false;
-        setpoint = 0.0;
-    }
-
     public void holdWrist() {
-        openLoop = false;
         double currentPosition = wrist.getSelectedSensorPosition();
-        setpoint = currentPosition;
+        setWristSetpoint(currentPosition);
+    }
+
+    public void setWristPosition(WristPosition position) {
+        setWristSetpoint(position.setpoint);
+    }
+
+    private void setWristSetpoint(double setpoint) {
+        openLoop = false;
+        this.setpoint = setpoint;
     }
 
 
@@ -154,13 +165,14 @@ public class Intake extends SubsystemBase implements Lifecycle {
             wrist.configMotionCruiseVelocity(v);
             wrist.configMotionAcceleration(a);
 
-            wrist.set(ControlMode.MotionMagic, setpoint);
+            // wrist.set(ControlMode.MotionMagic, setpoint);
+            wrist.set(ControlMode.Position, setpoint);
         }
 
         SmartDashboard.putBoolean("Intake/OpenLoop", openLoop);
-        SmartDashboard.putNumber("Intake/Speed", openLoopWristSpeed);
         SmartDashboard.putNumber("Intake/wristEnc", wrist.getSelectedSensorPosition());
         SmartDashboard.putNumber("Intake/wristVel", wrist.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Intake/wristSetpoint", setpoint);
 
         SmartDashboard.putNumber("Intake/BusV", wrist.getBusVoltage());
         SmartDashboard.putNumber("Intake/OutAmp", wrist.getStatorCurrent());
