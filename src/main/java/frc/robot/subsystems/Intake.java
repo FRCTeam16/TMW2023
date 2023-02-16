@@ -5,11 +5,17 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase implements Lifecycle {
+
+    private Solenoid upper = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
+    private Solenoid lower = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
+    private Boolean Solstend = false;
 
     private TalonFX left = new TalonFX(Constants.Intake.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Intake.rightMotorId);
@@ -157,6 +163,17 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.putNumber("Intake/BusV", wrist.getBusVoltage());
         SmartDashboard.putNumber("Intake/OutAmp", wrist.getStatorCurrent());
         SmartDashboard.putString("Intake/LastError", wrist.getLastError().toString());
+
+        upper.set(Solstend); //open/close solinoids
+        lower.set(Solstend);
+    }
+    // solinoid is all I think about
+    void OpenHand(){
+        Solstend = true;
+    }
+
+    void CloseHand(){
+        Solstend = false;
     }
     
 }
