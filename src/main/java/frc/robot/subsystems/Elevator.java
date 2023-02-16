@@ -14,7 +14,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     private TalonFX left = new TalonFX(Constants.Elevator.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Elevator.rightMotorId);
 
-    private static double DEFAULT_OPENLOOP_SPEED = 0.25;
+    private static double DEFAULT_OPENLOOP_SPEED = 0.1;
 
     private boolean openLoop = true;
     private double speed = 0.0;

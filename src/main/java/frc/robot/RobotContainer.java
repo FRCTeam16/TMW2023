@@ -39,13 +39,17 @@ public class RobotContainer {
     private final JoystickButton april = new JoystickButton(right, 4);
     private final JoystickButton boto = new JoystickButton(right, 3);
 
-    private final Trigger gamepadRightYUp = new Trigger(() -> gamepad.getRawAxis(5) > 0.10);
-    private final Trigger gameadRightYDown = new Trigger(() -> gamepad.getRawAxis(5) < -0.10);
+    private final Trigger rotateArmUp = new Trigger(() -> gamepad.getRawAxis(5) > 0.10);
+    private final Trigger rotateArmDown = new Trigger(() -> gamepad.getRawAxis(5) < -0.10);
 
-    private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(1) < -0.10);
-    private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
+    private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(1) < -0.10);
+    private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
 
+
+    private final JoystickButton intake = new JoystickButton(right, 1);
+    private final JoystickButton eject = new JoystickButton(right, 2);
     private final Trigger wristOpenLoopUp = new Trigger(() -> gamepad.getPOV() == 0);
+    private final Trigger wristOpenLoopDown = new Trigger(() -> gamepad.getPOV() == 180);
 
 
     /* Subsystems */
@@ -95,8 +99,15 @@ public class RobotContainer {
         retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
 
         /* Pivot Controls */
-        gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.up())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
-        gameadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.down())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
+        rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
+        rotateArmDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
+
+        /* Intake Controls */
+        intake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        eject.onTrue(new InstantCommand(() -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+
+        wristOpenLoopUp.onTrue(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.stopWrist()));
+        wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.stopWrist()));
 
     }
 

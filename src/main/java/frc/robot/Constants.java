@@ -131,19 +131,19 @@ public final class Constants {
     }
 
     public static final class Elevator {
-        public static final int leftMotorId = 9;
-        public static final int rightMotorId = 10;
+        public static final int leftMotorId = 14;
+        public static final int rightMotorId = 15;
     }
 
     public static final class Pivot {
-        public static final int leftMotorId = 11;
-        public static final int rightMotorId = 12;
+        public static final int leftMotorId = 21;
+        public static final int rightMotorId = 20;
     }
 
     public static final class Intake {
-        public static final int leftMotorId = 13;
-        public static final int rightMotorId = 14;
-        public static final int wristMotorId = 15;
+        public static final int leftMotorId = 16;
+        public static final int rightMotorId = 17;
+        public static final int wristMotorId = 18;
     }
 
 

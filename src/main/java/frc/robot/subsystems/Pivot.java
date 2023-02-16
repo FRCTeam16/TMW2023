@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
@@ -28,6 +29,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         left.configFactoryDefault();
         right.configFactoryDefault();
         right.follow(left);
+        right.setInverted(TalonFXInvertType.OpposeMaster);
 
         left.setNeutralMode(NeutralMode.Brake);
         right.setNeutralMode(NeutralMode.Brake);
@@ -64,7 +66,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         SmartDashboard.setDefaultNumber("Pivot/MaxVel", maxVel);
         SmartDashboard.setDefaultNumber("Pivot/MaxAcc", maxAccel);
 
-        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     public void zeroPivotEncoder() {
@@ -72,19 +74,19 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         this.right.setSelectedSensorPosition(0, 0, 20);
     }
 
-    public void stop() {
+    public void openLoopStop() {
         openLoop = true;
         speed = 0.0;
     }
 
-    public void forward() {
+    public void openLoopUp() {
         openLoop = true;
-        speed = SmartDashboard.getNumber("Pivot/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        speed = SmartDashboard.getNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
-    public void reverse() {
+    public void openLoopDown() {
         openLoop = true;
-        speed = -SmartDashboard.getNumber("Pivot/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        speed = -SmartDashboard.getNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     public void down() {
