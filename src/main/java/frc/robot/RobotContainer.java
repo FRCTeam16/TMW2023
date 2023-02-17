@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.aprilAuto;
+import frc.robot.autos.aprilAuto; 
 import frc.robot.autos.boto;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
@@ -46,11 +46,12 @@ public class RobotContainer {
     private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
 
 
-    private final JoystickButton intake = new JoystickButton(right, 1);
+    private final JoystickButton JoyIntake = new JoystickButton(right, 1);
     private final JoystickButton eject = new JoystickButton(right, 2);
     private final Trigger wristOpenLoopUp = new Trigger(() -> gamepad.getPOV() == 0);
     private final Trigger wristOpenLoopDown = new Trigger(() -> gamepad.getPOV() == 180);
 
+    private final Trigger PadIntake = new Trigger(()-> gamepad.getRawButton(1));
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
@@ -102,13 +103,19 @@ public class RobotContainer {
         rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
         rotateArmDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
 
+        
         /* Intake Controls */
-        intake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        JoyIntake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         eject.onTrue(new InstantCommand(() -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
 
         wristOpenLoopUp.onTrue(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
+        
+        gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.up())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
+        gamepadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.down())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
 
+        PadIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
+        
     }
 
 

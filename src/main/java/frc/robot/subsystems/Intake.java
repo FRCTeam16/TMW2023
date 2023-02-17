@@ -182,11 +182,11 @@ public class Intake extends SubsystemBase implements Lifecycle {
         lower.set(Solstend);
     }
     // solinoid is all I think about
-    void OpenHand(){
+    public void OpenHand(){
         Solstend = true;
     }
 
-    void CloseHand(){
+    public void CloseHand(){
         Solstend = false;
     }
     
