@@ -52,6 +52,10 @@ public class RobotContainer {
     private final Trigger wristOpenLoopDown = new Trigger(() -> gamepad.getPOV() == 180);
 
     private final Trigger PadIntake = new Trigger(()-> gamepad.getRawButton(1));
+    private final Trigger gamepadRightYUp = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
+    private final Trigger gamepadRightYDown = new Trigger(()-> gamepad.getRawAxis(1) < -0.10);
+
+    
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
@@ -110,9 +114,9 @@ public class RobotContainer {
 
         wristOpenLoopUp.onTrue(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
-        
-        gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.up())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
-        gamepadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.down())).onFalse(new InstantCommand(() -> Subsystems.pivot.stop()));
+
+        gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
+        gamepadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
 
         PadIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
         
