@@ -81,6 +81,11 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
     }
 
+    @Override
+    public void teleopInit() {
+        setpoint = left.getSelectedSensorPosition();
+    }
+
     public void zeroWristEncoder() {
         this.wrist.setSelectedSensorPosition(0, 0, 20);
         this.setpoint = 0.0;

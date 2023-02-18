@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,7 +24,7 @@ public class RobotContainer {
     /* Controllers */
     private final Joystick left    = new Joystick(0);
     private final Joystick right   = new Joystick(1);
-    private final Joystick gamepad = new Joystick(2);
+    private final XboxController gamepad = new XboxController(2);
 
 
     /* Driver Buttons */
@@ -43,21 +44,24 @@ public class RobotContainer {
     private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
     private final Trigger wristTempDown     = new JoystickButton(right, 2);
 
-    private final Trigger rotateArmUp   = new Trigger(() -> gamepad.getRawAxis(0) >  0.10);
-    private final Trigger rotateArmDown = new Trigger(() -> gamepad.getRawAxis(0) < -0.10);
-
-    private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(5) < -0.10);
-    private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(5) >  0.10);
+    // private final Trigger PadIntake     = new Trigger(() -> gamepad.getRawButton(1));
+    private final Trigger rotateArmUp   = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kLeftY.value) >  0.10);
+    private final Trigger rotateArmDown = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kLeftY.value) < -0.10);
+    
+    private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) < -0.10);
+    private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) >  0.10);
 
     private final JoystickButton extendRamp  = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
     private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
 
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(right, 2);
+    private final JoystickButton robotCentric = new JoystickButton(right, 3);
 
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
+
+    private final PneumaticHub pneumaticHub = new PneumaticHub();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -75,6 +79,8 @@ public class RobotContainer {
         configureButtonBindings();
         // Configure software buttons
         configureDashboardButtons();
+        // Configure pneumatic pressures
+        pneumaticHub.enableCompressorAnalog(60, 100);
     }
 
     /**
@@ -89,12 +95,6 @@ public class RobotContainer {
 
         april.onTrue(new aprilAuto(right.getX(),right.getY()));
 
-        /* Worse version of what is below */
-        //gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp()))
-        //.onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
-
-        //gamepadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown()))
-        //.onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
 
         rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp()))
                   .onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
@@ -102,9 +102,6 @@ public class RobotContainer {
         rotateArmDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown()))
                     .onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
             
-            /* pivot closed loops */
-            /* elevator closed loops */
-
 
         elevatorForward
             .onTrue(new InstantCommand(()  -> Subsystems.elevator.forward()))
@@ -113,18 +110,16 @@ public class RobotContainer {
             .onTrue(new InstantCommand(()  -> Subsystems.elevator.reverse()))
             .onFalse(new InstantCommand(() -> Subsystems.elevator.stop()));
 
+
         extendRamp.onTrue(new InstantCommand(()  -> Subsystems.ramp.forward()));
         retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
-
-        /* Pivot Controls */
-        
 
         
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
-        padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        // padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         eject.onTrue(new InstantCommand(()     -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
-        padEject.onTrue(new InstantCommand(()  -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        // padEject.onTrue(new InstantCommand(()  -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
 
         wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
@@ -150,6 +145,14 @@ public class RobotContainer {
     public Command getAutonomousCommand() { 
         // An ExampleCommand will run in autonomous
         return new aprilAuto(right.getX(),right.getY());
+    }
+
+    public void teleopInit() {
+        Subsystems.lifecycleSubsystems.stream().filter(s -> s != null).forEach((s) -> s.teleopInit());
+    }
+
+    public void autoInit() {
+        Subsystems.lifecycleSubsystems.stream().filter(s -> s != null).forEach((s) -> s.autoInit());
     }
 
 }
