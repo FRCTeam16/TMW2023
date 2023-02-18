@@ -24,7 +24,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private TalonFX right = new TalonFX(Constants.Intake.rightMotorId);
     private TalonFX wrist = new TalonFX(Constants.Intake.wristMotorId);
 
-    private static double DEFAULT_OPENLOOP_SPEED = 0.25;
+    private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
+    private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.5;
 
     private boolean openLoop = true;
     private double openLoopWristSpeed = 0.0;
@@ -76,12 +77,13 @@ public class Intake extends SubsystemBase implements Lifecycle {
         pidHelper.initialize(0.00012, 0, 0, 0, 0, 0);
         pidHelper.updateTalonFX(left, 0);
 
-        SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_SPEED);
-        SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", 0.1);
+        SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
+        SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
     }
 
     public void zeroWristEncoder() {
         this.wrist.setSelectedSensorPosition(0, 0, 20);
+        this.setpoint = 0.0;
     }
 
     public void stopWrist() {
@@ -91,20 +93,20 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public void raiseWristOpenLoop() {
         openLoop = true;
-        openLoopWristSpeed = SmartDashboard.getNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_SPEED);
+        openLoopWristSpeed = SmartDashboard.getNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
     }
 
     public void lowerWristOpenLoop() {
         openLoop = true;
-        openLoopWristSpeed = -SmartDashboard.getNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_SPEED);
+        openLoopWristSpeed = -SmartDashboard.getNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
     }
 
     public void intake() {
-        intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", 0.25);
+        intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
     }
 
     public void eject() {
-        intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeSpeed", 0.25);
+        intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
     }
 
     public void stopIntake() {

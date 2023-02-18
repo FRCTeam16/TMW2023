@@ -52,6 +52,7 @@ public class RobotContainer {
     private final Trigger wristOpenLoopDown = new Trigger(() -> gamepad.getPOV() == 180);
 
     private final Trigger PadIntake = new Trigger(()-> gamepad.getRawButton(1));
+
     private final Trigger gamepadRightYUp = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
     private final Trigger gamepadRightYDown = new Trigger(()-> gamepad.getRawAxis(1) < -0.10);
 
@@ -115,9 +116,6 @@ public class RobotContainer {
         wristOpenLoopUp.onTrue(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
 
-        gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
-        gamepadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
-
         PadIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
         
     }
@@ -125,8 +123,8 @@ public class RobotContainer {
 
     private void configureDashboardButtons() {
         SmartDashboard.putData("Zero Elevator Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.elevator.zeroElevatorEncoder()));
-        // SmartDashboard.putData("Retract Elevator", new InstantCommand(() -> Subsystems.elevator.retract()));
-        // SmartDashboard.putData("Extend Elevator", new InstantCommand(() -> Subsystems.elevator.extend()));
+        SmartDashboard.putData("Zero Pivot Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.pivot.zeroPivotEncoder()));
+        SmartDashboard.putData("Zero Wrist Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.intake.zeroWristEncoder()));
     }
 
     /**

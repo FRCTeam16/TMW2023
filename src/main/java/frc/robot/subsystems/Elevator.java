@@ -17,7 +17,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     private TalonFX left = new TalonFX(Constants.Elevator.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Elevator.rightMotorId);
 
-    private static double DEFAULT_OPENLOOP_SPEED = 0.15;
+    private static double DEFAULT_OPENLOOP_SPEED = 0.1;
+    private static double DEFAULT_OPENLOOP_SPEED_REVERSE = 0.05;
 
     private boolean openLoop = true;
     private double speed = 0.0;
@@ -47,8 +48,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.setNeutralMode(NeutralMode.Brake);
         right.setNeutralMode(NeutralMode.Brake);
 
-
         TalonFXConfiguration config = new TalonFXConfiguration();
+        config.neutralDeadband = 0.01;
         config.supplyCurrLimit.enable = true;
         config.supplyCurrLimit.triggerThresholdCurrent = 40; // the peak supply current, in amps
         config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit triggers, in sec
@@ -56,10 +57,12 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
-        pidHelper.initialize(0.00012, 0, 0, 0, 0, 0);
+        pidHelper.initialize(0.05, 0, 0, 0, 0, 0);
         pidHelper.updateTalonFX(left, 0);
 
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeedReverse", DEFAULT_OPENLOOP_SPEED_REVERSE);
+        SmartDashboard.setDefaultNumber("Elevator/ArbFF", 0.0);
 
         this.zeroElevatorEncoder();
         openLoop = true;
@@ -69,6 +72,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     public void zeroElevatorEncoder() {
         this.left.setSelectedSensorPosition(0, 0, 20);
         this.right.setSelectedSensorPosition(0, 0, 20);
+        this.setpoint = 0.0;
     }
 
     public void stop() {
@@ -83,7 +87,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
     public void reverse() {
         openLoop = true;
-        speed = -SmartDashboard.getNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+        speed = -SmartDashboard.getNumber("Elevator/OpenLoopSpeedReverse", DEFAULT_OPENLOOP_SPEED_REVERSE);
     }
 
     public void setElevatorPosition(ElevatorPosition position) {
@@ -103,12 +107,19 @@ public class Elevator extends SubsystemBase implements Lifecycle {
             pidHelper.updateValuesFromDashboard();
             pidHelper.updateTalonFX(left, 0);
 
-            left.set(ControlMode.Position, setpoint);
+            double arbitraryFF = SmartDashboard.getNumber("Elevator/ArbFF", 0.0);
+            SmartDashboard.putNumber("Elevator/CalculatedFF", calculateGravityFeedForward());
+
+            arbitraryFF = calculateGravityFeedForward();
+
+            left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, arbitraryFF);
             // left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, calculateGravityFeedForward() );
             // left.set(ControlMode.MotionMagic, setpoint);  TODO: measure velocity and acceleration for motion magic
         }
 
         // Telemetry
+        SmartDashboard.putNumber("Elevator/CalculatedFF", calculateGravityFeedForward());
+
         SmartDashboard.putBoolean("Elevator/OpenLoop", openLoop);
         SmartDashboard.putNumber("Elevator/Speed", speed);
         SmartDashboard.putNumber("Elevator/LeftEnc", left.getSelectedSensorPosition());
@@ -129,7 +140,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         double degrees = Subsystems.pivot.getPivotAngleDegrees();
         double radians = java.lang.Math.toRadians(degrees);
         double cosineScalar = java.lang.Math.cos(radians);
-        double maxGravityFF = 0.07;
+        double maxGravityFF = 0.07;  // FIXME get max value
         return maxGravityFF * cosineScalar;
     }
     

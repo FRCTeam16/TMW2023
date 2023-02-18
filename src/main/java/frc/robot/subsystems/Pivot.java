@@ -16,7 +16,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
     private TalonFX left = new TalonFX(Constants.Pivot.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Pivot.rightMotorId);
 
-    private static double DEFAULT_OPENLOOP_SPEED = 0.25;
+    private static double DEFAULT_OPENLOOP_SPEED = 0.5;
 
     private boolean openLoop = true;
     private double speed = 0.0;
@@ -69,6 +69,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
     public void zeroPivotEncoder() {
         this.left.setSelectedSensorPosition(0, 0, 20);
         this.right.setSelectedSensorPosition(0, 0, 20);
+        this.setpoint = 0.0;
     }
 
     public void openLoopStop() {
@@ -104,12 +105,14 @@ public class Pivot extends SubsystemBase implements Lifecycle {
      * @return
      */
     public double getPivotAngleDegrees() {
-        int kMeasuredPosHorizontal = 840; // FIXME: Position measured when arm is horizontal
+        int kMeasuredPosHorizontal = -311371; // FIXME: Position measured when arm is horizontal
         double gearing = 625;
         double kTicksPerDegree = (gearing * 4096) / 360; //Sensor is 1:1 with arm rotation
+
+        kTicksPerDegree = 311371 / 90;
         double currentPos = left.getSelectedSensorPosition();
         double degrees = (currentPos - kMeasuredPosHorizontal) / kTicksPerDegree;
-        return degrees;
+        return degrees - 90.0;
     }
 
     @Override
