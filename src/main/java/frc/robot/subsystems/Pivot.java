@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.util.PIDHelper;
 
 public class Pivot extends SubsystemBase implements Lifecycle {
 
@@ -20,7 +21,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
     private boolean openLoop = true;
     private double speed = 0.0;
 
-    private double kFF=0.00, kP=0.026, kI=0, kD=0, maxVel=2000, maxAccel=500;
+    private final PIDHelper pidHelper = new PIDHelper("Pivot");
     private double setpoint = 0.0;
 
 
@@ -34,7 +35,6 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         private PivotPosition(double setpoint) {
             this.setpoint = setpoint;
         }
-
     }
 
 
@@ -56,30 +56,14 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
+        pidHelper.initialize(0.026, 0, 0, 0, 0, 0);
+        pidHelper.updateTalonFX(left, 0);
+        
+        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
 
         this.zeroPivotEncoder();
-
         openLoop = true;
         speed = 0.0;
-
-        left.config_kP(0, kP);
-        left.config_kF(0, kFF);
-        left.config_kI(0, kI);
-        left.config_kD(0, kD);
-
-        // motion magic
-        left.configMotionCruiseVelocity(maxVel);
-        left.configMotionAcceleration(maxAccel);
-
-
-        SmartDashboard.setDefaultNumber("Pivot/kFF", kFF);
-        SmartDashboard.setDefaultNumber("Pivot/kP", kP);
-        SmartDashboard.setDefaultNumber("Pivot/kI", kI);
-        SmartDashboard.setDefaultNumber("Pivot/kD", kD);
-        SmartDashboard.setDefaultNumber("Pivot/MaxVel", maxVel);
-        SmartDashboard.setDefaultNumber("Pivot/MaxAcc", maxAccel);
-
-        SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
     }
 
     public void zeroPivotEncoder() {
@@ -115,30 +99,30 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         this.setpoint = setpoint;
     }
 
+    /**
+     * Returns the angle of the pivoted arm, with 0 degrees at the top
+     * @return
+     */
+    public double getPivotAngleDegrees() {
+        int kMeasuredPosHorizontal = 840; // FIXME: Position measured when arm is horizontal
+        double gearing = 625;
+        double kTicksPerDegree = (gearing * 4096) / 360; //Sensor is 1:1 with arm rotation
+        double currentPos = left.getSelectedSensorPosition();
+        double degrees = (currentPos - kMeasuredPosHorizontal) / kTicksPerDegree;
+        return degrees;
+    }
 
     @Override
     public void periodic() {
         if (openLoop) {
             left.set(ControlMode.PercentOutput, speed);
         } else {
-            double ff = SmartDashboard.getNumber("Pivot/kFF", kFF);
-            double p = SmartDashboard.getNumber("Pivot/kP", kP);
-            double i = SmartDashboard.getNumber("Pivot/kI", kI);
-            double d = SmartDashboard.getNumber("Pivot/kD", kD);
-            double v = SmartDashboard.getNumber("Pivot/MaxVel", maxVel);
-            double a = SmartDashboard.getNumber("Pivot/MaxAcc", maxAccel);
-
-            left.config_kP(0, p);
-            left.config_kF(0, ff);
-            left.config_kI(0, i);
-            left.config_kD(0, d);
-
-            // motion magic
-            left.configMotionCruiseVelocity(v);
-            left.configMotionAcceleration(a);
+            pidHelper.updateValuesFromDashboard();
+            pidHelper.updateTalonFX(left, 0);
 
             // left.set(ControlMode.MotionMagic, setpoint);
             left.set(ControlMode.Position, setpoint);
+            // left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, calculateGravityFeedForward() );
         }
 
         SmartDashboard.putBoolean("Pivot/OpenLoop", openLoop);
@@ -146,6 +130,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         SmartDashboard.putNumber("Pivot/LeftEnc", left.getSelectedSensorPosition());
         SmartDashboard.putNumber("Pivot/LeftVel", left.getSelectedSensorVelocity());
         SmartDashboard.putNumber("Pivot/setpoint", this.setpoint);
+        SmartDashboard.putNumber("Pivot/Degrees", this.getPivotAngleDegrees());
 
         SmartDashboard.putNumber("Pivot/BusV", left.getBusVoltage());
         SmartDashboard.putNumber("Pivot/OutAmp", left.getStatorCurrent());

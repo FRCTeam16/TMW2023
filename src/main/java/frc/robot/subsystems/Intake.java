@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.util.PIDHelper;
 
 
 public class Intake extends SubsystemBase implements Lifecycle {
@@ -30,7 +31,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private double intakeSpeed = 0.0;
 
-    private double kFF=0.00, kP=0.00012, kI=0, kD=0, maxVel=2000, maxAccel=500;
+    private PIDHelper pidHelper = new PIDHelper("Intake");
     private double setpoint = 0.0;
 
 
@@ -44,7 +45,6 @@ public class Intake extends SubsystemBase implements Lifecycle {
             this.setpoint = setpoint;
         }
     }
-
 
 
     public Intake() {
@@ -73,22 +73,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
         openLoop = true;
         openLoopWristSpeed = 0.0;
 
-        wrist.config_kP(0, kP);
-        wrist.config_kF(0, kFF);
-        wrist.config_kI(0, kI);
-        wrist.config_kD(0, kD);
-
-        // motion magic
-        wrist.configMotionCruiseVelocity(maxVel);
-        wrist.configMotionAcceleration(maxAccel);
-
-
-        SmartDashboard.setDefaultNumber("Intake/kFF", kFF);
-        SmartDashboard.setDefaultNumber("Intake/kP", kP);
-        SmartDashboard.setDefaultNumber("Intake/kI", kI);
-        SmartDashboard.setDefaultNumber("Intake/kD", kD);
-        SmartDashboard.setDefaultNumber("Intake/MaxVel", maxVel);
-        SmartDashboard.setDefaultNumber("Intake/MaxAcc", maxAccel);
+        pidHelper.initialize(0.00012, 0, 0, 0, 0, 0);
+        pidHelper.updateTalonFX(left, 0);
 
         SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", 0.1);
@@ -149,22 +135,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
         if (openLoop) {
             wrist.set(ControlMode.PercentOutput, openLoopWristSpeed);
         } else {
-            double ff = SmartDashboard.getNumber("Intake/kFF", kFF);
-            double p = SmartDashboard.getNumber("Intake/kP", kP);
-            double i = SmartDashboard.getNumber("Intake/kI", kI);
-            double d = SmartDashboard.getNumber("Intake/kD", kD);
-            double v = SmartDashboard.getNumber("Intake/MaxVel", maxVel);
-            double a = SmartDashboard.getNumber("Intake/MaxAcc", maxAccel);
-
-            wrist.config_kP(0, p);
-            wrist.config_kF(0, ff);
-            wrist.config_kI(0, i);
-            wrist.config_kD(0, d);
-
-            // motion magic
-            wrist.configMotionCruiseVelocity(v);
-            wrist.configMotionAcceleration(a);
-
+            pidHelper.updateValuesFromDashboard();
+            pidHelper.updateTalonFX(left, 0);
+           
             // wrist.set(ControlMode.MotionMagic, setpoint);
             wrist.set(ControlMode.Position, setpoint);
         }
