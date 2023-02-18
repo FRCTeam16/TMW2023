@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
@@ -8,6 +9,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Subsystems;
+import frc.robot.subsystems.util.PIDHelper;
 
 public class Elevator extends SubsystemBase implements Lifecycle {
 
@@ -19,7 +22,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     private boolean openLoop = true;
     private double speed = 0.0;
 
-    private double kFF=0.000, kP=0.00012, kI=0, kD=0, maxVel=2000, maxAccel=500;
+    private final PIDHelper pidHelper = new PIDHelper("Elevator");
     private double setpoint = 0.0;
 
 
@@ -53,30 +56,14 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
-
-        this.zeroElevatorEncoder();
-
-        openLoop = true;
-        speed = 0.0;
-
-        left.config_kP(0, kP);
-        left.config_kF(0, kFF);
-        left.config_kI(0, kI);
-        left.config_kD(0, kD);
-
-        // motion magic
-        left.configMotionCruiseVelocity(maxVel);
-        left.configMotionAcceleration(maxAccel);
-
-
-        SmartDashboard.setDefaultNumber("Elevator/kFF", kFF);
-        SmartDashboard.setDefaultNumber("Elevator/kP", kP);
-        SmartDashboard.setDefaultNumber("Elevator/kI", kI);
-        SmartDashboard.setDefaultNumber("Elevator/kD", kD);
-        SmartDashboard.setDefaultNumber("Elevator/MaxVel", maxVel);
-        SmartDashboard.setDefaultNumber("Elevator/MaxAcc", maxAccel);
+        pidHelper.initialize(0.00012, 0, 0, 0, 0, 0);
+        pidHelper.updateTalonFX(left, 0);
 
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
+
+        this.zeroElevatorEncoder();
+        openLoop = true;
+        speed = 0.0;
     }
 
     public void zeroElevatorEncoder() {
@@ -113,26 +100,15 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         if (openLoop) {
             left.set(ControlMode.PercentOutput, speed);
         } else {
-            double ff = SmartDashboard.getNumber("Elevator/kFF", kFF);
-            double p = SmartDashboard.getNumber("Elevator/kP", kP);
-            double i = SmartDashboard.getNumber("Elevator/kI", kI);
-            double d = SmartDashboard.getNumber("Elevator/kD", kD);
-            double v = SmartDashboard.getNumber("Elevator/MaxVel", maxVel);
-            double a = SmartDashboard.getNumber("Elevator/MaxAcc", maxAccel);
-
-            left.config_kP(0, p);
-            left.config_kF(0, ff);
-            left.config_kI(0, i);
-            left.config_kD(0, d);
-
-            // motion magic
-            left.configMotionCruiseVelocity(v);
-            left.configMotionAcceleration(a);
+            pidHelper.updateValuesFromDashboard();
+            pidHelper.updateTalonFX(left, 0);
 
             left.set(ControlMode.Position, setpoint);
+            // left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, calculateGravityFeedForward() );
             // left.set(ControlMode.MotionMagic, setpoint);  TODO: measure velocity and acceleration for motion magic
         }
 
+        // Telemetry
         SmartDashboard.putBoolean("Elevator/OpenLoop", openLoop);
         SmartDashboard.putNumber("Elevator/Speed", speed);
         SmartDashboard.putNumber("Elevator/LeftEnc", left.getSelectedSensorPosition());
@@ -142,6 +118,19 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         SmartDashboard.putNumber("Elevator/BusV", left.getBusVoltage());
         SmartDashboard.putNumber("Elevator/OutAmp", left.getStatorCurrent());
         SmartDashboard.putString("Elevator/LastError", left.getLastError().toString());
+    }
+
+    /**
+     * Calculates an arbitrary feed forward value to offset gravity effects
+     * 
+     * @see https://docs.ctre-phoenix.com/en/stable/ch16_ClosedLoop.html#gravity-offset-arm
+     */
+    private double calculateGravityFeedForward() {
+        double degrees = Subsystems.pivot.getPivotAngleDegrees();
+        double radians = java.lang.Math.toRadians(degrees);
+        double cosineScalar = java.lang.Math.cos(radians);
+        double maxGravityFF = 0.07;
+        return maxGravityFF * cosineScalar;
     }
     
 }
