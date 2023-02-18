@@ -21,45 +21,43 @@ import frc.robot.commands.TeleopSwerve;
  */
 public class RobotContainer {
     /* Controllers */
-    private final Joystick left = new Joystick(0);
-    private final Joystick right = new Joystick(1);
+    private final Joystick left    = new Joystick(0);
+    private final Joystick right   = new Joystick(1);
     private final Joystick gamepad = new Joystick(2);
 
 
     /* Driver Buttons */
-    private final JoystickButton zeroGyro = new JoystickButton(gamepad, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(right, 2);
-
     //private final JoystickButton elevatorForward = new JoystickButton(gamepad, XboxController.Button.kY.value);
     //private final JoystickButton elevatorReverse = new JoystickButton(gamepad, XboxController.Button.kX.value);
 
-    private final JoystickButton extendRamp = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
+ 
+
+    private final JoystickButton april     = new JoystickButton(left,    1);
+    private final JoystickButton intake    = new JoystickButton(left,    0);
+    private final JoystickButton padIntake = new JoystickButton(gamepad, 5);
+    private final JoystickButton eject     = new JoystickButton(right,   0);
+    private final JoystickButton padEject  = new JoystickButton(gamepad, 4);
+      
+    private final Trigger wristOpenLoopUp   = new JoystickButton(right, 3);
+    private final Trigger wristOpenLoopDown = new JoystickButton(right, 2);
+    private final Trigger wristTempDown     = new JoystickButton(right, 1);
+
+    private final Trigger PadIntake     = new Trigger(() -> gamepad.getRawButton(1));
+    private final Trigger rotateArmUp   = new Trigger(() -> gamepad.getRawAxis(0) >  0.10);
+    private final Trigger rotateArmDown = new Trigger(() -> gamepad.getRawAxis(0) < -0.10);
+
+    private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(5) < -0.10);
+    private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(5) >  0.10);
+
+    private final JoystickButton extendRamp  = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
     private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
 
-    private final JoystickButton april = new JoystickButton(right, 4);
-    private final JoystickButton boto = new JoystickButton(right, 3);
+    private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
+    private final JoystickButton robotCentric = new JoystickButton(right, 2);
 
-    private final Trigger rotateArmUp = new Trigger(() -> gamepad.getRawAxis(5) > 0.10);
-    private final Trigger rotateArmDown = new Trigger(() -> gamepad.getRawAxis(5) < -0.10);
-
-    private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(1) < -0.10);
-    private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
-
-
-    private final JoystickButton JoyIntake = new JoystickButton(right, 1);
-    private final JoystickButton eject = new JoystickButton(right, 2);
-    private final Trigger wristOpenLoopUp = new Trigger(() -> gamepad.getPOV() == 0);
-    private final Trigger wristOpenLoopDown = new Trigger(() -> gamepad.getPOV() == 180);
-
-    private final Trigger PadIntake = new Trigger(()-> gamepad.getRawButton(1));
-    private final Trigger gamepadRightYUp = new Trigger(() -> gamepad.getRawAxis(1) > 0.10);
-    private final Trigger gamepadRightYDown = new Trigger(()-> gamepad.getRawAxis(1) < -0.10);
-
-    
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
-
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -68,14 +66,15 @@ public class RobotContainer {
                 Subsystems.swerveSubsystem, 
                 () -> -right.getY(),
                 () -> -right.getX(), 
-                () -> left.getX(), 
-                () -> robotCentric.getAsBoolean()
+                () ->  left.getX(), 
+                () ->  robotCentric.getAsBoolean()
             )
         );
 
         // Configure the button bindings
         configureButtonBindings();
-
+        private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
+        private final JoystickButton robotCentric = new JoystickButton(right, 2);
         // Configure software buttons
         configureDashboardButtons();
     }
@@ -91,35 +90,49 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> Subsystems.swerveSubsystem.zeroGyro()));
 
         april.onTrue(new aprilAuto(right.getX(),right.getY()));
-        boto.onTrue(new boto(right.getRawAxis(0),right.getRawAxis(1)));
+
+        /* Worse version of what is below */
+        //gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp()))
+        //.onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
+
+        //gamepadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown()))
+        //.onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
+
+        rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp()))
+                  .onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
+
+        rotateArmDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown()))
+                    .onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
+            
+            /* pivot closed loops */
+            /* elevator closed loops */
+
 
         elevatorForward
-            .onTrue(new InstantCommand(() -> Subsystems.elevator.forward()))
+            .onTrue(new InstantCommand(()  -> Subsystems.elevator.forward()))
             .onFalse(new InstantCommand(() -> Subsystems.elevator.stop()));
         elevatorReverse
-            .onTrue(new InstantCommand(() -> Subsystems.elevator.reverse()))
+            .onTrue(new InstantCommand(()  -> Subsystems.elevator.reverse()))
             .onFalse(new InstantCommand(() -> Subsystems.elevator.stop()));
 
-        extendRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.forward()));
+        extendRamp.onTrue(new InstantCommand(()  -> Subsystems.ramp.forward()));
         retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
 
         /* Pivot Controls */
-        rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
-        rotateArmDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.holdPosition()));
+        
 
         
         /* Intake Controls */
-        JoyIntake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
-        eject.onTrue(new InstantCommand(() -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        eject.onTrue(new InstantCommand(()     -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        padEject.onTrue(new InstantCommand(()  -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
 
-        wristOpenLoopUp.onTrue(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
+        wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
-
-        gamepadRightYUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
-        gamepadRightYDown.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopDown())).onFalse(new InstantCommand(() -> Subsystems.pivot.openLoopStop()));
-
-        PadIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
+        wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop()));
         
+        PadIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
     }
 
 
@@ -138,5 +151,5 @@ public class RobotContainer {
         // An ExampleCommand will run in autonomous
         return new aprilAuto(right.getX(),right.getY());
     }
-    
+
 }
