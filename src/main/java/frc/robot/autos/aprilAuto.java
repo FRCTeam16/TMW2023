@@ -56,7 +56,7 @@ public class aprilAuto extends CommandBase{
             instance.ID == 3 ||
             instance.ID == 4 ){
             //drive in pos way
-            Translation2d translation = new Translation2d(Ry ,checkNetT(instance) + Rx ).times(Constants.Swerve.maxSpeed / 6); //the 8 can be reduced to go faster
+            Translation2d translation = new Translation2d(Ry ,checkNetT(instance) + Rx ).times(Constants.Swerve.maxSpeed / 8); //the 8 can be reduced to go faster
             Subsystems.swerveSubsystem.drive(translation, 0, true, true);
         }
         if( instance.ID == 5 ||
@@ -64,7 +64,7 @@ public class aprilAuto extends CommandBase{
             instance.ID == 7 ||
             instance.ID == 8 ){
             //drive in neg way
-            Translation2d translation = new Translation2d(Ry ,-checkNetT(instance) + Rx ).times(Constants.Swerve.maxSpeed / 6); //the 8 can be reduced to go faster
+            Translation2d translation = new Translation2d(Ry ,-checkNetT(instance) + Rx ).times(Constants.Swerve.maxSpeed / 8); //the 8 can be reduced to go faster
             Subsystems.swerveSubsystem.drive(translation, 0, true, true);
         }
         else{
