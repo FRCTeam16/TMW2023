@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public enum WristPosition {
         Vertical(0),
-        Down(100);
+        GroundPickup(45207);
 
         public final double setpoint;
 
