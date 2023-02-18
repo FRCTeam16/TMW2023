@@ -64,7 +64,6 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         this.zeroPivotEncoder();
         openLoop = true;
         speed = 0.0;
-
     }
 
     public void zeroPivotEncoder() {
@@ -106,7 +105,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
      */
     public double getPivotAngleDegrees() {
         int kMeasuredPosHorizontal = 840; // FIXME: Position measured when arm is horizontal
-        double gearing = 1;
+        double gearing = 625;
         double kTicksPerDegree = (gearing * 4096) / 360; //Sensor is 1:1 with arm rotation
         double currentPos = left.getSelectedSensorPosition();
         double degrees = (currentPos - kMeasuredPosHorizontal) / kTicksPerDegree;
