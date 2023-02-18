@@ -27,12 +27,18 @@ public class RobotContainer {
     private final XboxController gamepad = new XboxController(2);
 
 
+    /* Driver Buttons */
+    //private final JoystickButton elevatorForward = new JoystickButton(gamepad, XboxController.Button.kY.value);
+    //private final JoystickButton elevatorReverse = new JoystickButton(gamepad, XboxController.Button.kX.value);
+
+ 
+
     private final JoystickButton april     = new JoystickButton(left,    2);
+
     private final JoystickButton intake    = new JoystickButton(left,    1);
-    // private final JoystickButton padIntake = new JoystickButton(gamepad, 5);
-    // private final Trigger padIntake = new Trigger(gamepad.)
+    private final JoystickButton padIntake = new JoystickButton(gamepad, 6);
     private final JoystickButton eject     = new JoystickButton(right,   1);
-    // private final JoystickButton padEject  = new JoystickButton(gamepad, 4);
+    private final JoystickButton padEject  = new JoystickButton(gamepad, 5);
       
     private final Trigger wristOpenLoopUp   = new JoystickButton(right, 4);
     private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
@@ -119,14 +125,16 @@ public class RobotContainer {
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop()));
         
-        // PadIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
+        padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
     }
 
 
     private void configureDashboardButtons() {
         SmartDashboard.putData("Zero Elevator Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.elevator.zeroElevatorEncoder()));
-        SmartDashboard.putData("Zero Pivot Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.pivot.zeroPivotEncoder()));
         SmartDashboard.putData("Zero Wrist Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.intake.zeroWristEncoder()));
+        SmartDashboard.putData("Zero Pivot Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.pivot.zeroPivotEncoder()));
+        // SmartDashboard.putData("Retract Elevator", new InstantCommand(() -> Subsystems.elevator.retract()));
+        // SmartDashboard.putData("Extend Elevator", new InstantCommand(() -> Subsystems.elevator.extend()));
     }
 
     /**

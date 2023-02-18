@@ -28,10 +28,9 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
 
     public enum ElevatorPosition {
-        StartPosition(0),
-        Retracted(100),
-        LowConePlacement(200),
-        HightConePlacement(500);
+        Vertical(0),
+        GroundPickup(26754);
+      
 
         public final double setpoint;
 
