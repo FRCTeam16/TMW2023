@@ -63,18 +63,18 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
-        Subsystems.swerveSubsystem.setDefaultCommand(
-            new TeleopSwerve(
-                Subsystems.swerveSubsystem, 
-                () -> -right.getY(),
-                () -> -right.getX(), 
-                () -> left.getX(), 
-                () -> robotCentric.getAsBoolean()
-            )
-        );
+        // Subsystems.swerveSubsystem.setDefaultCommand(
+        //     new TeleopSwerve(
+        //         Subsystems.swerveSubsystem, 
+        //         () -> -right.getY(),
+        //         () -> -right.getX(), 
+        //         () -> left.getX(), 
+        //         () -> robotCentric.getAsBoolean()
+        //     )
+        // );
 
         // Configure the button bindings
-        configureButtonBindings();
+        // configureButtonBindings();
 
         // Configure software buttons
         configureDashboardButtons();
@@ -90,8 +90,8 @@ public class RobotContainer {
         /* Driver Buttons */
         zeroGyro.onTrue(new InstantCommand(() -> Subsystems.swerveSubsystem.zeroGyro()));
 
-        april.onTrue(new aprilAuto(right.getX(),right.getY()));
-        boto.onTrue(new boto(right.getRawAxis(0),right.getRawAxis(1)));
+        // april.onTrue(new aprilAuto(right.getX(),right.getY()));
+        // boto.onTrue(new boto(right.getRawAxis(0),right.getRawAxis(1)));
 
         elevatorForward
             .onTrue(new InstantCommand(() -> Subsystems.elevator.forward()))

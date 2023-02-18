@@ -29,13 +29,13 @@ public class Subsystems {
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
 
     private Subsystems() {
-        swerveSubsystem = new Swerve();
+        // swerveSubsystem = new Swerve();
         visionSubsystem = new VisionSubsystem();
-        ledSubsystem = new LEDSubsystem();
-        elevator = new Elevator();
-        ramp = new Ramp();
-        pivot = new Pivot();
-        intake = new Intake();
+        // ledSubsystem = new LEDSubsystem();
+        // elevator = new Elevator();
+        // ramp = new Ramp();
+        // pivot = new Pivot();
+        // intake = new Intake();
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);

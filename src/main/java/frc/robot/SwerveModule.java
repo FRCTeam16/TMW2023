@@ -116,4 +116,9 @@ public class SwerveModule {
             getAngle()
         );
     }
+
+    public TalonFX getDriveMotor() { return this.mDriveMotor; }
+
+    public TalonFX getSteerMotor() { return this.mAngleMotor; }
+
 }
