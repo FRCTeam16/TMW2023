@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,12 +30,13 @@ public class RobotContainer {
     private final JoystickButton april     = new JoystickButton(left,    2);
     private final JoystickButton intake    = new JoystickButton(left,    1);
     // private final JoystickButton padIntake = new JoystickButton(gamepad, 5);
+    // private final Trigger padIntake = new Trigger(gamepad.)
     private final JoystickButton eject     = new JoystickButton(right,   1);
     // private final JoystickButton padEject  = new JoystickButton(gamepad, 4);
       
     private final Trigger wristOpenLoopUp   = new JoystickButton(right, 4);
     private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
-    private final Trigger wristTempDown     = new JoystickButton(right, 5); // FIXME: what button?
+    private final Trigger wristTempDown     = new JoystickButton(right, 2);
 
     // private final Trigger PadIntake     = new Trigger(() -> gamepad.getRawButton(1));
     private final Trigger rotateArmUp   = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kLeftY.value) >  0.10);
@@ -47,11 +49,13 @@ public class RobotContainer {
     private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
 
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(right, 2);
+    private final JoystickButton robotCentric = new JoystickButton(right, 3);
 
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
+
+    private final PneumaticHub pneumaticHub = new PneumaticHub();
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -69,6 +73,8 @@ public class RobotContainer {
         configureButtonBindings();
         // Configure software buttons
         configureDashboardButtons();
+        // Configure pneumatic pressures
+        pneumaticHub.enableCompressorAnalog(60, 100);
     }
 
     /**
@@ -131,6 +137,14 @@ public class RobotContainer {
     public Command getAutonomousCommand() { 
         // An ExampleCommand will run in autonomous
         return new aprilAuto(right.getX(),right.getY());
+    }
+
+    public void teleopInit() {
+        Subsystems.lifecycleSubsystems.stream().filter(s -> s != null).forEach((s) -> s.teleopInit());
+    }
+
+    public void autoInit() {
+        Subsystems.lifecycleSubsystems.stream().filter(s -> s != null).forEach((s) -> s.autoInit());
     }
 
 }

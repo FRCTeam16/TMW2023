@@ -38,7 +38,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public enum WristPosition {
         Vertical(0),
-        Down(100);
+        FloorPickup(0),
+        Maximum(100);
+
+        // max negative 
 
         public final double setpoint;
 
@@ -79,6 +82,11 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
         SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
+    }
+
+    @Override
+    public void teleopInit() {
+        setpoint = left.getSelectedSensorPosition();
     }
 
     public void zeroWristEncoder() {

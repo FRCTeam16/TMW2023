@@ -66,6 +66,11 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         speed = 0.0;
     }
 
+    @Override
+    public void teleopInit() {
+        setpoint = left.getSelectedSensorPosition();
+    }
+
     public void zeroPivotEncoder() {
         this.left.setSelectedSensorPosition(0, 0, 20);
         this.right.setSelectedSensorPosition(0, 0, 20);
