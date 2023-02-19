@@ -170,7 +170,7 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() { 
         // An ExampleCommand will run in autonomous
-        return new aprilAuto(right.getX(),right.getY());
+        return new aprilAuto(right.getRawAxis(0),right.getRawAxis(1));
     }
 
     public void teleopInit() {
