@@ -14,6 +14,7 @@ public class PigeonGyro implements BSGyro {
     public PigeonGyro(int CAN_ID) {
         m_pigeon = new WPI_Pigeon2(CAN_ID);
         m_pigeon.configEnableCompass(false);
+        // m_pigeon.configMountPoseYaw(180);   // TODO: This is 2023 only
         // var errorCode = m_pigeon.configFactoryDefault();
     }
 

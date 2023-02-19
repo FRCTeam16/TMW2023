@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public enum WristPosition {
         Vertical(0),
-        GroundPickup(45207);
+        GroundPickup(-45207);
 
         public final double setpoint;
 
@@ -52,12 +52,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
         left.configFactoryDefault();
         right.configFactoryDefault();
         wrist.configFactoryDefault();
+
         right.follow(left);
         right.setInverted(TalonFXInvertType.OpposeMaster);
-
-        left.setNeutralMode(NeutralMode.Coast);
-        right.setNeutralMode(NeutralMode.Coast);
-        wrist.setNeutralMode(NeutralMode.Brake);
 
 
         TalonFXConfiguration config = new TalonFXConfiguration();
@@ -65,23 +62,32 @@ public class Intake extends SubsystemBase implements Lifecycle {
         config.supplyCurrLimit.triggerThresholdCurrent = 40; // the peak supply current, in amps
         config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit triggers, in sec
         config.supplyCurrLimit.currentLimit = 30; // the current to maintain if the peak supply limit is triggered
+        config.neutralDeadband = 0.01;
+        
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
         wrist.configAllSettings(config);
+
+        // Custom settings
+        left.setNeutralMode(NeutralMode.Coast);
+        right.setNeutralMode(NeutralMode.Coast);
+        wrist.setNeutralMode(NeutralMode.Brake);
+        
                
         this.zeroWristEncoder();
 
         openLoop = true;
         openLoopWristSpeed = 0.0;
 
-        pidHelper.initialize(0.00012, 0, 0, 0, 0, 0);
-        pidHelper.updateTalonFX(left, 0);
+        pidHelper.initialize(0.07, 0, 0, 0, 0, 0);
+        pidHelper.updateTalonFX(wrist, 0);
 
         SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
 
-        left.configForwardSoftLimitThreshold(60000);
-        left.configReverseSoftLimitThreshold(0);
+        wrist.configForwardSoftLimitThreshold(1000);
+        wrist.configReverseSoftLimitThreshold(-170_000);
+        this.setSoftLimitsEnabled(true);
     }
 
     @Override
@@ -136,8 +142,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
     }
 
     public void setSoftLimitsEnabled(boolean enable) {
-        left.configForwardSoftLimitEnable(enable);
-        left.configReverseSoftLimitEnable(enable);
+        wrist.configForwardSoftLimitEnable(enable);
+        wrist.configReverseSoftLimitEnable(enable);
     }
 
     @Override
@@ -150,7 +156,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
             wrist.set(ControlMode.PercentOutput, openLoopWristSpeed);
         } else {
             pidHelper.updateValuesFromDashboard();
-            pidHelper.updateTalonFX(left, 0);
+            pidHelper.updateTalonFX(wrist, 0);
            
             // wrist.set(ControlMode.MotionMagic, setpoint);
             wrist.set(ControlMode.Position, setpoint);
@@ -170,12 +176,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
     }
     // solinoid is all I think about
     public void OpenHand(){
-        System.out.println("OpenHand Called");
         Solstend = true;
     }
 
     public void CloseHand(){
-        System.out.println("CloseHand Called");
         Solstend = false;
     }
     

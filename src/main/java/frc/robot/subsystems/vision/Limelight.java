@@ -65,7 +65,7 @@ public class Limelight {
     }
 
     public LEDMode getLEDMode() {
-        int rawMode = (int) dataTable.getEntry("limelight").getNumber(LEDMode.CurrentPipeline.mode);
+        int rawMode = (int) dataTable.getEntry("ledMode").getNumber(LEDMode.CurrentPipeline.mode);
         for (LEDMode ledMode : LEDMode.values()) {
             if (ledMode.mode == rawMode) {
                 return ledMode;

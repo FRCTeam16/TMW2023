@@ -14,11 +14,11 @@ import frc.robot.autos.boto;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.aprilAuto;
 import frc.robot.commands.ConfigureSoftLimits;
-import frc.robot.commands.PoseElevator;
-import frc.robot.commands.PosePivot;
-import frc.robot.commands.PoseWrist;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.pose.PoseElevator;
+import frc.robot.commands.pose.PosePivot;
+import frc.robot.commands.pose.PoseWrist;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
 import frc.robot.subsystems.Intake.WristPosition;
 import frc.robot.subsystems.Pivot.PivotPosition;
@@ -60,7 +60,7 @@ public class RobotContainer {
     private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kY.value);
 
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(right, 3);
+    private final JoystickButton robotCentric = new JoystickButton(left, 3);
     
     private final JoystickButton enableLimelight = new JoystickButton(left, 16);
     private final JoystickButton disableLimelight = new JoystickButton(left, 15);

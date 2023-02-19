@@ -28,7 +28,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
 
     public enum PivotPosition {
         Vertical(0),
-        Horizontal(200000),
+        Horizontal(200_000),
         GroundPickup(383480);
 
         public final double setpoint;
@@ -46,10 +46,6 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         right.follow(left);
         right.setInverted(TalonFXInvertType.OpposeMaster);
 
-        left.setNeutralMode(NeutralMode.Brake);
-        right.setNeutralMode(NeutralMode.Brake);
-
-
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.supplyCurrLimit.enable = true;
         config.supplyCurrLimit.triggerThresholdCurrent = 40; // the peak supply current, in amps
@@ -59,8 +55,12 @@ public class Pivot extends SubsystemBase implements Lifecycle {
 
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
+
+        left.setNeutralMode(NeutralMode.Brake);
+        right.setNeutralMode(NeutralMode.Brake);
+       
                
-        pidHelper.initialize(0.026, 0, 0, 0, 0, 0);
+        pidHelper.initialize(0.0175, 0, 0, 0, 0, 0);
         pidHelper.updateTalonFX(left, 0);
         
         SmartDashboard.setDefaultNumber("Pivot/OpenLoopSpeedx", DEFAULT_OPENLOOP_SPEED);
