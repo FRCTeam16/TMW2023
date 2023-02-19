@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
@@ -41,6 +42,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
     public Pivot() {
         left.configFactoryDefault();
         right.configFactoryDefault();
+
         right.follow(left);
         right.setInverted(TalonFXInvertType.OpposeMaster);
 
@@ -53,6 +55,8 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         config.supplyCurrLimit.triggerThresholdCurrent = 40; // the peak supply current, in amps
         config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit triggers, in sec
         config.supplyCurrLimit.currentLimit = 30; // the current to maintain if the peak supply limit is triggered
+        config.closedloopRamp = 0.5;
+
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
@@ -64,6 +68,10 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         this.zeroPivotEncoder();
         openLoop = true;
         speed = 0.0;
+
+        left.configForwardSoftLimitThreshold(250000);
+        left.configReverseSoftLimitThreshold(0);
+        this.setSoftLimitsEnabled(true);
     }
 
     @Override
@@ -103,6 +111,13 @@ public class Pivot extends SubsystemBase implements Lifecycle {
     private void setPivotSetpoint(double setpoint) {
         openLoop = false;
         this.setpoint = setpoint;
+    }
+
+    public void setSoftLimitsEnabled(boolean enable) {
+        System.out.println("***** PIVOT setSoftLimtisEnabled: " + enable);
+        ErrorCode result = left.configForwardSoftLimitEnable(enable);
+        System.out.println("ErrorCode: " + result.toString());
+        left.configReverseSoftLimitEnable(enable);
     }
 
     /**

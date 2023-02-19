@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
 
     public enum ElevatorPosition {
-        Vertical(0),
+        Down(0),
         GroundPickup(26754);
       
 
@@ -53,6 +53,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         config.supplyCurrLimit.triggerThresholdCurrent = 40; // the peak supply current, in amps
         config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit triggers, in sec
         config.supplyCurrLimit.currentLimit = 30; // the current to maintain if the peak supply limit is triggered
+        config.closedloopRamp = 0.5;
+        
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
@@ -66,11 +68,15 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         this.zeroElevatorEncoder();
         openLoop = true;
         speed = 0.0;
+
+        left.configForwardSoftLimitThreshold(30000);
+        left.configReverseSoftLimitThreshold(0);
     }
 
     @Override
     public void teleopInit() {
         setpoint = left.getSelectedSensorPosition();
+        this.setSoftLimitsEnabled(true);
     }
 
     public void zeroElevatorEncoder() {
@@ -101,6 +107,11 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     private void setElevatorSetpoint(double setpoint) {
         openLoop = false;
         this.setpoint = setpoint;
+    }
+
+    public void setSoftLimitsEnabled(boolean enable) {
+        left.configForwardSoftLimitEnable(enable);
+        left.configReverseSoftLimitEnable(enable);
     }
 
     @Override

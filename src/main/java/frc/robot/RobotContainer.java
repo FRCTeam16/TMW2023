@@ -9,10 +9,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.aprilAuto; 
-import frc.robot.autos.boto;
+import frc.robot.autos.aprilAuto;
+import frc.robot.commands.ConfigureSoftLimits;
+import frc.robot.commands.PoseElevator;
+import frc.robot.commands.PosePivot;
+import frc.robot.commands.PoseWrist;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Elevator.ElevatorPosition;
+import frc.robot.subsystems.Intake.WristPosition;
+import frc.robot.subsystems.Pivot.PivotPosition;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,32 +33,28 @@ public class RobotContainer {
     private final XboxController gamepad = new XboxController(2);
 
 
-    /* Driver Buttons */
-    //private final JoystickButton elevatorForward = new JoystickButton(gamepad, XboxController.Button.kY.value);
-    //private final JoystickButton elevatorReverse = new JoystickButton(gamepad, XboxController.Button.kX.value);
-
- 
-
     private final JoystickButton april     = new JoystickButton(left,    2);
 
-    private final JoystickButton intake    = new JoystickButton(left,    1);
-    private final JoystickButton padIntake = new JoystickButton(gamepad, 6);
-    private final JoystickButton eject     = new JoystickButton(right,   1);
-    private final JoystickButton padEject  = new JoystickButton(gamepad, 5);
+    private final JoystickButton intake    = new JoystickButton(right,    1);
+    // private final JoystickButton padIntake = new JoystickButton(gamepad, 6);
+    private final JoystickButton eject     = new JoystickButton(left,   1);
+    // private final JoystickButton padEject  = new JoystickButton(gamepad, 5);
       
     private final Trigger wristOpenLoopUp   = new JoystickButton(right, 4);
     private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
     private final Trigger wristTempDown     = new JoystickButton(right, 2);
 
-    // private final Trigger PadIntake     = new Trigger(() -> gamepad.getRawButton(1));
+    private final JoystickButton openHand  = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
+    private final JoystickButton closeHand = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
+
     private final Trigger rotateArmUp   = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kLeftY.value) >  0.10);
     private final Trigger rotateArmDown = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kLeftY.value) < -0.10);
     
     private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) < -0.10);
     private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) >  0.10);
 
-    private final JoystickButton extendRamp  = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
-    private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton extendRamp  = new JoystickButton(gamepad, XboxController.Button.kX.value);
+    private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kY.value);
 
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(right, 3);
@@ -125,16 +127,34 @@ public class RobotContainer {
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop()));
         
-        padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
+        // padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
+
+        openHand.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
+        closeHand.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
     }
 
 
     private void configureDashboardButtons() {
+        SmartDashboard.putData("Zero Gyro", new RunWithDisabledInstantCommand(Subsystems.swerveSubsystem::zeroGyro));
+
         SmartDashboard.putData("Zero Elevator Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.elevator.zeroElevatorEncoder()));
         SmartDashboard.putData("Zero Wrist Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.intake.zeroWristEncoder()));
         SmartDashboard.putData("Zero Pivot Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.pivot.zeroPivotEncoder()));
         // SmartDashboard.putData("Retract Elevator", new InstantCommand(() -> Subsystems.elevator.retract()));
         // SmartDashboard.putData("Extend Elevator", new InstantCommand(() -> Subsystems.elevator.extend()));
+
+        SmartDashboard.putData("Elev Move to Zero", new PoseElevator(ElevatorPosition.Down));
+        SmartDashboard.putData("Elev Move to GroundPickup", new PoseElevator(ElevatorPosition.GroundPickup));
+
+        SmartDashboard.putData("Pivot Move to Zero", new PosePivot(PivotPosition.Vertical));
+        SmartDashboard.putData("Pivot Move to Horizontal", new PosePivot(PivotPosition.Horizontal));
+        SmartDashboard.putData("Pivot Move to GroundPickup", new PosePivot(PivotPosition.GroundPickup));
+
+        SmartDashboard.putData("Wrist Move to Zero", new PoseWrist(WristPosition.Vertical));
+        SmartDashboard.putData("Wrist Move to GroundPickup", new PoseWrist(WristPosition.GroundPickup));
+
+        SmartDashboard.putData("Enable Soft Limits", new ConfigureSoftLimits(true));
+        SmartDashboard.putData("Disable Soft Limits", new ConfigureSoftLimits(false));
     }
 
     /**

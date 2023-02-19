@@ -16,9 +16,9 @@ import frc.robot.subsystems.util.PIDHelper;
 
 public class Intake extends SubsystemBase implements Lifecycle {
 
-    private Solenoid upper = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
-    private Solenoid lower = new Solenoid(PneumaticsModuleType.CTREPCM, 2);
-    private Boolean Solstend = false;
+    private Solenoid upper = new Solenoid(PneumaticsModuleType.REVPH, 0);
+    private Solenoid lower = new Solenoid(PneumaticsModuleType.REVPH, 1);
+    private boolean Solstend = false;
 
     private TalonFX left = new TalonFX(Constants.Intake.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Intake.rightMotorId);
@@ -79,6 +79,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
         SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
+
+        left.configForwardSoftLimitThreshold(60000);
+        left.configReverseSoftLimitThreshold(0);
     }
 
     @Override
@@ -132,6 +135,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
         this.setpoint = setpoint;
     }
 
+    public void setSoftLimitsEnabled(boolean enable) {
+        left.configForwardSoftLimitEnable(enable);
+        left.configReverseSoftLimitEnable(enable);
+    }
 
     @Override
     public void periodic() {
@@ -159,14 +166,16 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.putString("Intake/LastError", wrist.getLastError().toString());
 
         upper.set(Solstend); //open/close solinoids
-        lower.set(Solstend);
+        lower.set(!Solstend);
     }
     // solinoid is all I think about
     public void OpenHand(){
+        System.out.println("OpenHand Called");
         Solstend = true;
     }
 
     public void CloseHand(){
+        System.out.println("CloseHand Called");
         Solstend = false;
     }
     
