@@ -58,6 +58,9 @@ public class RobotContainer {
 
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(right, 3);
+    
+    private final JoystickButton enableLimelight = new JoystickButton(left, 16);
+    private final JoystickButton disableLimelight = new JoystickButton(left, 15);
 
 
     /* Subsystems */
@@ -131,6 +134,9 @@ public class RobotContainer {
 
         openHand.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
         closeHand.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
+
+        enableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.enable()).ignoringDisable(true));
+        disableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.disable()).ignoringDisable(true));
     }
 
 
