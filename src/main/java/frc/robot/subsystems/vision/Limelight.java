@@ -77,7 +77,7 @@ public class Limelight {
 
     public void setLEDMode(LEDMode ledMode) {
         System.out.println("Setting LED Mode: " + ledMode + " | " + ledMode.mode);
-        dataTable.getEntry("limelight").setNumber(ledMode.mode);
+        dataTable.getEntry("ledMode").setNumber(ledMode.mode);
     }
 
     /**

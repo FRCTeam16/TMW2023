@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
 import frc.robot.subsystems.gyro.BSGyro;
-import frc.robot.subsystems.gyro.NavXGyro;
+import frc.robot.subsystems.gyro.PigeonGyro;
 
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
@@ -21,8 +21,8 @@ public class Swerve extends SubsystemBase {
     public BSGyro gyro;
 
     public Swerve() {
-        // gyro = new PigeonGyro(Constants.Swerve.pigeonID);
-        gyro = new NavXGyro();
+         gyro = new PigeonGyro(Constants.Swerve.pigeonID);
+        
         zeroGyro();
 
         mSwerveMods = new SwerveModule[] {
@@ -61,7 +61,9 @@ public class Swerve extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){
+            double start = System.nanoTime();
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
+            System.out.println("Module[" + mod.moduleNumber + "] setModuleState: " + (System.nanoTime() - start) + " ns");
         }
     }    
 

@@ -1,10 +1,7 @@
-# WARNING: There is currently an issue causing this code to not work with MK4i's, we are working on finding the issue, as soon as it is fixed this warning will be removed. If you would like to follow the progress/help test please see this [issue](https://github.com/Team364/BaseFalconSwerve/issues/8).
-**Once ths code is tested on an actual robot sometime in the next week or so, this warning shall be removed.**
+# TMW2023 
 
-# BaseFalconSwerve </br>
+Competition robot code for FRC Team 16.  Thank you [Team 364](https://github.com/Team364/BaseFalconSwerve) for a very nice base swerve implementation of SDS modules!
 
-**Basic Swerve Code for a Swerve Module using Falcon Motors, a CTRE CANCoder, and a CTRE Pigeon Gyro** </br>
-This code was designed with Swerve Drive Specialties MK3, MK4, and MK4i style modules in mind, but should be easily adaptable to other styles of modules.</br>
 
 **Setting Constants**
 ----
@@ -55,14 +52,3 @@ These instructions are mostly followable from Step
 15. ```driveKP```: 
 <br>After completeing characterization and inserting the KS, KV, and KA values into the code, tune the drive motor kP until it doesn't overshoot and doesnt oscilate around a target velocity.
 <br>Leave ```driveKI```, ```driveKD```, and ```driveKF``` at 0.0.
-
-
-
-
-**Controller Mappings**
-----
-This code is natively setup to use a xbox controller to control the swerve drive. </br>
-* Left Stick: Translation Control (forwards and sideways movement)
-* Right Stick: Rotation Control </br>
-* Y button: Zero Gyro (useful if the gyro drifts mid match, just rotate the robot forwards, and press Y to rezero)
-* Left Bumper: Switches To Robot Centric Control while held

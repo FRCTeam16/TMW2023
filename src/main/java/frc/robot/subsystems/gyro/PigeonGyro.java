@@ -13,6 +13,7 @@ public class PigeonGyro implements BSGyro {
 
     public PigeonGyro(int CAN_ID) {
         m_pigeon = new WPI_Pigeon2(CAN_ID);
+        m_pigeon.configEnableCompass(false);
         // var errorCode = m_pigeon.configFactoryDefault();
     }
 

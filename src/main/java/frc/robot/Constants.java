@@ -21,8 +21,8 @@ public final class Constants {
             COTSFalconSwerveConstants.SDSMK4(COTSFalconSwerveConstants.driveGearRatios.SDSMK4_L2);
 
         /* Drivetrain Constants */
-        public static final double trackWidth = Units.inchesToMeters(27.16535); //TODO: This must be tuned to specific robot
-        public static final double wheelBase = Units.inchesToMeters(27.16535); //TODO: This must be tuned to specific robot
+        public static final double trackWidth = Units.inchesToMeters(19.713); //TODO: This must be tuned to specific robot
+        public static final double wheelBase = Units.inchesToMeters(27.213); //TODO: This must be tuned to specific robot
         public static final double wheelCircumference = chosenModule.wheelCircumference;
 
         /* Swerve Kinematics 
@@ -94,7 +94,7 @@ public final class Constants {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 2;
             public static final int canCoderID = 1;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(146.33);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(149.13);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -129,6 +129,23 @@ public final class Constants {
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
     }
+
+    public static final class Elevator {
+        public static final int leftMotorId = 14;
+        public static final int rightMotorId = 15;
+    }
+
+    public static final class Pivot {
+        public static final int leftMotorId = 21;
+        public static final int rightMotorId = 20;
+    }
+
+    public static final class Intake {
+        public static final int leftMotorId = 16;
+        public static final int rightMotorId = 17;
+        public static final int wristMotorId = 18;
+    }
+
 
     public static final class AutoConstants { //TODO: The below constants are used in the example auto, and must be tuned to specific robot
         public static final double kMaxSpeedMetersPerSecond = 3;
