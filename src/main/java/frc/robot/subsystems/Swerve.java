@@ -18,10 +18,12 @@ import frc.robot.subsystems.gyro.PigeonGyro;
 public class Swerve extends SubsystemBase {
     public SwerveDriveOdometry swerveOdometry;
     public SwerveModule[] mSwerveMods;
-    public BSGyro gyro;
+    public final BSGyro gyro;
+    public final RotationController rotationController;
 
     public Swerve() {
          gyro = new PigeonGyro(Constants.Swerve.pigeonID);
+         rotationController = new RotationController();
         
         zeroGyro();
 
@@ -61,9 +63,9 @@ public class Swerve extends SubsystemBase {
         SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.Swerve.maxSpeed);
         
         for(SwerveModule mod : mSwerveMods){
-            double start = System.nanoTime();
+            // double start = System.nanoTime();
             mod.setDesiredState(desiredStates[mod.moduleNumber], false);
-            System.out.println("Module[" + mod.moduleNumber + "] setModuleState: " + (System.nanoTime() - start) + " ns");
+            // System.out.println("Module[" + mod.moduleNumber + "] setModuleState: " + (System.nanoTime() - start) + " ns");
         }
     }    
 
@@ -93,13 +95,16 @@ public class Swerve extends SubsystemBase {
 
     public void zeroGyro(){
         gyro.zeroGyroscope();
-        // gyro.setYaw(0);
     }
 
     public Rotation2d getYaw() {
         return gyro.getGyroscopeRotation();
         // return (Constants.Swerve.invertGyro) ? Rotation2d.fromDegrees(360 - gyro.getYaw()) : Rotation2d.fromDegrees(gyro.getYaw());
     }
+
+    public RotationController getRotationController() {
+        return this.rotationController;
+    } 
 
     @Override
     public void periodic(){
