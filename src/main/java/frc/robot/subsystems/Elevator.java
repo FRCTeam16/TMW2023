@@ -28,8 +28,13 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
 
     public enum ElevatorPosition {
-        Down(0),
-        GroundPickup(26754);
+        Down(1000),
+        GroundPickup(26754),    // 31545?
+        SingleSubstationCone(3000),
+        SingleSubstationCube(3000),
+        ScoreConeMid(15000),
+        ScoreConeHigh(56500);
+
       
 
         public final double setpoint;
@@ -50,16 +55,17 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.neutralDeadband = 0.01;
         config.supplyCurrLimit.enable = true;
-        config.supplyCurrLimit.triggerThresholdCurrent = 40; // the peak supply current, in amps
+        config.supplyCurrLimit.triggerThresholdCurrent = 50; // the peak supply current, in amps
         config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit triggers, in sec
-        config.supplyCurrLimit.currentLimit = 30; // the current to maintain if the peak supply limit is triggered
+        config.supplyCurrLimit.currentLimit = 35; // the current to maintain if the peak supply limit is triggered
         config.closedloopRamp = 0.5;
         
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
-        pidHelper.initialize(0.05, 0, 0, 0, 0, 0);
+        pidHelper.initialize(0.01, 0, 0, 0, 7500, 1000);
         pidHelper.updateTalonFX(left, 0);
+
 
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeedReverse", DEFAULT_OPENLOOP_SPEED_REVERSE);
@@ -69,7 +75,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         openLoop = true;
         speed = 0.0;
 
-        left.configForwardSoftLimitThreshold(30000);
+        left.configForwardSoftLimitThreshold(59000);
         left.configReverseSoftLimitThreshold(0);
     }
 

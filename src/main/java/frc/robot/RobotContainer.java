@@ -16,6 +16,8 @@ import frc.robot.autos.aprilAuto;
 import frc.robot.commands.ConfigureSoftLimits;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.pose.MoveToScoreConeHighPose;
+import frc.robot.commands.pose.MoveToSingleSubstationPose;
 import frc.robot.commands.pose.PoseElevator;
 import frc.robot.commands.pose.PosePivot;
 import frc.robot.commands.pose.PoseWrist;
@@ -56,8 +58,12 @@ public class RobotContainer {
     private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) < -0.10);
     private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) >  0.10);
 
-    private final JoystickButton extendRamp  = new JoystickButton(gamepad, XboxController.Button.kX.value);
-    private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kY.value);
+   // private final JoystickButton extendRamp  = new JoystickButton(gamepad, XboxController.Button.kX.value);
+    //private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kY.value);
+
+    private final JoystickButton singleSubstationPose = new JoystickButton(gamepad, XboxController.Button.kX.value);
+    private final JoystickButton scoreConeHighPose = new JoystickButton(gamepad, XboxController.Button.kA.value);
+
 
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(left, 3);
@@ -120,9 +126,11 @@ public class RobotContainer {
             .onFalse(new InstantCommand(() -> Subsystems.elevator.stop()));
 
 
-        extendRamp.onTrue(new InstantCommand(()  -> Subsystems.ramp.forward()));
-        retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
+       // extendRamp.onTrue(new InstantCommand(()  -> Subsystems.ramp.forward()));
+        //retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
 
+        singleSubstationPose.onTrue(new MoveToSingleSubstationPose());
+        scoreConeHighPose.onTrue(new MoveToScoreConeHighPose());
         
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));

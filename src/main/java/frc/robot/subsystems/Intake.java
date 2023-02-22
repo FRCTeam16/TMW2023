@@ -38,7 +38,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public enum WristPosition {
         Vertical(0),
-        GroundPickup(-45207);
+        SingleSubstation(-89500),
+        ScoreCone(50000),
+        ScoreCube(100000),
+        GroundPickup(-45207);       // was -45207
 
         public final double setpoint;
 
@@ -92,7 +95,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     @Override
     public void teleopInit() {
-        setpoint = left.getSelectedSensorPosition();
+        setpoint = wrist.getSelectedSensorPosition();
     }
 
     public void zeroWristEncoder() {
