@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         GroundPickup(26754),    // 31545?
         SingleSubstationCone(500),
         SingleSubstationCube(500),
-        ScoreConeMid(32_541),
+        ScoreConeMid(32_200), // 32_541
         ScoreConeHigh(53_000),  // 56_500
         Stow(1000);
 
@@ -64,7 +64,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
-        pidHelper.initialize(0.01, 0, 0, 0, 7500, 1000);
+        pidHelper.initialize(0.025, 0, 0, 0, 10_000, 15_000);
         pidHelper.updateTalonFX(left, 0);
 
 
@@ -148,9 +148,9 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
             arbitraryFF = calculateGravityFeedForward();
 
-            left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, arbitraryFF);
-            // left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, calculateGravityFeedForward() );
-            // left.set(ControlMode.MotionMagic, setpoint);  TODO: measure velocity and acceleration for motion magic
+            // left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, arbitraryFF);
+            // left.set(ControlMode.MotionMagic, setpoint);  //TODO: measure velocity and acceleration for motion magic
+            left.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, arbitraryFF);
         }
 
         // Telemetry

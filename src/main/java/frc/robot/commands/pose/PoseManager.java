@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SelectCommand;
 
 // no stow to high
 // no high to stow
@@ -33,6 +34,7 @@ public class PoseManager {
 
     public Command getPose(Pose requestedPose) {
         // TODO: make dynamic registry for illegal moves
+        System.out.println("PoseManager getPose: " + currentPose + " => " + requestedPose);
         boolean illegal = false;
         if (currentPose == Pose.Stow && requestedPose == Pose.ScoreHighCone) {
             illegal = true;
@@ -48,5 +50,9 @@ public class PoseManager {
         } else {
             return Commands.print("!!! [PoseManager] Unhandled pose requested: " + requestedPose);
         }
+    }
+
+    public Pose getCurrentPose() {
+        return this.currentPose;
     }
 }

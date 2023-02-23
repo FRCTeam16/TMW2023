@@ -27,6 +27,7 @@ public class RequestPart extends CommandBase {
 
     @Override
     public void execute() {
+        System.out.println("Requesting part: " + this.partType);
         SmartDashboard.putNumber(KEY, this.partType.value);
     }
 

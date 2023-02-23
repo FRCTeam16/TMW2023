@@ -6,8 +6,10 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
@@ -121,7 +123,7 @@ public class RobotContainer {
      */
     private void configureButtonBindings() {
         /* Driver Buttons */
-        zeroGyro.onTrue(new InstantCommand(() -> Subsystems.swerveSubsystem.zeroGyro()));
+        zeroGyro.onTrue(new InstantCommand(() -> Subsystems.swerveSubsystem.zeroGyro()).ignoringDisable(true));
 
         april.onTrue(new aprilAuto(right.getX(),right.getY()));
 
@@ -141,17 +143,12 @@ public class RobotContainer {
             .onFalse(new InstantCommand(() -> Subsystems.elevator.stop()));
         elevatorRest.onTrue(new InstantCommand(Subsystems.elevator::restOpenLoop));
 
-        // singleSubstationPose.onTrue(new MoveToSingleSubstationPose());
-        // // TODO: doubleSubstationPose.onTrue())
-        // scoreConeHighPose.onTrue(new MoveToScoreConeHighPose());
-        // scoreConeMidPose.onTrue(new MoveToScoreConeMidPose());
-        // stowPose.onTrue(new MoveToStowPose());
 
-        singleSubstationPose.onTrue(Subsystems.poseManager.getPose(Pose.SingleSubstation));
+        singleSubstationPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.SingleSubstation))));
         // TODO: doubleSubstationPose.onTrue())
-        scoreConeHighPose.onTrue(Subsystems.poseManager.getPose(Pose.ScoreHighCone));
-        scoreConeMidPose.onTrue(Subsystems.poseManager.getPose(Pose.ScoreMidCone));
-        stowPose.onTrue(Subsystems.poseManager.getPose(Pose.Stow));
+        scoreConeHighPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreHighCone))));
+        scoreConeMidPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreMidCone))));
+        stowPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));
         
         
         
@@ -194,9 +191,9 @@ public class RobotContainer {
         SmartDashboard.putData("Disable Soft Limits", new ConfigureSoftLimits(false));
 
         SmartDashboard.putNumber(RequestPart.KEY, RequestPart.PartType.None.value);
-        SmartDashboard.putData("Request No Part", new RunWithDisabledInstantCommand(() -> new RequestPart(PartType.None)));
-        SmartDashboard.putData("Request Cube", new RunWithDisabledInstantCommand(() -> new RequestPart(PartType.Cube)));
-        SmartDashboard.putData("Request Cone", new RunWithDisabledInstantCommand(() -> new RequestPart(PartType.Cone)));
+        SmartDashboard.putData("Request No Part", new RequestPart(PartType.None).ignoringDisable(true));
+        SmartDashboard.putData("Request Cube",  new RequestPart(PartType.Cube).ignoringDisable(true));
+        SmartDashboard.putData("Request Cone", new RequestPart(PartType.Cone).ignoringDisable(true));
 
     }
 

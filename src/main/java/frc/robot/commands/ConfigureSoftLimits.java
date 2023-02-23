@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Subsystems;
 
 public class ConfigureSoftLimits extends CommandBase {
@@ -10,7 +9,6 @@ public class ConfigureSoftLimits extends CommandBase {
 
     public ConfigureSoftLimits(boolean enable) {
         this.enable = enable;
-        // this.ignoringDisable(true);
     }
 
     @Override
