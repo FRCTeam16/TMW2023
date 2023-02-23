@@ -40,7 +40,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         SmartDashboard.setDefaultNumber("LEDClimbTime", 30);
         try {
             if (running) {
-                serial = new SerialPort(57600, SerialPort.Port.kUSB1);
+                serial = new SerialPort(57600, SerialPort.Port.kUSB2);
             }
         } catch (Exception e) {
             System.err.println("Unable to create DMS/LED subsystem, problem with serial port: " + e.getMessage());
