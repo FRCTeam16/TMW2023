@@ -7,7 +7,7 @@ import frc.robot.subsystems.Elevator.ElevatorPosition;
 import frc.robot.subsystems.Intake.WristPosition;
 import frc.robot.subsystems.Pivot.PivotPosition;
 
-public class MoveToScoreConeHighPose extends SequentialCommandGroup {
+class MoveToScoreConeHighPose extends SequentialCommandGroup {
     public MoveToScoreConeHighPose() {
         addCommands(
             Commands.race(

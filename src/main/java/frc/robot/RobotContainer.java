@@ -6,19 +6,19 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.autos.aprilAuto;
-import frc.robot.autos.boto;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.aprilAuto;
 import frc.robot.commands.ConfigureSoftLimits;
+import frc.robot.commands.RequestPart;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.pose.MoveToScoreConeHighPose;
-import frc.robot.commands.pose.MoveToSingleSubstationPose;
+import frc.robot.commands.RequestPart.PartType;
 import frc.robot.commands.pose.PoseElevator;
+import frc.robot.commands.pose.PoseManager.Pose;
 import frc.robot.commands.pose.PosePivot;
 import frc.robot.commands.pose.PoseWrist;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
@@ -38,36 +38,51 @@ public class RobotContainer {
     private final XboxController gamepad = new XboxController(2);
 
 
+    //
+    // Intake
+    //
     private final JoystickButton april     = new JoystickButton(left,    2);
 
     private final JoystickButton intake    = new JoystickButton(right,    1);
-    // private final JoystickButton padIntake = new JoystickButton(gamepad, 6);
     private final JoystickButton eject     = new JoystickButton(left,   1);
-    // private final JoystickButton padEject  = new JoystickButton(gamepad, 5);
       
     private final Trigger wristOpenLoopUp   = new JoystickButton(right, 4);
     private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
     private final Trigger wristTempDown     = new JoystickButton(right, 2);
 
-    private final JoystickButton openHand  = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
-    private final JoystickButton closeHand = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
+    private final JoystickButton openHandJoy = new JoystickButton(left, 3);
+    private final JoystickButton closeHandJoy = new JoystickButton(left, 4);
 
-    private final Trigger rotateArmUp   = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kLeftY.value) >  0.10);
-    private final Trigger rotateArmDown = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kLeftY.value) < -0.10);
+    //
+    // Pivot
+    //
+    private final Trigger rotateArmUp   = new Trigger(() -> gamepad.getLeftY() >  0.10);
+    private final Trigger rotateArmDown = new Trigger(() -> gamepad.getLeftY() < -0.10);
     
+    //
+    // Elevator
+    //
     private final Trigger elevatorForward = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) < -0.10);
     private final Trigger elevatorReverse = new Trigger(() -> gamepad.getRawAxis(XboxController.Axis.kRightY.value) >  0.10);
-
-   // private final JoystickButton extendRamp  = new JoystickButton(gamepad, XboxController.Button.kX.value);
-    //private final JoystickButton retractRamp = new JoystickButton(gamepad, XboxController.Button.kY.value);
-
-    private final JoystickButton singleSubstationPose = new JoystickButton(gamepad, XboxController.Button.kX.value);
-    private final JoystickButton scoreConeHighPose = new JoystickButton(gamepad, XboxController.Button.kA.value);
+    private final JoystickButton elevatorRest = new JoystickButton(gamepad, XboxController.Button.kBack.value);
 
 
+    //
+    // Poses
+    //
+    private final Trigger singleSubstationPose = new Trigger(() -> gamepad.getPOV() == 180);
+    private final Trigger doubleSubstationPose = new Trigger(() -> gamepad.getPOV() == 0);
+    private final JoystickButton scoreConeHighPose = new JoystickButton(gamepad, XboxController.Button.kY.value);
+    private final JoystickButton scoreConeMidPose = new JoystickButton(gamepad, XboxController.Button.kX.value);
+    private final JoystickButton groundPickupPose = new JoystickButton(gamepad, XboxController.Button.kA.value);
+    private final JoystickButton stowPose = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
+
+
+    //
+    // General Commands
+    //
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
-    private final JoystickButton robotCentric = new JoystickButton(left, 3);
-    
+    private final JoystickButton robotCentric = new JoystickButton(left, 8);
     private final JoystickButton enableLimelight = new JoystickButton(left, 16);
     private final JoystickButton disableLimelight = new JoystickButton(left, 15);
 
@@ -124,28 +139,34 @@ public class RobotContainer {
         elevatorReverse
             .onTrue(new InstantCommand(()  -> Subsystems.elevator.reverse()))
             .onFalse(new InstantCommand(() -> Subsystems.elevator.stop()));
+        elevatorRest.onTrue(new InstantCommand(Subsystems.elevator::restOpenLoop));
 
+        // singleSubstationPose.onTrue(new MoveToSingleSubstationPose());
+        // // TODO: doubleSubstationPose.onTrue())
+        // scoreConeHighPose.onTrue(new MoveToScoreConeHighPose());
+        // scoreConeMidPose.onTrue(new MoveToScoreConeMidPose());
+        // stowPose.onTrue(new MoveToStowPose());
 
-       // extendRamp.onTrue(new InstantCommand(()  -> Subsystems.ramp.forward()));
-        //retractRamp.onTrue(new InstantCommand(() -> Subsystems.ramp.back()));
-
-        singleSubstationPose.onTrue(new MoveToSingleSubstationPose());
-        scoreConeHighPose.onTrue(new MoveToScoreConeHighPose());
+        singleSubstationPose.onTrue(Subsystems.poseManager.getPose(Pose.SingleSubstation));
+        // TODO: doubleSubstationPose.onTrue())
+        scoreConeHighPose.onTrue(Subsystems.poseManager.getPose(Pose.ScoreHighCone));
+        scoreConeMidPose.onTrue(Subsystems.poseManager.getPose(Pose.ScoreMidCone));
+        stowPose.onTrue(Subsystems.poseManager.getPose(Pose.Stow));
+        
+        
         
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
-        // padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         eject.onTrue(new InstantCommand(()     -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
-        // padEject.onTrue(new InstantCommand(()  -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
 
         wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
-        wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.raiseWristOpenLoop()));
+        wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.storeAndScore())).onFalse(new InstantCommand(() -> Subsystems.intake.restoreStoredSetpoint()));
         
         // padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
 
-        openHand.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
-        closeHand.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
+        openHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
+        closeHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
 
         enableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.enable()).ignoringDisable(true));
         disableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.disable()).ignoringDisable(true));
@@ -158,8 +179,6 @@ public class RobotContainer {
         SmartDashboard.putData("Zero Elevator Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.elevator.zeroElevatorEncoder()));
         SmartDashboard.putData("Zero Wrist Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.intake.zeroWristEncoder()));
         SmartDashboard.putData("Zero Pivot Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.pivot.zeroPivotEncoder()));
-        // SmartDashboard.putData("Retract Elevator", new InstantCommand(() -> Subsystems.elevator.retract()));
-        // SmartDashboard.putData("Extend Elevator", new InstantCommand(() -> Subsystems.elevator.extend()));
 
         SmartDashboard.putData("Elev Move to Zero", new PoseElevator(ElevatorPosition.Down));
         SmartDashboard.putData("Elev Move to GroundPickup", new PoseElevator(ElevatorPosition.GroundPickup));
@@ -173,6 +192,12 @@ public class RobotContainer {
 
         SmartDashboard.putData("Enable Soft Limits", new ConfigureSoftLimits(true));
         SmartDashboard.putData("Disable Soft Limits", new ConfigureSoftLimits(false));
+
+        SmartDashboard.putNumber(RequestPart.KEY, RequestPart.PartType.None.value);
+        SmartDashboard.putData("Request No Part", new RunWithDisabledInstantCommand(() -> new RequestPart(PartType.None)));
+        SmartDashboard.putData("Request Cube", new RunWithDisabledInstantCommand(() -> new RequestPart(PartType.Cube)));
+        SmartDashboard.putData("Request Cone", new RunWithDisabledInstantCommand(() -> new RequestPart(PartType.Cone)));
+
     }
 
     /**

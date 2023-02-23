@@ -7,7 +7,7 @@ import frc.robot.subsystems.Elevator.ElevatorPosition;
 import frc.robot.subsystems.Intake.WristPosition;
 import frc.robot.subsystems.Pivot.PivotPosition;
 
-public class MoveToGroundPickupPose extends SequentialCommandGroup {
+class MoveToGroundPickupPose extends SequentialCommandGroup {
     public MoveToGroundPickupPose() {
         addCommands(
             Commands.race(

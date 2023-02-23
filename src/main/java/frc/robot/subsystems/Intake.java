@@ -25,7 +25,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private TalonFX wrist = new TalonFX(Constants.Intake.wristMotorId);
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
-    private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.5;
+    private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
+    private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.15;
 
     private boolean openLoop = true;
     private double openLoopWristSpeed = 0.0;
@@ -34,6 +35,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private PIDHelper pidHelper = new PIDHelper("Intake");
     private double setpoint = 0.0;
+    private double storedSetpoint = 0.0;
 
 
     public enum WristPosition {
@@ -41,7 +43,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SingleSubstation(-89500),
         ScoreCone(50000),
         ScoreCube(100000),
-        GroundPickup(-45207);       // was -45207
+        GroundPickup(-45207),       // was -45207
+        Stow(-72_488),
+        WristScore(-75_843);
 
         public final double setpoint;
 
@@ -87,6 +91,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
         SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
+        SmartDashboard.setDefaultNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
 
         wrist.configForwardSoftLimitThreshold(1000);
         wrist.configReverseSoftLimitThreshold(-170_000);
@@ -123,7 +128,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     }
 
     public void eject() {
-        intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
+        intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
     }
 
     public void stopIntake() {
@@ -137,6 +142,15 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public void setWristPosition(WristPosition position) {
         setWristSetpoint(position.setpoint);
+    }
+
+    public void storeAndScore() {
+        storedSetpoint = setpoint;
+        setWristSetpoint(WristPosition.WristScore.setpoint);
+    }
+
+    public void restoreStoredSetpoint() {
+        setWristSetpoint(storedSetpoint);
     }
 
     private void setWristSetpoint(double setpoint) {
@@ -184,6 +198,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public void CloseHand(){
         Solstend = false;
+    }
+
+    public boolean isHandOpen() {
+        return Solstend;
     }
     
 }

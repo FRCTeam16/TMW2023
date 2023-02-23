@@ -3,6 +3,7 @@ package frc.robot;
 import java.util.ArrayList;
 import java.util.List;
 
+import frc.robot.commands.pose.PoseManager;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lifecycle;
@@ -26,6 +27,9 @@ public class Subsystems {
     public static Pivot pivot;
     public static Intake intake;
     
+    // not real subsystems
+    public static PoseManager poseManager;
+    
     public static List<Lifecycle> lifecycleSubsystems = new ArrayList<>();
 
     private Subsystems() {
@@ -36,6 +40,8 @@ public class Subsystems {
         ramp = new Ramp();
         pivot = new Pivot();
         intake = new Intake();
+        poseManager = new PoseManager();
+
 
         lifecycleSubsystems.add(visionSubsystem);
         lifecycleSubsystems.add(ledSubsystem);

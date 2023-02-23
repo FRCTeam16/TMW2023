@@ -7,17 +7,18 @@ import frc.robot.subsystems.Elevator.ElevatorPosition;
 import frc.robot.subsystems.Intake.WristPosition;
 import frc.robot.subsystems.Pivot.PivotPosition;
 
-class MoveToSingleSubstationPose extends SequentialCommandGroup {
-    public MoveToSingleSubstationPose() {
+class MoveToStowPose extends SequentialCommandGroup {
+    public MoveToStowPose() {
         addCommands(
             Commands.race(
-                new PosePivot(PivotPosition.SingleSubstation),
+                new PosePivot(PivotPosition.Stow),
                 new WaitCommand(0.5)
             ),
             Commands.parallel(
-                new PoseElevator(ElevatorPosition.SingleSubstationCone),
-                new PoseWrist(WristPosition.SingleSubstation)
+                new PoseElevator(ElevatorPosition.Stow),
+                new PoseWrist(WristPosition.Stow)
             )
         );
     }
+    
 }

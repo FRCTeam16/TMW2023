@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems;
+import frc.robot.commands.RequestPart;
 import frc.robot.subsystems.Lifecycle;
 
 public class LEDSubsystem extends SubsystemBase implements Lifecycle {
@@ -36,26 +37,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
     /** Creates a new LEDSubsystem. */
     public LEDSubsystem() {
-        // public void updateLEDbuffer() {
-        // LEDbuffer[0] = 254; // initialize
-        // LEDbuffer[1] = FLD;
-        // LEDbuffer[2] = FLS;
-        // LEDbuffer[3] = FRD;
-        // LEDbuffer[4] = FRS;
-        // LEDbuffer[5] = RLD;
-        // LEDbuffer[6] = RLS;
-        // LEDbuffer[7] = RRD;
-        // LEDbuffer[8] = RRS;
-        // LEDbuffer[9] = commStatus;
-        // LEDbuffer[10] = allianceColor;
-        // LEDbuffer[11] = a;
-        // LEDbuffer[12] = b;
-        // LEDbuffer[13] = c;
-        // LEDbuffer[14] = 255; // terminate
-        // }
-
         SmartDashboard.setDefaultNumber("LEDClimbTime", 30);
-
         try {
             if (running) {
                 serial = new SerialPort(57600, SerialPort.Port.kUSB1);
@@ -97,29 +79,22 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             robotState = 3;
         }
 
+        int requestedPart = (int) SmartDashboard.getNumber(RequestPart.KEY, 0);
+
         int allianceColor = 0;
         if (DriverStation.getAlliance() == Alliance.Red) {
             allianceColor = 1;
         } else if (DriverStation.getAlliance() == Alliance.Blue) {
             allianceColor = 2;
         }
-        byte[] buffer = new byte[15];
+        byte[] buffer = new byte[6];
 
         buffer[0] = (byte) 254;
-        buffer[1] = driveStatus.FL.byteValue();
-        buffer[2] = steerStatus.FL.byteValue();
-        buffer[3] = driveStatus.FR.byteValue();
-        buffer[4] = steerStatus.FR.byteValue();
-        buffer[5] = driveStatus.RL.byteValue();
-        buffer[6] = steerStatus.RL.byteValue();
-        buffer[7] = driveStatus.RR.byteValue();
-        buffer[8] = steerStatus.RR.byteValue();
-        buffer[9] = (byte) robotState;
-        buffer[10] = (byte) allianceColor;
-        buffer[11] = 0; // (byte) (Subsystems.shooterSubsystem.atMinimumSpeed() ? 1 : 0);
-        buffer[12] = (byte) secondsToClimb;
-        buffer[13] = 0; // (byte) (Subsystems.turretSubsystem.hasVisionTarget() ? 1 : 0);;
-        buffer[14] = (byte) 255;
+        buffer[1] = (byte) requestedPart;  // request part type
+        buffer[2] = (byte) (Subsystems.intake.isHandOpen() ? 1: 2); // part presence 
+        buffer[3] = (byte) robotState; // comm status
+        buffer[4] = (byte) allianceColor;
+        buffer[5] = (byte) 255;
 
         this.serial.write(buffer, buffer.length);
         this.serial.flush();

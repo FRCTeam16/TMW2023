@@ -30,10 +30,11 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     public enum ElevatorPosition {
         Down(1000),
         GroundPickup(26754),    // 31545?
-        SingleSubstationCone(3000),
-        SingleSubstationCube(3000),
-        ScoreConeMid(15000),
-        ScoreConeHigh(56500);
+        SingleSubstationCone(500),
+        SingleSubstationCube(500),
+        ScoreConeMid(32_541),
+        ScoreConeHigh(53_000),  // 56_500
+        Stow(1000);
 
       
 
@@ -106,6 +107,12 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         speed = -SmartDashboard.getNumber("Elevator/OpenLoopSpeedReverse", DEFAULT_OPENLOOP_SPEED_REVERSE);
     }
 
+    /** Helper method to avoid the squeal  */
+    public void restOpenLoop() {
+        openLoop = true;
+        speed = 0.0;
+    }
+
     public void setElevatorPosition(ElevatorPosition position) {
         this.setElevatorSetpoint(position.setpoint);
     }
@@ -118,6 +125,14 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     public void setSoftLimitsEnabled(boolean enable) {
         left.configForwardSoftLimitEnable(enable);
         left.configReverseSoftLimitEnable(enable);
+    }
+
+    public double getRawElevatorPosition() {
+        return left.getSelectedSensorPosition();
+    }
+
+    public boolean isElevatorExtended() {
+        return getRawElevatorPosition() > 15_000;
     }
 
     @Override
