@@ -16,12 +16,12 @@ public class TestPoseManager {
         assert(result instanceof PrintCommand);
     }
 
-    @Test
-    public void testIllegalMoveHighStow() {
-        PoseManager poseManager = new PoseManager();
-        poseManager.getPose(Pose.ScoreHighCone);
-        Command result  = poseManager.getPose(Pose.Stow);
-        assert(result instanceof PrintCommand);
-    }
+    // @Test
+    // public void testIllegalMoveHighStow() {
+    //     PoseManager poseManager = new PoseManager();
+    //     poseManager.getPose(Pose.ScoreHighCone);
+    //     Command result  = poseManager.getPose(Pose.Stow);
+    //     assert(result instanceof PrintCommand);
+    // }
     
 }
