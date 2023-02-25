@@ -83,7 +83,7 @@ public class RobotContainer {
     //
     // General Commands
     //
-    private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kY.value);
+    private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(left, 8);
     private final JoystickButton enableLimelight = new JoystickButton(left, 16);
     private final JoystickButton disableLimelight = new JoystickButton(left, 15);

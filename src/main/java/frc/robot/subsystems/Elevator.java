@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         GroundPickup(28_600),    // 31545?
         SingleSubstationCone(500),
         SingleSubstationCube(500),
-        DoubleSubstation(24_300),
+        DoubleSubstation(22_800),
         ScoreConeMid(32_200), // 32_541
         ScoreConeHigh(53_000),  // 56_500
         Stow(1000);
@@ -65,7 +65,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
                
-        pidHelper.initialize(0.025, 0, 0, 0, 10_000, 15_000);
+        pidHelper.initialize(0.035, 0, 0, 0, 10_000, 15_000);
         pidHelper.updateTalonFX(left, 0);
 
 
