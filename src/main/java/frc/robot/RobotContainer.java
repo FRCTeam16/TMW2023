@@ -43,10 +43,11 @@ public class RobotContainer {
     //
     // Intake
     //
-    private final JoystickButton april     = new JoystickButton(left,    2);
+    private final JoystickButton april     = new JoystickButton(left,    13);   // was 2
 
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
+    private final JoystickButton travelIntake = new JoystickButton(left, 2);
       
     private final Trigger wristOpenLoopUp   = new JoystickButton(right, 4);
     private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
@@ -156,6 +157,7 @@ public class RobotContainer {
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         eject.onTrue(new InstantCommand(()     -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        travelIntake.onTrue(new InstantCommand(Subsystems.intake::runTravelIntake)).onFalse(new InstantCommand(Subsystems.intake::stopIntake));
 
         wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
