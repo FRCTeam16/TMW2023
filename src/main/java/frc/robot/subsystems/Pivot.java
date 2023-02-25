@@ -73,7 +73,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         openLoop = true;
         speed = 0.0;
 
-        left.configForwardSoftLimitThreshold(250000);
+        left.configForwardSoftLimitThreshold(380000);
         left.configReverseSoftLimitThreshold(0);
         this.setSoftLimitsEnabled(true);
     }

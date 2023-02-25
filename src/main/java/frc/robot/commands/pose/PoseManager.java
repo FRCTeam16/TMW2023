@@ -38,9 +38,12 @@ public class PoseManager {
         // TODO: make dynamic registry for illegal moves
         System.out.println("PoseManager getPose: " + currentPose + " => " + requestedPose);
         boolean illegal = false;
-        if (currentPose == Pose.Stow && requestedPose == Pose.ScoreHighCone) {
+        if (currentPose == Pose.Stow && (requestedPose == Pose.ScoreHighCone || requestedPose == Pose.GroundPickup)) {
             illegal = true;
         } else if (currentPose == Pose.ScoreHighCone && requestedPose == Pose.Stow) {
+            illegal = true;
+        }
+        else if (currentPose == Pose.GroundPickup && (requestedPose == Pose.Stow || requestedPose == Pose.SingleSubstation || requestedPose == Pose.DoubleSubstation)) {
             illegal = true;
         }
         if (illegal) {

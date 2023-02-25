@@ -40,11 +40,11 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public enum WristPosition {
         Vertical(0),
-        SingleSubstation(-89500),
-        DoubleSubstation(-127540),
+        SingleSubstation(-89_500),
+        DoubleSubstation(-127_540),
         ScoreCone(1000),   // 50000
         ScoreCube(1000),  // 100000
-        GroundPickup(-45207),       // was -45207
+        GroundPickup(30_850),       // was -45207
         Stow(-72_488),
         ScoreCubeHigh(-150_383),
         ScoreCubeMid(-150_242),
@@ -96,7 +96,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
 
-        wrist.configForwardSoftLimitThreshold(1000);
+        wrist.configForwardSoftLimitThreshold(40_000);
         wrist.configReverseSoftLimitThreshold(-170_000);
         this.setSoftLimitsEnabled(true);
     }
