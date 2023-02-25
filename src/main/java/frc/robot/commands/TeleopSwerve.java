@@ -1,17 +1,14 @@
 package frc.robot.commands;
 
-import frc.robot.Constants;
-import frc.robot.Subsystems;
-import frc.robot.subsystems.Swerve;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.Subsystems;
+import frc.robot.subsystems.Swerve;
 
 
 public class TeleopSwerve extends CommandBase {    
@@ -21,9 +18,11 @@ public class TeleopSwerve extends CommandBase {
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
 
-    // Extended elevator constraings
-    Constraints constraints = new Constraints(1.5, 1.5);
-    TrapezoidProfile profile;
+    // Extended elevator constraints
+    private static final double MAX_TRANSLATION_SPEED = 1.5;    // m/s
+    private static final double DECEL_RATE = 3.5;
+
+    private Translation2d lastSpeed = new Translation2d(0,0);
 
     public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
         this.s_Swerve = s_Swerve;
@@ -42,22 +41,29 @@ public class TeleopSwerve extends CommandBase {
         double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
-        // Govern speed when elevator is extended
-        final double maxSpeed = Subsystems.elevator.isElevatorExtended() ? 1.5 : Constants.Swerve.maxSpeed;
+        // Define maximum speeds
+        double maxSpeed = Subsystems.elevator.isElevatorExtended() ? MAX_TRANSLATION_SPEED : Constants.Swerve.maxSpeed;
         final double maxRotation = Subsystems.elevator.isElevatorExtended() ? 4 : Constants.Swerve.maxAngularVelocity;
-        
-        // if (Subsystems.elevator.isElevatorExtended()) {
-        //     if (profile == null) {
-        //         State goal = new TrapezoidProfile.State(maxSpeed, maxRotation)
-        //                         profile = new TrapezoidProfile(constraints, null)
-        //     }
 
-        // }
+        // Target swerve velocity state
+        final Translation2d swerveSpeed;
+        Translation2d targetSpeed = new Translation2d(translationVal, strafeVal).times(maxSpeed);
+        if (Subsystems.elevator.isElevatorExtended() && 
+            (lastSpeed.getX() >= targetSpeed.getX() || lastSpeed.getY() >= targetSpeed.getY())) {
+                // Interpolate slowly towards target if we are extended and going faster than target velocity
+            swerveSpeed = new Translation2d(
+                MathUtil.interpolate(lastSpeed.getX(), targetSpeed.getX(), DECEL_RATE),
+                MathUtil.interpolate(lastSpeed.getY(), targetSpeed.getY(), DECEL_RATE)
+            );
+        } else {
+            swerveSpeed = targetSpeed;
+        }
 
+        lastSpeed = swerveSpeed;
 
         /* Drive */
         s_Swerve.drive(
-            new Translation2d(translationVal, strafeVal).times(maxSpeed), 
+            swerveSpeed, 
             rotationVal * maxRotation, 
             !robotCentricSup.getAsBoolean(), 
             true
