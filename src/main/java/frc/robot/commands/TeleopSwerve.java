@@ -20,7 +20,7 @@ public class TeleopSwerve extends CommandBase {
 
     // Extended elevator constraints
     private static final double MAX_TRANSLATION_SPEED = 1.5;    // m/s
-    private static final double DECEL_RATE = 3.5;
+    private static final double DECEL_RATE = 0.07;
 
     private Translation2d lastSpeed = new Translation2d(0,0);
 
