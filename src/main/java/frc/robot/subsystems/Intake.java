@@ -41,6 +41,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     public enum WristPosition {
         Vertical(0),
         SingleSubstation(-89500),
+        DoubleSubstation(-127540),
         ScoreCone(1000),   // 50000
         ScoreCube(1000),  // 100000
         GroundPickup(-45207),       // was -45207

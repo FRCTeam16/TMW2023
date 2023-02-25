@@ -76,8 +76,8 @@ public class RobotContainer {
     private final Trigger doubleSubstationPose = new Trigger(() -> gamepad.getPOV() == 0);
     private final JoystickButton scoreConeHighPose = new JoystickButton(gamepad, XboxController.Button.kY.value);
     private final JoystickButton scoreConeMidPose = new JoystickButton(gamepad, XboxController.Button.kX.value);
-    private final JoystickButton groundPickupPose = new JoystickButton(gamepad, XboxController.Button.kA.value);
-    private final JoystickButton stowPose = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
+    private final JoystickButton groundPickupPose = new JoystickButton(gamepad, XboxController.Button.kB.value);
+    private final JoystickButton stowPose = new JoystickButton(gamepad, XboxController.Button.kA.value);
 
 
     //
@@ -145,7 +145,7 @@ public class RobotContainer {
 
 
         singleSubstationPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.SingleSubstation))));
-        // TODO: doubleSubstationPose.onTrue())
+        doubleSubstationPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.DoubleSubstation))));
         scoreConeHighPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreHighCone))));
         scoreConeMidPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreMidCone))));
         stowPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));

@@ -15,6 +15,7 @@ public class PoseManager {
     public enum Pose {
         StartingConfig,
         SingleSubstation,
+        DoubleSubstation,
         GroundPickup,
         Stow,
         ScoreMidCone,
@@ -28,6 +29,7 @@ public class PoseManager {
         commandRegistry.put(Pose.GroundPickup, MoveToGroundPickupPose::new);
         commandRegistry.put(Pose.Stow, MoveToStowPose::new);
         commandRegistry.put(Pose.SingleSubstation, MoveToSingleSubstationPose::new);
+        commandRegistry.put(Pose.DoubleSubstation, MoveToDoubleSubstationPose::new);
         commandRegistry.put(Pose.ScoreMidCone, MoveToScoreConeMidPose::new);
         commandRegistry.put(Pose.ScoreHighCone, MoveToScoreConeHighPose::new);
     }

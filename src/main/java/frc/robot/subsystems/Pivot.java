@@ -32,6 +32,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         ScoringAngle(175000),
         GroundPickup(370_000),
         SingleSubstation(29100 ),
+        DoubleSubstation(80700),
         Stow(187_902);
 
         public final double setpoint;

@@ -32,6 +32,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         GroundPickup(26754),    // 31545?
         SingleSubstationCone(500),
         SingleSubstationCube(500),
+        DoubleSubstation(24300),
         ScoreConeMid(32_200), // 32_541
         ScoreConeHigh(53_000),  // 56_500
         Stow(1000);

@@ -37,7 +37,7 @@ public class TeleopSwerve extends CommandBase {
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
         // Govern speed when elevator is extended
-        final double maxSpeed = Subsystems.elevator.isElevatorExtended() ? 1.0 : Constants.Swerve.maxSpeed;
+        final double maxSpeed = Subsystems.elevator.isElevatorExtended() ? 1.5 : Constants.Swerve.maxSpeed;
 
         /* Drive */
         s_Swerve.drive(
