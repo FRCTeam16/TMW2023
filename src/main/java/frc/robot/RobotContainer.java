@@ -18,6 +18,7 @@ import frc.robot.commands.ConfigureSoftLimits;
 import frc.robot.commands.RequestPart;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.TestRotationController;
 import frc.robot.commands.RequestPart.PartType;
 import frc.robot.commands.pose.PoseElevator;
 import frc.robot.commands.pose.PoseManager.Pose;
@@ -197,6 +198,9 @@ public class RobotContainer {
         SmartDashboard.putData("Request No Part", new RequestPart(PartType.None).ignoringDisable(true));
         SmartDashboard.putData("Request Cube",  new RequestPart(PartType.Cube).ignoringDisable(true));
         SmartDashboard.putData("Request Cone", new RequestPart(PartType.Cone).ignoringDisable(true));
+
+
+        SmartDashboard.putData("Test Rotation", new TestRotationController(-90));
 
     }
 

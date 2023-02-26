@@ -1,10 +1,7 @@
 package frc.robot.commands.auto;
 
-import java.security.Timestamp;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
@@ -148,22 +145,12 @@ Test new
     var twist = Subsystems.swerveSubsystem.getRotationController().calculate(
         Subsystems.swerveSubsystem.gyro.getGyroscopeRotation().getDegrees(), angle);
     var desiredTranslation = new Translation2d(vxMetersPerSecond, vyMetersPerSecond);
-    Subsystems.swerveSubsystem.drive(desiredTranslation, twist, fieldCentric, true);
 
-    /*
-    var speeds = (fieldCentric) ? 
-      ChassisSpeeds.fromFieldRelativeSpeeds(
-          vxMetersPerSecond, 
-          vyMetersPerSecond,
-          Math.toRadians(twist), 
-          Subsystems.swerveSubsystem.gyro.getGyroscopeRotation()) :
-        new ChassisSpeeds(
-          vxMetersPerSecond,
-          vyMetersPerSecond,
-          Math.toRadians(twist)
-        );
-    Subsystems.swerveSubsystem.drive(speeds);
-    */
+    Subsystems.swerveSubsystem.drive(
+      desiredTranslation, 
+      Math.toRadians(twist), 
+      fieldCentric, 
+      true);
   }
 
   // Called once the command ends or is interrupted.

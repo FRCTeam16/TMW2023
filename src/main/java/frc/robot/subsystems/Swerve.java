@@ -117,5 +117,7 @@ public class Swerve extends SubsystemBase {
         }
 
         SmartDashboard.putNumber("NavX", gyro.getGyroscopeRotation().getDegrees());
+
+        SmartDashboard.putData("RotationController", this.rotationController);
     }
 }
