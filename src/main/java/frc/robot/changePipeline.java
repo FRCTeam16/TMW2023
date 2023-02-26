@@ -6,15 +6,31 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 public class changePipeline extends CommandBase{
 
     Limelight limelight = new Limelight();
+
+    public void togglePip() {
+        if(limelight.getCurrentPipelin() == 0){
+            changePip(Pipelines.April);
+            return;
+        }
+        if(limelight.getCurrentPipelin() == 1){
+            changePip(Pipelines.Retro);
+            return;
+        }
+        else{
+            pipThrow();
+        }
+    }
     
     public void changePip(Pipelines pipe){
         if(pipe == Pipelines.Retro){
-            //set to one
+            //set to pipeline one
             limelight.setCurrentPipeline(0);
+            return;
         }
         if(pipe == Pipelines.April){
-            //set to two
+            //set to pipeline two
             limelight.setCurrentPipeline(1);
+            return;
         }
         else {
             pipThrow();
@@ -27,7 +43,7 @@ public class changePipeline extends CommandBase{
     }
 
     private void pipThrow(){
-        System.out.println("Invalid Pipline type passed, try Retro or April");
+        System.out.println("Invalid pipline type passed, try passing Pipelines.Retro (for pipeline 0) or Pipelines.April (for pipeline 1)");
     }
 
 
