@@ -21,6 +21,7 @@ import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.TestRotationController;
 import frc.robot.commands.RequestPart.PartType;
 import frc.robot.commands.pose.PoseElevator;
+import frc.robot.commands.pose.PoseManager;
 import frc.robot.commands.pose.PoseManager.Pose;
 import frc.robot.commands.pose.PosePivot;
 import frc.robot.commands.pose.PoseWrist;
@@ -148,10 +149,10 @@ public class RobotContainer {
 
         singleSubstationPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.SingleSubstation))));
         doubleSubstationPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.DoubleSubstation))));
-        scoreConeHighPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreHighCone))));
-        scoreConeMidPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreMidCone))));
-        groundPickupPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.GroundPickup))));
-        stowPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));
+        scoreConeHighPose.onTrue(new InstantCommand(()    -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreHighCone))));
+        scoreConeMidPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreMidCone))));
+        groundPickupPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.GroundPickup))));
+        stowPose.onTrue(new InstantCommand(()             -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));
         
         
         
@@ -201,6 +202,7 @@ public class RobotContainer {
 
 
         SmartDashboard.putData("Test Rotation", new TestRotationController(-90));
+        SmartDashboard.putData("Move To Zero", new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Zero))));
 
     }
 
