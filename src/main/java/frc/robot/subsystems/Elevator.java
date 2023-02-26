@@ -26,18 +26,16 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     private final PIDHelper pidHelper = new PIDHelper("Elevator");
     private double setpoint = 0.0;
 
-
     public enum ElevatorPosition {
         Down(1_000),
-        GroundPickup(28_600),    // 31545?
+        GroundPickup(28_600), // 31545?
         SingleSubstationCone(500),
         SingleSubstationCube(500),
         DoubleSubstation(22_800),
         ScoreConeMid(32_200), // 32_541
-        ScoreConeHigh(53_000),  // 56_500
-        Stow(1000);
-
-      
+        ScoreConeHigh(53_000), // 56_500
+        Stow(1000),
+        Zero(0); //TUNE THIS
 
         public final double setpoint;
 
@@ -58,16 +56,16 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         config.neutralDeadband = 0.01;
         config.supplyCurrLimit.enable = true;
         config.supplyCurrLimit.triggerThresholdCurrent = 50; // the peak supply current, in amps
-        config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit triggers, in sec
+        config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit
+                                                           // triggers, in sec
         config.supplyCurrLimit.currentLimit = 35; // the current to maintain if the peak supply limit is triggered
         config.closedloopRamp = 0.5;
-        
+
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
-               
+
         pidHelper.initialize(0.035, 0, 0, 0, 10_000, 15_000);
         pidHelper.updateTalonFX(left, 0);
-
 
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeedReverse", DEFAULT_OPENLOOP_SPEED_REVERSE);
@@ -108,7 +106,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         speed = -SmartDashboard.getNumber("Elevator/OpenLoopSpeedReverse", DEFAULT_OPENLOOP_SPEED_REVERSE);
     }
 
-    /** Helper method to avoid the squeal  */
+    /** Helper method to avoid the squeal */
     public void restOpenLoop() {
         openLoop = true;
         speed = 0.0;
@@ -149,8 +147,10 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
             arbitraryFF = calculateGravityFeedForward();
 
-            // left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward, arbitraryFF);
-            // left.set(ControlMode.MotionMagic, setpoint);  //TODO: measure velocity and acceleration for motion magic
+            // left.set(ControlMode.Position, setpoint, DemandType.ArbitraryFeedForward,
+            // arbitraryFF);
+            // left.set(ControlMode.MotionMagic, setpoint); //TODO: measure velocity and
+            // acceleration for motion magic
             left.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, arbitraryFF);
         }
 
@@ -177,8 +177,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         double degrees = Subsystems.pivot.getPivotAngleDegrees();
         double radians = java.lang.Math.toRadians(degrees);
         double cosineScalar = java.lang.Math.cos(radians);
-        double maxGravityFF = 0.07;  // FIXME get max value
+        double maxGravityFF = 0.07; // FIXME get max value
         return maxGravityFF * cosineScalar;
     }
-    
+
 }

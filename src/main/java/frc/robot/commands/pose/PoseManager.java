@@ -19,7 +19,8 @@ public class PoseManager {
         GroundPickup,
         Stow,
         ScoreMidCone,
-        ScoreHighCone
+        ScoreHighCone,
+        Zero
     }
 
     private Pose currentPose = Pose.StartingConfig;
@@ -32,6 +33,7 @@ public class PoseManager {
         commandRegistry.put(Pose.DoubleSubstation, MoveToDoubleSubstationPose::new);
         commandRegistry.put(Pose.ScoreMidCone, MoveToScoreConeMidPose::new);
         commandRegistry.put(Pose.ScoreHighCone, MoveToScoreConeHighPose::new);
+        commandRegistry.put(Pose.Zero, MoveToZeroPose::new);
     }
 
     public Command getPose(Pose requestedPose) {
@@ -40,10 +42,10 @@ public class PoseManager {
         boolean illegal = false;
         if (currentPose == Pose.Stow && (requestedPose == Pose.ScoreHighCone || requestedPose == Pose.GroundPickup)) {
             illegal = true;
-        } else if (currentPose == Pose.ScoreHighCone && requestedPose == Pose.Stow) {
+        } else if (currentPose == Pose.ScoreHighCone && (requestedPose == Pose.Stow || requestedPose == Pose.Zero)) {
             illegal = true;
         }
-        else if (currentPose == Pose.GroundPickup && (requestedPose == Pose.Stow || requestedPose == Pose.SingleSubstation || requestedPose == Pose.DoubleSubstation)) {
+        else if (currentPose == Pose.GroundPickup && (requestedPose == Pose.Stow || requestedPose == Pose.Zero || requestedPose == Pose.SingleSubstation || requestedPose == Pose.DoubleSubstation)) {
             illegal = true;
         }
         if (illegal) {
