@@ -7,7 +7,7 @@ public class PDistTest extends SequentialCommandGroup {
 
     public PDistTest() {
         addCommands(
-            new ProfiledDistanceDriveCommand(0, 0.2, 0.5, 0)
+            new ProfiledDistanceDriveCommand(0, 0.5, 3.0, 0)
         );
     }
     

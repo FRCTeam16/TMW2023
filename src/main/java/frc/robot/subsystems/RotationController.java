@@ -7,14 +7,14 @@ import frc.robot.Constants;
 public class RotationController extends PIDController {
 
     private static final double maxDegreesPerSecond = Math.toDegrees(Constants.Swerve.maxAngularVelocity);
+    private static final double SPEED_CLAMP = 0.2;
 
-    // private static final double kP = 4.0; //0.01; //4.25;
+    private static final double kP = 4.0; //0.01; //4.25;
     // private static final double kI = 1.35; // 3.0;
-    private static final double kP = 1.0; //0.01; //4.25;
     private static final double kI = 0.0; // 3.0;
     private static final double kD = 0.0; // 0;
 
-    private double tolerance = 10.0;
+    private double tolerance = 2.0;
 
     public RotationController() {
         this(kP, kI, kD);
@@ -28,6 +28,6 @@ public class RotationController extends PIDController {
     }
 
     public static double clampToDPS(double outputPercent) {
-        return MathUtil.clamp(outputPercent, -0.6, 0.6) * maxDegreesPerSecond;
+        return MathUtil.clamp(outputPercent, -SPEED_CLAMP, SPEED_CLAMP) * maxDegreesPerSecond;
     }
 }

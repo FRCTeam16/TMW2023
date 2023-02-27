@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Subsystems;
 import frc.robot.auto.strategies.DebugAuto;
+import frc.robot.auto.strategies.ScoreAndBalance;
 import frc.robot.auto.strategies.TestTrajectoryFactory;
 import frc.robot.autos.PDistTest;
 import frc.robot.autos.exampleAuto;
@@ -15,7 +16,7 @@ import frc.robot.autos.exampleAuto;
 public class AutoManager {
 
     public enum AutoStrategies {
-        DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory
+        DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, ScoreAndBalance
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -26,6 +27,7 @@ public class AutoManager {
         registerStrategy("exampleAuto", AutoStrategies.ExampleAuto, new exampleAuto(Subsystems.swerveSubsystem));
         registerStrategy("pdist test", AutoStrategies.PDistTest, new PDistTest(), true);
         registerStrategy("TestTrajectoryFactory", AutoStrategies.TestTrajectoryFactory, new TestTrajectoryFactory());
+        registerStrategy("Score And Balance Right", AutoStrategies.ScoreAndBalance, new ScoreAndBalance());
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.
         SmartDashboard.putData("Auto Selector", chooser);

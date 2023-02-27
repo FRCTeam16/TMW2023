@@ -11,7 +11,7 @@ import frc.robot.Subsystems;
 
 public class ProfiledDistanceDriveCommand extends CommandBase {
 
-  public static boolean debug = false;  // controls writing sysouts
+  public static boolean debug = true;  // controls writing sysouts
 
   private double distanceThreshold = 0.05;
   private double angle;
@@ -135,20 +135,23 @@ Test new
     double vyMetersPerSecond = speed * Math.sin(driveAngle);
 */
 
-    if (debug) {
-    System.out.println(
-      "DA: " + driveAngle +
-      " | VX: " + vxMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond + 
-      " | VY: " + vyMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond);
-    }
 
     var twist = Subsystems.swerveSubsystem.getRotationController().calculate(
         Subsystems.swerveSubsystem.gyro.getGyroscopeRotation().getDegrees(), angle);
     var desiredTranslation = new Translation2d(vxMetersPerSecond, vyMetersPerSecond);
 
+    
+    if (debug) {
+      System.out.println(
+        "DA: " + driveAngle +
+        " | VX: " + vxMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond + 
+        " | VY: " + vyMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond +
+        " | TW: " + twist);
+      }
+
     Subsystems.swerveSubsystem.drive(
       desiredTranslation, 
-      Math.toRadians(twist), 
+      Math.toRadians(-twist), 
       fieldCentric, 
       true);
   }

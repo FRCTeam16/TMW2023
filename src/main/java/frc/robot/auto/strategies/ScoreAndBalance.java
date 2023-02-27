@@ -8,21 +8,42 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.Subsystems;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.TrajectoryDriveFactory;
+import frc.robot.commands.pose.PoseManager.Pose;
 
-public class TestTrajectoryFactory extends SequentialCommandGroup {
-    public TestTrajectoryFactory() {
+public class ScoreAndBalance extends SequentialCommandGroup {
+    public ScoreAndBalance() {
         addCommands(
             new InitializeAutoState(0),
-            // Subsystems.poseManager.getPose(Pose.Stow), 
-            // new WaitCommand(1.0), 
+            new InstantCommand(Subsystems.intake::CloseHand),
+            new WaitCommand(0.5),
+
+            Subsystems.poseManager.getPose(Pose.ScoreHighCone),
+            new WaitCommand(1.0),
+            new InstantCommand(Subsystems.intake::storeAndScore),
+            new WaitCommand(0.25),
+            new InstantCommand(Subsystems.intake::OpenHand),
+            new WaitCommand(0.5),
+            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
+
+            Subsystems.poseManager.getPose(Pose.SingleSubstation),
+            new WaitCommand(0.5),
+            Subsystems.poseManager.getPose(Pose.Stow),
+
+            // Do drive
             TrajectoryDriveFactory.createCommand(driveToBackOfChargeStation()),
             TrajectoryDriveFactory.createCommand(driveOntoChargeStation())
-        );
+
+        );;
     }
+
+    final double RAMP_Y = 2.3;
 
     Trajectory driveToBackOfChargeStation() {
         return TrajectoryGenerator.generateTrajectory(
@@ -32,18 +53,18 @@ public class TestTrajectoryFactory extends SequentialCommandGroup {
                    new Translation2d(4, 0)
                     ),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(4.0, 2.2, new Rotation2d(0)),
+                new Pose2d(4.0, RAMP_Y, new Rotation2d(0)),
                 TrajectoryDriveFactory.DEFAULT_TRAJECTORY_CONFIG);
     }
 
     Trajectory driveOntoChargeStation() {
         return TrajectoryGenerator.generateTrajectory(
                 // Start at the origin facing the +X direction
-                new Pose2d(4, 2.2, new Rotation2d(0)),
+                new Pose2d(4, RAMP_Y, new Rotation2d(0)),
                 List.of(),
-                new Pose2d(1.75, 2.2, new Rotation2d(0)),
+                new Pose2d(1.6, RAMP_Y, new Rotation2d(0)),
                 new TrajectoryConfig(
-                    0.5, 0.5)
+                    0.75, 1)
                     .setReversed(true)
                     .setKinematics(Constants.Swerve.swerveKinematics));
     }

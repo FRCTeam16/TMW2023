@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     
-    // addPeriodic(Subsystems.ledSubsystem::Report, 0.25);
+    addPeriodic(Subsystems.ledSubsystem::Report, 0.25);
   }
 
   /**
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putString("CurrentPose", Subsystems.poseManager.getCurrentPose().toString());
+    m_robotContainer.periodic();
   }
 
   @Override

@@ -7,21 +7,18 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.autos.aprilAuto;
 import frc.robot.commands.ConfigureSoftLimits;
 import frc.robot.commands.RequestPart;
+import frc.robot.commands.RequestPart.PartType;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
-import frc.robot.commands.TestRotationController;
-import frc.robot.commands.RequestPart.PartType;
+import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.pose.PoseElevator;
-import frc.robot.commands.pose.PoseManager;
 import frc.robot.commands.pose.PoseManager.Pose;
 import frc.robot.commands.pose.PosePivot;
 import frc.robot.commands.pose.PoseWrist;
@@ -55,8 +52,8 @@ public class RobotContainer {
     private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
     private final Trigger wristTempDown     = new JoystickButton(right, 2);
 
-    private final JoystickButton openHandJoy = new JoystickButton(left, 3);
-    private final JoystickButton closeHandJoy = new JoystickButton(left, 4);
+    private final JoystickButton openHandJoy = new JoystickButton(left, 4);
+    private final JoystickButton closeHandJoy = new JoystickButton(left, 3);
 
     //
     // Pivot
@@ -105,7 +102,7 @@ public class RobotContainer {
                 Subsystems.swerveSubsystem, 
                 () -> -right.getY(),
                 () -> -right.getX(), 
-                () ->  left.getX(), 
+                () ->  left.getX(),     // i think this should be negative
                 () ->  robotCentric.getAsBoolean()
             )
         );
@@ -200,8 +197,7 @@ public class RobotContainer {
         SmartDashboard.putData("Request Cube",  new RequestPart(PartType.Cube).ignoringDisable(true));
         SmartDashboard.putData("Request Cone", new RequestPart(PartType.Cone).ignoringDisable(true));
 
-
-        SmartDashboard.putData("Test Rotation", new TestRotationController(-90));
+        SmartDashboard.putData("Test Rotation", new RotateToAngle(45));
         SmartDashboard.putData("Move To Zero", new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Zero))));
 
     }
@@ -212,8 +208,6 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     public Command getAutonomousCommand() { 
-        // An ExampleCommand will run in autonomous
-        // return new aprilAuto(right.getX(),right.getY());
         return autoManager.getSelectedCommand();
     }
 
@@ -223,6 +217,11 @@ public class RobotContainer {
 
     public void autoInit() {
         Subsystems.lifecycleSubsystems.stream().filter(s -> s != null).forEach((s) -> s.autoInit());
+    }
+
+    public void periodic() {
+        SmartDashboard.putString("CurrentPose", Subsystems.poseManager.getCurrentPose().toString());
+        SmartDashboard.putNumber("CurrentYaw", Subsystems.swerveSubsystem.getYaw().getDegrees());
     }
 
 }
