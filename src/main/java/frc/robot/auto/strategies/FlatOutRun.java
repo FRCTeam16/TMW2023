@@ -9,13 +9,15 @@ import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 import frc.robot.commands.pose.PoseManager.Pose;
 
-public class ScoredStraight extends SequentialCommandGroup {
-    public ScoredStraight() {
+public class FlatOutRun extends SequentialCommandGroup {
+
+    public FlatOutRun() {
+       
         addCommands(
             new InitializeAutoState(180),
             new InstantCommand(Subsystems.intake::CloseHand),
             new WaitCommand(0.5),
-            
+
             new SchedulePose(Pose.ScoreHighCone),
             new WaitCommand(1.0),
             new InstantCommand(Subsystems.intake::storeAndScore),
@@ -28,7 +30,17 @@ public class ScoredStraight extends SequentialCommandGroup {
             new WaitCommand(0.5),
             new SchedulePose(Pose.Stow),
 
-            new ProfiledDistanceDriveCommand(180, 0.5, 4, 0)
-        );
+
+            new WaitCommand(5),
+            
+
+            // Do drive
+            new ProfiledDistanceDriveCommand(180, 0.5, 0.1, -1.25)
+                .withEndSpeed(0.5)
+                .withThreshold(0.1)
+                .withTimeout(3.0),
+            new ProfiledDistanceDriveCommand(180, 0.5, 2.5, 0)
+            
+        );;
     }
 }

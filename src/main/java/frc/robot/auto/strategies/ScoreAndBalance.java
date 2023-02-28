@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
 import frc.robot.commands.Balance;
+import frc.robot.commands.SchedulePose;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 import frc.robot.commands.pose.PoseManager.Pose;
@@ -28,7 +29,7 @@ public class ScoreAndBalance extends SequentialCommandGroup {
             new InstantCommand(Subsystems.intake::CloseHand),
             new WaitCommand(0.5),
 
-            Subsystems.poseManager.getPose(Pose.ScoreHighCone),
+            new SchedulePose(Pose.ScoreHighCone),
             new WaitCommand(1.0),
             new InstantCommand(Subsystems.intake::storeAndScore),
             new WaitCommand(0.25),
@@ -36,9 +37,9 @@ public class ScoreAndBalance extends SequentialCommandGroup {
             new WaitCommand(0.5),
             new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
 
-            Subsystems.poseManager.getPose(Pose.SingleSubstation),
+            new SchedulePose(Pose.SingleSubstation),
             new WaitCommand(0.5),
-            Subsystems.poseManager.getPose(Pose.Stow),
+            new SchedulePose(Pose.Stow),
 
             // Do drive
             new ProfiledDistanceDriveCommand(180, 1, 3.75, 0)
