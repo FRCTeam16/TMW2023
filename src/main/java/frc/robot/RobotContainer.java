@@ -102,7 +102,7 @@ public class RobotContainer {
                 Subsystems.swerveSubsystem, 
                 () -> -right.getY(),
                 () -> -right.getX(), 
-                () ->  left.getX(),     // i think this should be negative
+                () ->  -left.getX(),
                 () ->  robotCentric.getAsBoolean()
             )
         );

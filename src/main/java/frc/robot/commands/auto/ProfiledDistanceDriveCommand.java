@@ -151,7 +151,7 @@ Test new
 
     Subsystems.swerveSubsystem.drive(
       desiredTranslation, 
-      Math.toRadians(-twist), 
+      Math.toRadians(twist), 
       fieldCentric, 
       true);
   }
