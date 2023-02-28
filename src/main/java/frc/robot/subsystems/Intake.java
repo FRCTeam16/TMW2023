@@ -26,12 +26,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
-<<<<<<< HEAD
-    private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.05;
-=======
     private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.125;
-    private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.1;
->>>>>>> 706a393 (Added slow intake speed && Proximety Digital Input on intake)
+    private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.05;
     private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.15;
 
     private boolean openLoop = true;
@@ -79,13 +75,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
         config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit
                                                            // triggers, in sec
         config.supplyCurrLimit.currentLimit = 30; // the current to maintain if the peak supply limit is triggered
-<<<<<<< HEAD
         config.neutralDeadband = 0.001;
         
-=======
-        config.neutralDeadband = 0.01;
-
->>>>>>> 706a393 (Added slow intake speed && Proximety Digital Input on intake)
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
         wrist.configAllSettings(config);
@@ -231,21 +222,12 @@ public class Intake extends SubsystemBase implements Lifecycle {
     }
 
     // solinoid is all I think about
-<<<<<<< HEAD
     public void OpenHand(){
         Solstend = false;
     }
 
     public void CloseHand(){
         Solstend = true;
-=======
-    public void OpenHand() {
-        Solstend = true;
-    }
-
-    public void CloseHand() {
-        Solstend = false;
->>>>>>> 706a393 (Added slow intake speed && Proximety Digital Input on intake)
     }
 
     public boolean isHandOpen() {
