@@ -12,11 +12,13 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoManager;
 import frc.robot.autos.aprilAuto;
+import frc.robot.commands.Balance;
 import frc.robot.commands.ConfigureSoftLimits;
 import frc.robot.commands.RequestPart;
 import frc.robot.commands.RequestPart.PartType;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.pose.PoseElevator;
 import frc.robot.commands.pose.PoseManager.Pose;
@@ -97,6 +99,9 @@ public class RobotContainer {
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
+
+        Subsystems.swerveSubsystem.gyro.setGyroOffset(180);
+
         Subsystems.swerveSubsystem.setDefaultCommand(
             new TeleopSwerve(
                 Subsystems.swerveSubsystem, 
@@ -169,6 +174,8 @@ public class RobotContainer {
 
         enableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.enable()).ignoringDisable(true));
         disableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.disable()).ignoringDisable(true));
+
+        new JoystickButton(right, 16).whileTrue(new Balance());
     }
 
 
@@ -200,6 +207,9 @@ public class RobotContainer {
         SmartDashboard.putData("Test Rotation", new RotateToAngle(45));
         SmartDashboard.putData("Move To Zero", new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Zero))));
 
+
+        SmartDashboard.putData("Zero With 180 Offset", new ZeroAndSetOffsetCommand(180));
+
     }
 
     /**
@@ -222,6 +232,7 @@ public class RobotContainer {
     public void periodic() {
         SmartDashboard.putString("CurrentPose", Subsystems.poseManager.getCurrentPose().toString());
         SmartDashboard.putNumber("CurrentYaw", Subsystems.swerveSubsystem.getYaw().getDegrees());
+        SmartDashboard.putNumber("Pitch", Subsystems.swerveSubsystem.gyro.getPitch());
     }
 
 }

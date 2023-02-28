@@ -16,24 +16,43 @@ import frc.robot.commands.auto.TrajectoryDriveFactory;
 public class TestTrajectoryFactory extends SequentialCommandGroup {
     public TestTrajectoryFactory() {
         addCommands(
-            new InitializeAutoState(0),
+            new InitializeAutoState(180),
             // Subsystems.poseManager.getPose(Pose.Stow), 
             // new WaitCommand(1.0), 
-            TrajectoryDriveFactory.createCommand(driveToBackOfChargeStation()),
-            TrajectoryDriveFactory.createCommand(driveOntoChargeStation())
+            TrajectoryDriveFactory.createCommand(backwardsTest())
+            // TrajectoryDriveFactory.createCommand(driveOntoChargeStation())
         );
     }
 
+    private double ONEEIGHTY_RADS = Math.toRadians(180);
+
+    Trajectory backwardsTest() {
+        return TrajectoryGenerator.generateTrajectory(
+                // Start at the origin facing the +X direction
+                new Pose2d(0, 0, new Rotation2d(ONEEIGHTY_RADS)),
+                List.of(
+                   new Translation2d(2, 0)
+                    ),
+                // End 3 meters straight ahead of where we started, facing forward
+                new Pose2d(3.0, 0, new Rotation2d(ONEEIGHTY_RADS)),
+                new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                    .setReversed(true)
+                    .setKinematics(Constants.Swerve.swerveKinematics));
+    }
+
+    
     Trajectory driveToBackOfChargeStation() {
         return TrajectoryGenerator.generateTrajectory(
                 // Start at the origin facing the +X direction
-                new Pose2d(0, 0, new Rotation2d(0)),
+                new Pose2d(0, 0, new Rotation2d(ONEEIGHTY_RADS)),
                 List.of(
                    new Translation2d(4, 0)
                     ),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(4.0, 2.2, new Rotation2d(0)),
-                TrajectoryDriveFactory.DEFAULT_TRAJECTORY_CONFIG);
+                new Pose2d(4.0, 2.2, new Rotation2d(ONEEIGHTY_RADS)),
+                new TrajectoryConfig(Constants.AutoConstants.kMaxSpeedMetersPerSecond, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+                    .setReversed(true)
+                    .setKinematics(Constants.Swerve.swerveKinematics));
     }
 
     Trajectory driveOntoChargeStation() {

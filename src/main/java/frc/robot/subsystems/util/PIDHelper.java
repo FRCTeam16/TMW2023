@@ -2,6 +2,7 @@ package frc.robot.subsystems.util;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class PIDHelper {
@@ -70,6 +71,10 @@ public class PIDHelper {
         motor.config_kF(slot, this.kF);
         motor.configMotionCruiseVelocity(this.kV);
         motor.configMotionAcceleration(this.kA);
+    }
+
+    public void updatePIDController(PIDController pid) {
+        pid.setPID(this.kP, this.kI, this.kD);
     }
 
 }
