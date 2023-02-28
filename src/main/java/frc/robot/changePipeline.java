@@ -7,6 +7,10 @@ public class changePipeline extends CommandBase{
 
     Limelight limelight = new Limelight();
 
+    public changePipeline(Pipelines pipe) {
+        changePip(pipe);
+    }
+
     public void togglePip() {
         if(limelight.getCurrentPipelin() == 0){
             changePip(Pipelines.April);
