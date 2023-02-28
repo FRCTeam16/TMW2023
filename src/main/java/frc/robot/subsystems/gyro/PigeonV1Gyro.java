@@ -27,4 +27,14 @@ public class PigeonV1Gyro implements BSGyro {
         m_pigeon.setFusedHeading(offsetDegrees);
     }
 
+    @Override
+    public double getPitch() {
+        return m_pigeon.getPitch();
+    }
+
+    @Override
+    public double getRoll() {
+        return m_pigeon.getRoll();
+    }
+
 }

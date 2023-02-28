@@ -35,4 +35,14 @@ public class NavXGyro implements BSGyro {
         // TODO: needs testing
         m_navx.setAngleAdjustment(offsetDegrees);
     }
+
+    @Override
+    public double getPitch() {
+        return m_navx.getPitch();
+    }
+
+    @Override
+    public double getRoll() {
+        return m_navx.getRoll();
+    }
 }

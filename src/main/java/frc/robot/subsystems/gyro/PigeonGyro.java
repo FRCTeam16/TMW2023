@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class PigeonGyro implements BSGyro {
     // private final Pigeon2 m_pigeon;
     private final WPI_Pigeon2 m_pigeon;
-    private double[] ypr = new double[3];
     private double offset = 0.0;
 
     public PigeonGyro(int CAN_ID) {
@@ -31,7 +30,6 @@ public class PigeonGyro implements BSGyro {
         SmartDashboard.putNumber("PigeonGyro/Adjusted", degrees+offset);
 
         return Rotation2d.fromDegrees(degrees);
-        // return Rotation2d.fromDegrees(m_pigeon.getYaw());
     }
 
     @Override
@@ -45,5 +43,15 @@ public class PigeonGyro implements BSGyro {
         //m_pigeon.setYaw(offsetDegrees);
         this.offset = offsetDegrees;
         SmartDashboard.putNumber("PigeonGyro/Offset", offsetDegrees);
+    }
+
+    @Override
+    public double getPitch() {
+        return m_pigeon.getPitch();
+    }
+
+    @Override
+    public double getRoll() {
+        return m_pigeon.getRoll();
     }
 }
