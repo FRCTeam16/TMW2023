@@ -1,5 +1,7 @@
 package frc.robot.auto.strategies;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -11,6 +13,9 @@ import frc.robot.commands.pose.PoseManager.Pose;
 
 public class ScoredStraight extends SequentialCommandGroup {
     public ScoredStraight() {
+
+        int DIR = (DriverStation.getAlliance() == Alliance.Red) ? 1 : -1;
+
         addCommands(
             new InitializeAutoState(180),
             new InstantCommand(Subsystems.intake::CloseHand),

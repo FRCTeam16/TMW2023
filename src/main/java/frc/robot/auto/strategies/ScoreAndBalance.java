@@ -8,6 +8,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -23,6 +25,8 @@ public class ScoreAndBalance extends SequentialCommandGroup {
     private double ONEEIGHTY_RADS = Math.toRadians(180);
 
     public ScoreAndBalance() {
+
+        int DIR = (DriverStation.getAlliance() == Alliance.Red) ? 1 : -1;
        
         addCommands(
             new InitializeAutoState(180),
@@ -46,7 +50,7 @@ public class ScoreAndBalance extends SequentialCommandGroup {
                 .withEndSpeed(0.5)
                 .withThreshold(0.1)
                 .withTimeout(5.0),
-            new ProfiledDistanceDriveCommand(180, 0.75, 0, 2)
+            new ProfiledDistanceDriveCommand(180, 0.75, 0, DIR * 2)
                 .withEndSpeed(0.5)
                 .withTimeout(2.0),
 
