@@ -1,5 +1,7 @@
 package frc.robot.commands.auto;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -27,6 +29,8 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
   private State currentState;
   private double endSpeed = 0.0;
   private boolean fieldCentric = true;
+
+  public BooleanSupplier stopFunction;  // optional stop function evaluated for early termination
 
 
   /**
@@ -72,6 +76,11 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
 
   public ProfiledDistanceDriveCommand withConstraints(TrapezoidProfile.Constraints constraints) {
     this.constraints = constraints;
+    return this;
+  }
+
+  public ProfiledDistanceDriveCommand withStopCondition(BooleanSupplier stopFunction) {
+    this.stopFunction = stopFunction;
     return this;
   }
 
@@ -164,6 +173,12 @@ Test new
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+
+    if (this.stopFunction != null && this.stopFunction.getAsBoolean()) {
+      System.out.println("Stop Function Stopped exectuion");
+      return true;
+    }
+
     var distance = Subsystems.swerveSubsystem.getPose().getTranslation().getDistance(targetPose);
     if (debug) {
       System.out.println("DIST: " + distance + " | T:" + targetPose + " | C:" + Subsystems.swerveSubsystem.getPose().getTranslation());

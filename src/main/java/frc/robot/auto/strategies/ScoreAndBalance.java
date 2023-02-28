@@ -16,8 +16,6 @@ import frc.robot.Subsystems;
 import frc.robot.commands.Balance;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
-import frc.robot.commands.auto.ScoreConeHigh;
-import frc.robot.commands.auto.TrajectoryDriveFactory;
 import frc.robot.commands.pose.PoseManager.Pose;
 
 public class ScoreAndBalance extends SequentialCommandGroup {
@@ -27,34 +25,40 @@ public class ScoreAndBalance extends SequentialCommandGroup {
        
         addCommands(
             new InitializeAutoState(180),
-            // new InstantCommand(Subsystems.intake::CloseHand),
-            // new WaitCommand(0.5),
+            new InstantCommand(Subsystems.intake::CloseHand),
+            new WaitCommand(0.5),
 
-            // Subsystems.poseManager.getPose(Pose.ScoreHighCone),
-            // new WaitCommand(1.0),
-            // new InstantCommand(Subsystems.intake::storeAndScore),
-            // new WaitCommand(0.25),
-            // new InstantCommand(Subsystems.intake::OpenHand),
-            // new WaitCommand(0.5),
-            // new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
+            Subsystems.poseManager.getPose(Pose.ScoreHighCone),
+            new WaitCommand(1.0),
+            new InstantCommand(Subsystems.intake::storeAndScore),
+            new WaitCommand(0.25),
+            new InstantCommand(Subsystems.intake::OpenHand),
+            new WaitCommand(0.5),
+            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
 
-            // Subsystems.poseManager.getPose(Pose.SingleSubstation),
-            // new WaitCommand(0.5),
+            Subsystems.poseManager.getPose(Pose.SingleSubstation),
+            new WaitCommand(0.5),
             Subsystems.poseManager.getPose(Pose.Stow),
 
             // Do drive
-            new ProfiledDistanceDriveCommand(180, 0.5, 3.75, 0)
+            new ProfiledDistanceDriveCommand(180, 1, 3.75, 0)
                 .withEndSpeed(0.5)
+                .withThreshold(0.1)
                 .withTimeout(5.0),
-            new ProfiledDistanceDriveCommand(180, 0.5, 0, 2)
-                .withEndSpeed(0.2)
+            new ProfiledDistanceDriveCommand(180, 0.75, 0, 2)
+                .withEndSpeed(0.5)
                 .withTimeout(2.0),
 
-            new ProfiledDistanceDriveCommand(180, 0.6, -1, 0)
-                .withTimeout(3.0),
+            new ProfiledDistanceDriveCommand(180, 0.6, -2, 0)
+                .withStopCondition(this::stopOnPitch)
+                .withTimeout(4.0),
             new Balance(0.5)
             
         );;
+    }
+
+    public boolean stopOnPitch() {
+        return Math.abs(Subsystems.swerveSubsystem.gyro.getPitch()) > 5.0;
     }
 
     Trajectory backwardsTest() {
