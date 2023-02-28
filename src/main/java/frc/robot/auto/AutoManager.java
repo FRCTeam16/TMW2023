@@ -1,6 +1,7 @@
 package frc.robot.auto;
 
 import java.util.HashMap;
+import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,26 +22,26 @@ public class AutoManager {
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
-    private final HashMap<AutoStrategies, Command> strategyLookup = new HashMap<>();
+    private final HashMap<AutoStrategies, Supplier<Command>> strategyLookup = new HashMap<>();
 
     public AutoManager() {
-        registerStrategy("Debug Auto", AutoStrategies.DebugAuto, new DebugAuto());
+        registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
         // registerStrategy("exampleAuto", AutoStrategies.ExampleAuto, new exampleAuto(Subsystems.swerveSubsystem));
-        registerStrategy("pdist test", AutoStrategies.PDistTest, new PDistTest());
-        registerStrategy("TestTrajectoryFactory", AutoStrategies.TestTrajectoryFactory, new TestTrajectoryFactory(), true);
-        registerStrategy("Score And Balance", AutoStrategies.ScoreAndBalance, new ScoreAndBalance());
-        registerStrategy("Scored Straight", AutoStrategies.ScoredStraight, new ScoredStraight());
-        registerStrategy("FlatOutRun", AutoStrategies.FlatOutRun, new FlatOutRun());
+        registerStrategy("pdist test", AutoStrategies.PDistTest, PDistTest::new);
+        registerStrategy("TestTrajectoryFactory", AutoStrategies.TestTrajectoryFactory, TestTrajectoryFactory::new, true);
+        registerStrategy("Score And Balance", AutoStrategies.ScoreAndBalance, ScoreAndBalance::new);
+        registerStrategy("Scored Straight", AutoStrategies.ScoredStraight, ScoredStraight::new);
+        registerStrategy("FlatOutRun", AutoStrategies.FlatOutRun, FlatOutRun::new);
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.
         SmartDashboard.putData("Auto Selector", chooser);
     }
 
-    private void registerStrategy(String displayName, AutoStrategies strategyEnum, Command strategy) {
+    private void registerStrategy(String displayName, AutoStrategies strategyEnum, Supplier<Command> strategy) {
         registerStrategy(displayName, strategyEnum, strategy, false);
     }
 
-    private void registerStrategy(String displayName, AutoStrategies strategyEnum, Command strategy, boolean isDefault) {
+    private void registerStrategy(String displayName, AutoStrategies strategyEnum, Supplier<Command> strategy, boolean isDefault) {
         if (isDefault) {
             chooser.setDefaultOption(displayName, strategyEnum);
         } else {
@@ -57,7 +58,7 @@ public class AutoManager {
         Command selected = null;
 
         if (strategyLookup.containsKey(chooser.getSelected())) {
-            selected = strategyLookup.get(chooser.getSelected());
+            selected = strategyLookup.get(chooser.getSelected()).get();
         } else {
             // Missing autonomous key in lookup map
             selected = new InstantCommand(() -> System.out.println("ERROR: Could not find requested auto: " + chooser.getSelected()));
