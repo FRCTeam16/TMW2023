@@ -6,13 +6,13 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.util.PIDHelper;
-
 
 public class Intake extends SubsystemBase implements Lifecycle {
 
@@ -26,26 +26,33 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
+<<<<<<< HEAD
     private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.05;
+=======
+    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.125;
+    private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.1;
+>>>>>>> 706a393 (Added slow intake speed && Proximety Digital Input on intake)
     private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.15;
 
     private boolean openLoop = true;
     private double openLoopWristSpeed = 0.0;
 
     private double intakeSpeed = 0.0;
+    private double slowIntakeSpeed = 0.0;
 
     private PIDHelper pidHelper = new PIDHelper("Intake");
     private double setpoint = 0.0;
     private double storedSetpoint = 0.0;
 
+    private DigitalInput ProxSence = new DigitalInput(0); // Digital input might be 9 but we'll go w/ 0 for now
 
     public enum WristPosition {
         Vertical(0),
         SingleSubstation(-89_500),
         DoubleSubstation(-127_540),
-        ScoreCone(1000),   // 50000
-        ScoreCube(1000),  // 100000
-        GroundPickup(30_850),       // was -45207
+        ScoreCone(1000), // 50000
+        ScoreCube(1000), // 100000
+        GroundPickup(30_850), // was -45207
         Stow(-72_488),
         ScoreCubeHigh(-150_383),
         ScoreCubeMid(-150_242),
@@ -58,7 +65,6 @@ public class Intake extends SubsystemBase implements Lifecycle {
         }
     }
 
-
     public Intake() {
         left.configFactoryDefault();
         right.configFactoryDefault();
@@ -67,14 +73,19 @@ public class Intake extends SubsystemBase implements Lifecycle {
         right.follow(left);
         right.setInverted(TalonFXInvertType.OpposeMaster);
 
-
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.supplyCurrLimit.enable = true;
         config.supplyCurrLimit.triggerThresholdCurrent = 40; // the peak supply current, in amps
-        config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit triggers, in sec
+        config.supplyCurrLimit.triggerThresholdTime = 1.5; // the time at the peak supply current before the limit
+                                                           // triggers, in sec
         config.supplyCurrLimit.currentLimit = 30; // the current to maintain if the peak supply limit is triggered
+<<<<<<< HEAD
         config.neutralDeadband = 0.001;
         
+=======
+        config.neutralDeadband = 0.01;
+
+>>>>>>> 706a393 (Added slow intake speed && Proximety Digital Input on intake)
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
         wrist.configAllSettings(config);
@@ -83,8 +94,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
         left.setNeutralMode(NeutralMode.Coast);
         right.setNeutralMode(NeutralMode.Coast);
         wrist.setNeutralMode(NeutralMode.Brake);
-        
-               
+
         this.zeroWristEncoder();
 
         openLoop = true;
@@ -95,6 +105,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
         SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
+        SmartDashboard.setDefaultNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
         SmartDashboard.setDefaultNumber("Intake/TravelIntakeSpeed", DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
 
@@ -140,11 +151,15 @@ public class Intake extends SubsystemBase implements Lifecycle {
         intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
     }
 
+    public void slowIntake() {
+        slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
+    }
+
     public void eject() {
         intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
     }
 
-    public void runTravelIntake(){
+    public void runTravelIntake() {
         intakeSpeed = SmartDashboard.getNumber("Intake/TravelIntakeSpeed", DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED);
     }
 
@@ -182,8 +197,14 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     @Override
     public void periodic() {
+
+        if(isProxTripped()){
         // Always run intake in open loop
+        left.set(ControlMode.PercentOutput, slowIntakeSpeed);
+    }
+    else{
         left.set(ControlMode.PercentOutput, intakeSpeed);
+    }
 
         // Wrist can run in open loop or closed loop control
         if (openLoop) {
@@ -191,7 +212,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
         } else {
             pidHelper.updateValuesFromDashboard();
             pidHelper.updateTalonFX(wrist, 0);
-           
+
             // wrist.set(ControlMode.MotionMagic, setpoint);
             wrist.set(ControlMode.Position, setpoint);
         }
@@ -205,20 +226,33 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.putNumber("Intake/OutAmp", wrist.getStatorCurrent());
         SmartDashboard.putString("Intake/LastError", wrist.getLastError().toString());
 
-        upper.set(Solstend); //open/close solinoids
+        upper.set(Solstend); // open/close solinoids
         lower.set(!Solstend);
     }
+
     // solinoid is all I think about
+<<<<<<< HEAD
     public void OpenHand(){
         Solstend = false;
     }
 
     public void CloseHand(){
         Solstend = true;
+=======
+    public void OpenHand() {
+        Solstend = true;
+    }
+
+    public void CloseHand() {
+        Solstend = false;
+>>>>>>> 706a393 (Added slow intake speed && Proximety Digital Input on intake)
     }
 
     public boolean isHandOpen() {
         return !Solstend;
     }
-    
+
+    public boolean isProxTripped(){
+        return ProxSence.get();
+    }
 }
