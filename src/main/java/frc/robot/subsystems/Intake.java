@@ -26,7 +26,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
-    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.125;
+    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.05;
     private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.05;
     private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.15;
 
@@ -34,7 +34,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private double openLoopWristSpeed = 0.0;
 
     private double intakeSpeed = 0.0;
-    private double slowIntakeSpeed = 0.0;
+    private double slowIntakeSpeed = DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED;
 
     private PIDHelper pidHelper = new PIDHelper("Intake");
     private double setpoint = 0.0;
@@ -106,6 +106,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
         // Start in closed
         this.CloseHand();
+
+        this.slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
     }
 
     @Override
@@ -140,10 +142,6 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public void intake() {
         intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
-    }
-
-    public void slowIntake() {
-        slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
     }
 
     public void eject() {
@@ -190,12 +188,11 @@ public class Intake extends SubsystemBase implements Lifecycle {
     public void periodic() {
 
         if(isProxTripped()){
-        // Always run intake in open loop
-        left.set(ControlMode.PercentOutput, slowIntakeSpeed);
-    }
-    else{
-        left.set(ControlMode.PercentOutput, intakeSpeed);
-    }
+            // Always run intake in open loop
+            left.set(ControlMode.PercentOutput, slowIntakeSpeed);
+        } else{
+            left.set(ControlMode.PercentOutput, intakeSpeed);
+        }
 
         // Wrist can run in open loop or closed loop control
         if (openLoop) {
@@ -216,6 +213,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.putNumber("Intake/BusV", wrist.getBusVoltage());
         SmartDashboard.putNumber("Intake/OutAmp", wrist.getStatorCurrent());
         SmartDashboard.putString("Intake/LastError", wrist.getLastError().toString());
+        SmartDashboard.putBoolean("Intake/ObjectDetected", this.isProxTripped());
 
         upper.set(Solstend); // open/close solinoids
         lower.set(!Solstend);
@@ -235,6 +233,6 @@ public class Intake extends SubsystemBase implements Lifecycle {
     }
 
     public boolean isProxTripped(){
-        return ProxSence.get();
+        return !ProxSence.get();
     }
 }
