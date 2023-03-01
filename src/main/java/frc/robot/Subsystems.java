@@ -7,6 +7,7 @@ import frc.robot.commands.pose.PoseManager;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.PartIndicator;
 import frc.robot.subsystems.Pivot;
 import frc.robot.subsystems.Ramp;
 import frc.robot.subsystems.Swerve;
@@ -26,6 +27,7 @@ public class Subsystems {
     public static Ramp ramp;
     public static Pivot pivot;
     public static Intake intake;
+    public static PartIndicator partIndicator;
     
     // not real subsystems
     public static PoseManager poseManager;
@@ -41,6 +43,7 @@ public class Subsystems {
         pivot = new Pivot();
         intake = new Intake();
         poseManager = new PoseManager();
+        partIndicator = new PartIndicator();
 
 
         lifecycleSubsystems.add(visionSubsystem);

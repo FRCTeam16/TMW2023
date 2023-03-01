@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Subsystems;
+import frc.robot.subsystems.PartIndicator.PartType;
 import frc.robot.subsystems.util.PIDHelper;
 
 public class Intake extends SubsystemBase implements Lifecycle {
@@ -191,6 +193,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
             // Always run intake in open loop
             left.set(ControlMode.PercentOutput, slowIntakeSpeed);
         } else{
+            Subsystems.partIndicator.requestPart(PartType.None);    // call out signal
             left.set(ControlMode.PercentOutput, intakeSpeed);
         }
 

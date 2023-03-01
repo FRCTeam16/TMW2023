@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
 
 // no stow to high
 // no high to stow

@@ -14,8 +14,6 @@ import frc.robot.auto.AutoManager;
 import frc.robot.autos.aprilAuto;
 import frc.robot.commands.Balance;
 import frc.robot.commands.ConfigureSoftLimits;
-import frc.robot.commands.RequestPart;
-import frc.robot.commands.RequestPart.PartType;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
@@ -50,12 +48,16 @@ public class RobotContainer {
     private final JoystickButton eject     = new JoystickButton(left,   1);
     private final JoystickButton travelIntake = new JoystickButton(left, 2);
       
-    private final Trigger wristOpenLoopUp   = new JoystickButton(right, 4);
-    private final Trigger wristOpenLoopDown = new JoystickButton(right, 3);
+    private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
+    private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
     private final Trigger wristTempDown     = new JoystickButton(right, 2);
 
     private final JoystickButton openHandJoy = new JoystickButton(left, 4);
     private final JoystickButton closeHandJoy = new JoystickButton(left, 3);
+
+    // Part Request
+    private final JoystickButton requestCone = new JoystickButton(right, 3);
+    private final JoystickButton requestCube = new JoystickButton(right, 4);
 
     //
     // Pivot
@@ -169,6 +171,10 @@ public class RobotContainer {
         
         // padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
 
+        requestCone.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cone)));
+        requestCube.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cube)));
+        requestCone.and(requestCube).onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.None)));
+
         openHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
         closeHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
 
@@ -199,11 +205,6 @@ public class RobotContainer {
         SmartDashboard.putData("Enable Soft Limits", new ConfigureSoftLimits(true));
         SmartDashboard.putData("Disable Soft Limits", new ConfigureSoftLimits(false));
 
-        SmartDashboard.putNumber(RequestPart.KEY, RequestPart.PartType.None.value);
-        SmartDashboard.putData("Request No Part", new RequestPart(PartType.None).ignoringDisable(true));
-        SmartDashboard.putData("Request Cube",  new RequestPart(PartType.Cube).ignoringDisable(true));
-        SmartDashboard.putData("Request Cone", new RequestPart(PartType.Cone).ignoringDisable(true));
-
         SmartDashboard.putData("Test Rotation", new RotateToAngle(45));
         SmartDashboard.putData("Move To Zero", new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Zero))));
 
@@ -233,6 +234,7 @@ public class RobotContainer {
         SmartDashboard.putString("CurrentPose", Subsystems.poseManager.getCurrentPose().toString());
         SmartDashboard.putNumber("CurrentYaw", Subsystems.swerveSubsystem.getYaw().getDegrees());
         SmartDashboard.putNumber("Pitch", Subsystems.swerveSubsystem.gyro.getPitch());
+        autoManager.showSelectedAuto();
     }
 
 }

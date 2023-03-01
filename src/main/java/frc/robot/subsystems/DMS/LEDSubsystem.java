@@ -6,13 +6,13 @@ package frc.robot.subsystems.DMS;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems;
-import frc.robot.commands.RequestPart;
 import frc.robot.subsystems.Lifecycle;
+import frc.robot.subsystems.PartIndicator;
 
 public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     private boolean running = true;
@@ -79,7 +79,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
             robotState = 3;
         }
 
-        int requestedPart = (int) SmartDashboard.getNumber(RequestPart.KEY, 0);
+        int requestedPart = (int) SmartDashboard.getNumber(PartIndicator.KEY, 0);
 
         int allianceColor = 0;
         if (DriverStation.getAlliance() == Alliance.Red) {
