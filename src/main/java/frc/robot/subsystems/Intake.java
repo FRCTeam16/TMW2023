@@ -44,6 +44,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private DigitalInput ProxSence = new DigitalInput(0); // Digital input might be 9 but we'll go w/ 0 for now
 
+    boolean hasPart = false;
+
     public enum WristPosition {
         Vertical(0),
         SingleSubstation(-89_500),
@@ -115,6 +117,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     @Override
     public void teleopInit() {
         setpoint = wrist.getSelectedSensorPosition();
+        hasPart = false;
     }
 
     @Override
@@ -191,10 +194,16 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
         if(isProxTripped()){
             // Always run intake in open loop
+            hasPart = true;
             left.set(ControlMode.PercentOutput, slowIntakeSpeed);
         } else{
-            Subsystems.partIndicator.requestPart(PartType.None);    // call out signal
             left.set(ControlMode.PercentOutput, intakeSpeed);
+
+            // We had a part, signal we no longer have it
+            if (hasPart == true) {
+                hasPart = false;
+                Subsystems.partIndicator.requestPart(PartType.None);
+            }
         }
 
         // Wrist can run in open loop or closed loop control

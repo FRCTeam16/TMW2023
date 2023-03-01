@@ -171,9 +171,9 @@ public class RobotContainer {
         
         // padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
 
-        requestCone.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cone)));
-        requestCube.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cube)));
-        requestCone.and(requestCube).onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.None)));
+        requestCone.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cone)).ignoringDisable(true));
+        requestCube.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cube)).ignoringDisable(true));
+        requestCone.and(requestCube).onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.None)).ignoringDisable(true));
 
         openHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
         closeHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
@@ -229,6 +229,7 @@ public class RobotContainer {
     public void autoInit() {
         Subsystems.lifecycleSubsystems.stream().filter(s -> s != null).forEach((s) -> s.autoInit());
     }
+
 
     public void periodic() {
         SmartDashboard.putString("CurrentPose", Subsystems.poseManager.getCurrentPose().toString());
