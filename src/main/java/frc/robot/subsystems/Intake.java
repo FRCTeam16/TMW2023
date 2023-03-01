@@ -50,10 +50,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
         Vertical(0),
         SingleSubstation(-89_500),
         DoubleSubstation(-127_540),
-        ScoreCone(1000), // 50000
-        ScoreCube(1000), // 100000
-        GroundPickup(30_850), // was -45207
-        Stow(-72_488),
+        ScoreCone(1000),
+        ScoreCube(1000),
+        GroundPickup(30_850),
+        Stow(-63_467),
         ScoreCubeHigh(-150_383),
         ScoreCubeMid(-150_242),
         WristScore(-75_843);

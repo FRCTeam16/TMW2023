@@ -28,12 +28,12 @@ public class Elevator extends SubsystemBase implements Lifecycle {
 
     public enum ElevatorPosition {
         Down(1_000),
-        GroundPickup(28_600), // 31545?
+        GroundPickup(28_600),
         SingleSubstationCone(1000),
         SingleSubstationCube(1000),
-        DoubleSubstation(22_800),
-        ScoreConeMid(32_200), // 32_541
-        ScoreConeHigh(53_000), // 56_500
+        DoubleSubstation(23_314),
+        ScoreConeMid(32_200),
+        ScoreConeHigh(53_000),
         Stow(1000),
         Zero(0); //TUNE THIS
 
@@ -64,7 +64,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
 
-        pidHelper.initialize(0.035, 0, 0, 0, 10_000, 15_000);
+        pidHelper.initialize(0.037, 0, 0, 0, 10_000, 15_000);
         pidHelper.updateTalonFX(left, 0);
 
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);
