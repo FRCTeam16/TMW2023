@@ -16,6 +16,7 @@ import frc.robot.commands.Balance;
 import frc.robot.commands.ConfigureSoftLimits;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.XWHeelLock;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.pose.PoseElevator;
@@ -82,7 +83,8 @@ public class RobotContainer {
     private final JoystickButton scoreConeMidPose = new JoystickButton(gamepad, XboxController.Button.kX.value);
     private final JoystickButton groundPickupPose = new JoystickButton(gamepad, XboxController.Button.kB.value);
     private final JoystickButton stowPose = new JoystickButton(gamepad, XboxController.Button.kA.value);
-
+    
+    private final JoystickButton xLock = new JoystickButton(right, 10);
 
     //
     // General Commands
@@ -158,7 +160,7 @@ public class RobotContainer {
         groundPickupPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.GroundPickup))));
         stowPose.onTrue(new InstantCommand(()             -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));
         
-        
+        xLock.whileTrue(new XWHeelLock());
         
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));

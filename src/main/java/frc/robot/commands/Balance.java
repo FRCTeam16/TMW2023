@@ -18,7 +18,7 @@ public class Balance extends CommandBase implements Lifecycle {
     private final static double BALANCE_TRANSLATION_SPEED = Constants.Swerve.maxSpeed / 8;
 
 
-    private PIDController pidController = new PIDController(0.1, 0, 0.01);
+    private PIDController pidController = new PIDController(0.082, 0, 0.01);
     private PIDHelper pidHelper = new PIDHelper("BalancePID");
 
 

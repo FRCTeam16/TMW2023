@@ -14,6 +14,7 @@ public class ZeroAndSetOffsetCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("ZeroANdSetOffsetCommand(" + offsetAngleDegrees + ") called");
     Subsystems.swerveSubsystem.gyro.zeroGyroscope();
     Subsystems.swerveSubsystem.gyro.setGyroOffset(offsetAngleDegrees);
   }
