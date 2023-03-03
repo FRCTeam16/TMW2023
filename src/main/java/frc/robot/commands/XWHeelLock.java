@@ -14,17 +14,6 @@ public class XWHeelLock extends CommandBase {
 
     @Override
     public void execute() {
-        SwerveModuleState[] state = new SwerveModuleState[4];
-       
-        // state[0] = new SwerveModuleState();
-        // state[0].angle = Rotation2d.fromDegrees(45);
-        // state[1] = new SwerveModuleState();
-        // state[1].angle = Rotation2d.fromDegrees(-45);
-        // state[2] = new SwerveModuleState();
-        // state[2].angle = Rotation2d.fromDegrees(-45);
-        // state[3] = new SwerveModuleState();
-        // state[3].angle = Rotation2d.fromDegrees(45);
-
         SwerveModule[] mods = Subsystems.swerveSubsystem.mSwerveMods;
         mods[0].setWheelAngleManually(45);
         mods[1].setWheelAngleManually(-45);
