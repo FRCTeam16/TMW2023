@@ -28,8 +28,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
-    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.05;
-    private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.05;
+    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.10;
+    private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.10;
     private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.15;
 
     private boolean openLoop = true;
@@ -192,7 +192,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     @Override
     public void periodic() {
 
-        if(isProxTripped()){
+        if(isProxTripped() && Math.abs(intakeSpeed) < 0.01){
             // Always run intake in open loop
             hasPart = true;
             left.set(ControlMode.PercentOutput, slowIntakeSpeed);
