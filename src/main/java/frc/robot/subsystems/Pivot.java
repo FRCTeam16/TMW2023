@@ -29,7 +29,7 @@ public class Pivot extends SubsystemBase implements Lifecycle {
     public enum PivotPosition {
         Vertical(0),
         Horizontal(200_000),
-        ScoringAngle(175000),
+        ScoringAngle(183_270),
         GroundPickup(365_400),
         SingleSubstation(29100 ),
         DoubleSubstation(80700),

@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         SingleSubstationCone(1750),
         SingleSubstationCube(1750),
         DoubleSubstation(23_314),
-        ScoreConeMid(36_750),
+        ScoreConeMid(33_700),
         ScoreConeHigh(54_500),
         Stow(1000),
         Zero(0); //TUNE THIS
