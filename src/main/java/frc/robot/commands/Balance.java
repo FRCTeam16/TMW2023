@@ -28,7 +28,7 @@ public class Balance extends CommandBase implements Lifecycle {
         pidController.setSetpoint(0);
         pidController.setTolerance(0.5);
 
-        pidHelper.initialize(0.1, 0, 0.01, 0, 0, 0);
+        pidHelper.initialize(0.08, 0, 0.01, 0, 0, 0);   // kP = 0.1 for shelter
     }
 
     public Balance(double pitchThreshold) {

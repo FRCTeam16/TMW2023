@@ -25,8 +25,17 @@ public class ScoreAndBalance extends SequentialCommandGroup {
     private double ONEEIGHTY_RADS = Math.toRadians(180);
 
     public ScoreAndBalance() {
+        this(false);
+    }
+
+    public ScoreAndBalance(boolean invertSide) {
 
         int DIR = (DriverStation.getAlliance() == Alliance.Red) ? 1 : -1;
+
+        if (invertSide) {
+            System.out.println("Inverting Score And Balance direction");
+            DIR *= -1;
+        }
        
         addCommands(
             new InitializeAutoState(180),

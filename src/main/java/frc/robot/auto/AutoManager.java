@@ -18,7 +18,7 @@ public class AutoManager {
 
     public enum AutoStrategies {
         DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, 
-        ScoreAndBalance, ScoredStraight, FlatOutRun
+        ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -27,9 +27,10 @@ public class AutoManager {
     public AutoManager() {
         registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
         // registerStrategy("exampleAuto", AutoStrategies.ExampleAuto, new exampleAuto(Subsystems.swerveSubsystem));
-        registerStrategy("pdist test", AutoStrategies.PDistTest, PDistTest::new);
-        registerStrategy("TestTrajectoryFactory", AutoStrategies.TestTrajectoryFactory, TestTrajectoryFactory::new, true);
-        registerStrategy("Score And Balance", AutoStrategies.ScoreAndBalance, ScoreAndBalance::new);
+        // registerStrategy("pdist test", AutoStrategies.PDistTest, PDistTest::new);
+        // registerStrategy("TestTrajectoryFactory", AutoStrategies.TestTrajectoryFactory, TestTrajectoryFactory::new, true);
+        registerStrategy("Score And Balance", AutoStrategies.ScoreAndBalance, ScoreAndBalance::new, true);
+        registerStrategy("Score And Balance Other Side", AutoStrategies.ScoreAndBalanceOtherSide, () -> new ScoreAndBalance(true));
         registerStrategy("Scored Straight", AutoStrategies.ScoredStraight, ScoredStraight::new);
         registerStrategy("FlatOutRun", AutoStrategies.FlatOutRun, FlatOutRun::new);
 
