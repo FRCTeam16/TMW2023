@@ -29,8 +29,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     public enum ElevatorPosition {
         Down(1_000),
         GroundPickup(28_600),
-        SingleSubstationCone(1750),
-        SingleSubstationCube(1750),
+        SingleSubstationCone(2250),
+        SingleSubstationCube(2250),
         DoubleSubstation(23_314),
         ScoreConeMid(33_700),
         ScoreConeHigh(54_500),
