@@ -13,12 +13,13 @@ import frc.robot.auto.strategies.ScoreAndBalance;
 import frc.robot.auto.strategies.ScoredStraight;
 import frc.robot.auto.strategies.TestTrajectoryFactory;
 import frc.robot.autos.PDistTest;
+import frc.robot.auto.strategies.DoubleScore;
 
 public class AutoManager {
 
     public enum AutoStrategies {
         DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, 
-        ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun
+        ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun, DoubleScore
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -33,6 +34,7 @@ public class AutoManager {
         registerStrategy("Score And Balance Other Side", AutoStrategies.ScoreAndBalanceOtherSide, () -> new ScoreAndBalance(true));
         registerStrategy("Scored Straight", AutoStrategies.ScoredStraight, ScoredStraight::new);
         registerStrategy("FlatOutRun", AutoStrategies.FlatOutRun, FlatOutRun::new);
+        registerStrategy("DoubleScore", AutoStrategies.DoubleScore, DoubleScore::new);
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.
         SmartDashboard.putData("Auto Selector", chooser);
@@ -68,7 +70,7 @@ public class AutoManager {
     }
 
     public void showSelectedAuto() {
-        var selected = chooser.getSelected();
+        var selected = chooser.getSelected();   
         SmartDashboard.putString("Selected Auto", (selected != null) ? selected.name() : "Unknown" );
     }
 
