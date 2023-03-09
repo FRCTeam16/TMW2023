@@ -1,9 +1,11 @@
 package frc.robot.commands.pose;
 
+import java.sql.Driver;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -39,6 +41,8 @@ public class PoseManager {
         // TODO: make dynamic registry for illegal moves
         System.out.println("PoseManager getPose: " + currentPose + " => " + requestedPose);
         boolean illegal = false;
+
+
         if (currentPose == Pose.Stow && (requestedPose == Pose.ScoreHighCone || requestedPose == Pose.GroundPickup)) {
             illegal = true;
         } else if (currentPose == Pose.ScoreHighCone && (requestedPose == Pose.Stow || requestedPose == Pose.Zero)) {
@@ -47,9 +51,16 @@ public class PoseManager {
         else if (currentPose == Pose.GroundPickup && (requestedPose == Pose.Stow || requestedPose == Pose.Zero || requestedPose == Pose.SingleSubstation || requestedPose == Pose.DoubleSubstation)) {
             illegal = true;
         }
-        if (illegal) {
-            return Commands.print("!!! [PoseManager] ILLEGAL MOVE REQUESTED: " + currentPose + " -> " + requestedPose);
+
+        if (DriverStation.isTeleop()) {
+            if (illegal) {
+                return Commands.print("!!! [PoseManager] ILLEGAL MOVE REQUESTED: " + currentPose + " -> " + requestedPose);
+            }
+        } else if (DriverStation.isAutonomous()) {
+            System.out.println("Autonomous Override of Illegal Move: " + currentPose + " -> " + requestedPose);
         }
+
+        // Look up pose
         if (commandRegistry.containsKey(requestedPose)) {
             currentPose = requestedPose;
             return commandRegistry.get(requestedPose).get();

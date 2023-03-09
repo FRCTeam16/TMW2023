@@ -16,9 +16,13 @@ public class XWHeelLock extends CommandBase {
     public void execute() {
         SwerveModule[] mods = Subsystems.swerveSubsystem.mSwerveMods;
         mods[0].setWheelAngleManually(45);
+        mods[0].setDriveMotorManually(0);
         mods[1].setWheelAngleManually(-45);
+        mods[1].setDriveMotorManually(0);
         mods[2].setWheelAngleManually(-45);
+        mods[2].setDriveMotorManually(0);
         mods[3].setWheelAngleManually(45);
+        mods[3].setDriveMotorManually(0);
     }
 
 }

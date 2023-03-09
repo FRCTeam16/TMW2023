@@ -11,12 +11,12 @@ import frc.robot.subsystems.Pivot.PivotPosition;
 class MoveToScoreConeMidPose extends SequentialCommandGroup {
     public MoveToScoreConeMidPose() {
         addCommands(
-            Commands.race(
-                new PosePivot(PivotPosition.ScoringAngle),
-                new WaitCommand(0.5)
-            ),
             Commands.parallel(
-                new PoseElevator(ElevatorPosition.ScoreConeMid),
+                new PosePivot(PivotPosition.ScoringAngle),
+                new PoseElevator(ElevatorPosition.ScoreConeMid)
+            ),
+            new WaitCommand(0.20),
+            Commands.parallel(
                 Subsystems.intake.isHandOpen() ? 
                     new PoseWrist(WristPosition.ScoreCubeMid) :
                     new PoseWrist(WristPosition.ScoreCone)

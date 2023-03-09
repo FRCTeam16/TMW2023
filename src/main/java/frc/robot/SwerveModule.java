@@ -73,6 +73,10 @@ public class SwerveModule {
         mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(targetAngle, Constants.Swerve.angleGearRatio));
     }
 
+    public void setDriveMotorManually(double targetSpeed) {
+        mDriveMotor.set(ControlMode.PercentOutput, targetSpeed);
+    }
+
     private Rotation2d getAngle(){
         return Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), Constants.Swerve.angleGearRatio));
     }

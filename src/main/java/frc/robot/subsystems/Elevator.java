@@ -83,6 +83,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     public void teleopInit() {
         setpoint = left.getSelectedSensorPosition();
         this.setSoftLimitsEnabled(true);
+        this.speed = 0.0;
+        this.openLoop = true;
     }
 
     public void zeroElevatorEncoder() {
