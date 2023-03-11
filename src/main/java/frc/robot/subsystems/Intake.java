@@ -168,6 +168,15 @@ public class Intake extends SubsystemBase implements Lifecycle {
         intakeSpeed = SmartDashboard.getNumber("Intake/TravelIntakeSpeed", DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED);
     }
 
+    public void setAtSubstation(boolean atSubstation) {
+        if(atSubstation) {
+            intake();
+        }
+        else {
+            stopIntake();
+        }
+    }
+
     public void stopIntake() {
         intakeSpeed = 0.0;
     }

@@ -14,6 +14,13 @@ public class PoseWrist extends CommandBase {
     @Override
     public void execute() {
         Subsystems.intake.setWristPosition(position);
+        
+        if(position == WristPosition.DoubleSubstation || position == WristPosition.SingleSubstation) {
+            Subsystems.intake.setAtSubstation(true);
+        }
+        else {
+            Subsystems.intake.setAtSubstation(false);
+        }
     }
 
     @Override
