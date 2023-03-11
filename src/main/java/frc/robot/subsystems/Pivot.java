@@ -28,12 +28,12 @@ public class Pivot extends SubsystemBase implements Lifecycle {
 
     public enum PivotPosition {
         Vertical(0),
-        Horizontal(200_000),
-        ScoringAngle(183_270),
-        GroundPickup(365_400),
-        SingleSubstation(29100 ),
-        DoubleSubstation(80700),
-        Stow(187_902);
+        Horizontal(160_000),
+        ScoringAngle(140_600),
+        GroundPickup(292_300),
+        SingleSubstation(23_300),
+        DoubleSubstation(64_550),
+        Stow(150_300);
 
         public final double setpoint;
 
