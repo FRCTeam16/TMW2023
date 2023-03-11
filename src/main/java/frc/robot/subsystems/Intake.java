@@ -65,6 +65,17 @@ public class Intake extends SubsystemBase implements Lifecycle {
         }
     }
 
+    public enum HandState {
+        Open(1),
+        Closed(0);
+
+        public final int setState;
+
+        private HandState(int setState) {
+            this.setState = setState;
+        }
+    }
+
     public Intake() {
         left.configFactoryDefault();
         right.configFactoryDefault();
