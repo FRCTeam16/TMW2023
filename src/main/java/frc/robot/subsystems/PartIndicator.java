@@ -32,7 +32,7 @@ public class PartIndicator extends SubsystemBase {
     private DigitalOutput requestPin1 = new DigitalOutput(1);
     private DigitalOutput requestPin2 = new DigitalOutput(2);
 
-    private PartType requestedPartType = PartType.None;
+    public PartType requestedPartType = PartType.None;
     
     public PartIndicator() {
     }

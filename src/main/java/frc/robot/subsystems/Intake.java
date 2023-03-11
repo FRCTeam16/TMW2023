@@ -212,9 +212,17 @@ public class Intake extends SubsystemBase implements Lifecycle {
     @Override
     public void periodic() {
 
-        if(isProxTripped() && Math.abs(intakeSpeed) < 0.01){
-            // Always run intake in open loop
+        //Close hand if part detected
+        if(isProxTripped() && Subsystems.partIndicator.requestedPartType == PartType.Cone && !hasPart) {
+            CloseHand();
+            intakeSpeed = 0;
             hasPart = true;
+            }
+
+
+        //Intake Speed Control
+        // Always run intake in open loop
+        if(isProxTripped() && Math.abs(intakeSpeed) < 0.01){
             left.set(ControlMode.PercentOutput, slowIntakeSpeed);
         } else{
             left.set(ControlMode.PercentOutput, intakeSpeed);
