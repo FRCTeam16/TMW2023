@@ -16,17 +16,15 @@ class MoveToStowPose extends SequentialCommandGroup {
         if(Subsystems.pivot.getPivotEncoderPosition() > 100000) {
             addCommands(
             new PosePivot(PivotPosition.SingleSubstation),
-            new WaitCommand(.25),
-            new PoseElevator(ElevatorPosition.Stow),
             new WaitCommand(.25)
             );
         }
 
         addCommands(
-            Commands.parallel(
-                new PosePivot(PivotPosition.Stow),
-                new PoseWrist(WristPosition.Stow)
-            )
+            new PoseElevator(ElevatorPosition.Stow),
+            new WaitCommand(.25),
+            new PosePivot(PivotPosition.Stow),
+            new PoseWrist(WristPosition.Stow)
         );
     }
     
