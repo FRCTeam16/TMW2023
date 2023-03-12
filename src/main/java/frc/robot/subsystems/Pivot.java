@@ -139,6 +139,10 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         return degrees - 90.0;
     }
 
+    public double getPivotEncoderPosition() {
+        return left.getSelectedSensorPosition();
+    }
+
     @Override
     public void periodic() {
         if (openLoop) {

@@ -11,6 +11,8 @@ import frc.robot.subsystems.Pivot.PivotPosition;
 class MoveToScoreConeHighPose extends SequentialCommandGroup {
     public MoveToScoreConeHighPose() {
         addCommands(
+            new PosePivot(PivotPosition.SingleSubstation),
+            new WaitCommand(.25),
             Commands.parallel(
                 new PosePivot(PivotPosition.ScoringAngle),
                 new PoseElevator(ElevatorPosition.ScoreConeHigh)

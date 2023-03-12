@@ -9,9 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
-// no stow to high
-// no high to stow
-
 public class PoseManager {
     public enum Pose {
         StartingConfig,
@@ -43,9 +40,7 @@ public class PoseManager {
         boolean illegal = false;
 
 
-        if (currentPose == Pose.Stow && (requestedPose == Pose.ScoreHighCone || requestedPose == Pose.GroundPickup)) {
-            illegal = true;
-        } else if (currentPose == Pose.ScoreHighCone && (requestedPose == Pose.Stow || requestedPose == Pose.Zero)) {
+        if (currentPose == Pose.Stow && (requestedPose == Pose.GroundPickup)) {
             illegal = true;
         }
         else if (currentPose == Pose.GroundPickup && (requestedPose == Pose.Stow || requestedPose == Pose.Zero || requestedPose == Pose.SingleSubstation || requestedPose == Pose.DoubleSubstation)) {

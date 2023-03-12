@@ -8,13 +8,13 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;;
 
 public class TestPoseManager {
 
-    @Test
-    public void testIllegalMoveStowHigh() {
-        PoseManager poseManager = new PoseManager();
-        poseManager.getPose(Pose.Stow);
-        Command result  = poseManager.getPose(Pose.ScoreHighCone);
-        assert(result instanceof PrintCommand);
-    }
+    // @Test
+    // public void testIllegalMoveStowHigh() {
+    //     PoseManager poseManager = new PoseManager();
+    //     poseManager.getPose(Pose.Stow);
+    //     Command result  = poseManager.getPose(Pose.ScoreHighCone);
+    //     assert(result instanceof PrintCommand);
+    // }
 
     // @Test
     // public void testIllegalMoveHighStow() {
