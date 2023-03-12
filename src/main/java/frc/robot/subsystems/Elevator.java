@@ -35,7 +35,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         ScoreConeMid(33_700),
         ScoreConeHigh(54_500),
         Stow(1000),
-        Zero(0); //TUNE THIS
+        Zero(0), //TUNE THIS
+        Intermediate(2300);
 
         public final double setpoint;
 

@@ -33,7 +33,8 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         GroundPickup(292_300),
         SingleSubstation(23_300),
         DoubleSubstation(64_550),
-        Stow(150_300);
+        Stow(150_300),
+        Intermediate(90_300);
 
         public final double setpoint;
 

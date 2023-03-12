@@ -15,7 +15,8 @@ class MoveToStowPose extends SequentialCommandGroup {
 
         if(Subsystems.pivot.getPivotEncoderPosition() > 100000) {
             addCommands(
-            new PosePivot(PivotPosition.SingleSubstation),
+            new PosePivot(PivotPosition.Intermediate),
+            new PoseElevator(ElevatorPosition.Intermediate),
             new WaitCommand(.25)
             );
         }
