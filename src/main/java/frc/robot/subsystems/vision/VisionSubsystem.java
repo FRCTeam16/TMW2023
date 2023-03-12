@@ -1,12 +1,14 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.vision.Limelight.CameraMode;
 import frc.robot.subsystems.vision.Limelight.LEDMode;
 import frc.robot.subsystems.vision.Limelight.SceneInfo;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  * Vision subsystem.  
@@ -67,6 +69,10 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
     visionInfo.distanceToTarget = distance_inches;
     
     SmartDashboard.putNumber("Vision/DistToTargetInches", visionInfo.distanceToTarget);
+
+    if(CheckValidPosition(CAMERA_HEIGHT_IN, TARGET_HEIGHT_IN, CAMERA_ANGLE_DEGREES, visionInfo.yOffset)){
+      
+    }
   }
 
   /**
@@ -90,5 +96,22 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
    */
   public static class VisionInfo extends SceneInfo {
     public double distanceToTarget = -1;
+  }
+
+  public boolean CheckCentered(){
+    double X = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+    if(X > -0.1 && X < 0.71 ){
+      return true;
+    }
+    return false;
+  }
+
+  public boolean CheckValidPosition(double heightToCamera, double heightToTarget, double cameraAngle, double yOffset) {
+    if(CheckCentered()){
+      if(CalculateDistance(heightToCamera, heightToTarget, cameraAngle, yOffset) < 4){
+        return true;
+      }
+    }
+    return false;
   }
 }
