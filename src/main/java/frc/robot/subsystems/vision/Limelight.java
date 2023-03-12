@@ -25,11 +25,13 @@ public class Limelight {
      */
     public SceneInfo getScene() {
         SceneInfo si = new SceneInfo();
+        si.activePipeline = dataTable.getEntry("getpipe").getDouble(0.0);
         si.hasTarget = (dataTable.getEntry("tv").getNumber(0.0).doubleValue() > 0.5);
         si.xOffset = dataTable.getEntry("tx").getDouble(0.0);
         si.yOffset = dataTable.getEntry("ty").getDouble(0.0);
         si.targetArea = dataTable.getEntry("ta").getDouble(0.0);
 
+        SmartDashboard.putNumber("SceneInfo.activePipeline", si.activePipeline);
         SmartDashboard.putBoolean("SceneInfo.hasTarget", si.hasTarget);
         SmartDashboard.putNumber("SceneInfo.xOffset", si.xOffset);
 
@@ -37,6 +39,19 @@ public class Limelight {
         si.skew = dataTable.getEntry("ts").getDouble(0.0);
         si.latency = dataTable.getEntry("tl").getDouble(0.0) + 11;
         return si;
+    }
+
+    /**
+     * Returns april tag information from the Limelight
+     * @return AprilInfo structure containing data
+     */
+    public AprilInfo getAprilInfo() {
+        AprilInfo ai = new AprilInfo();
+        ai.targetId = dataTable.getEntry("tid").getDouble(-1);
+
+        SmartDashboard.putNumber("AprilInfo.id", ai.targetId);
+
+        return ai;
     }
 
     public int getCurrentPipelin() {
@@ -47,6 +62,7 @@ public class Limelight {
         if (pipeline < 0 || pipeline > 9) {
             throw new IllegalArgumentException("Valid pipeline numbers are from 0-9, you passed in" + pipeline);
         }
+        System.out.println("[Limelight] setting pipeline to: " + pipeline);
         dataTable.getEntry("pipeline").setNumber(pipeline);
     }
 
@@ -115,6 +131,8 @@ public class Limelight {
      * Information about the scene 
      */
     public static class SceneInfo {
+        /* active pipeline number */
+        public double activePipeline = 0.0;
         /* Whether the limelight has any valid targets */
         public boolean hasTarget = false;
         /* Horizontal Offset From Crosshair To Target (-27 degrees to 27 degrees) */
@@ -126,5 +144,15 @@ public class Limelight {
 
         public double skew = 0.0;
         public double latency = 0.0;
+
+        /* AprilTag ID */
+        public double targetId = -1.0;
+    }
+
+    /**
+     * Information about AprilTag (and future 3D data if needed)
+     */
+    public static class AprilInfo {
+        public double targetId = -1;
     }
 }

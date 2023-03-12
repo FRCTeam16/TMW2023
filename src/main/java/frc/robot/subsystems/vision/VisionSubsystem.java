@@ -1,14 +1,16 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.vision.Limelight.CameraMode;
 import frc.robot.subsystems.vision.Limelight.LEDMode;
 import frc.robot.subsystems.vision.Limelight.SceneInfo;
-import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  * Vision subsystem.  
@@ -54,6 +56,7 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
   @Override
   public void periodic() {
     var sceneInfo = limelight.getScene();
+    var aprilInfo = limelight.getAprilInfo();
     
     // Update out information
     visionInfo = new VisionInfo();
@@ -61,6 +64,8 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
     visionInfo.xOffset = sceneInfo.xOffset;
     visionInfo.yOffset = sceneInfo.yOffset;
     visionInfo.targetArea = sceneInfo.targetArea;
+
+    visionInfo.targetId = aprilInfo.targetId;
  
     double distance_inches = -1.0;
     if (visionInfo.hasTarget) {
@@ -113,5 +118,21 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
       }
     }
     return false;
+  }
+
+  public enum Pipeline {
+    April(0),
+    Retro(1);
+
+    public final int pipelineNumber;
+
+    private Pipeline(int number) {
+        this.pipelineNumber = number;
+    }
+  }
+
+  public CommandBase selectPipeline(Pipeline pipeline) {
+    return Commands.runOnce(() -> limelight.setCurrentPipeline(pipeline.pipelineNumber))
+      .ignoringDisable(true);
   }
 }

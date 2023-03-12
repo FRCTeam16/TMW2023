@@ -26,6 +26,8 @@ import frc.robot.commands.pose.PoseWrist;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
 import frc.robot.subsystems.Intake.WristPosition;
 import frc.robot.subsystems.Pivot.PivotPosition;
+import frc.robot.subsystems.vision.VisionSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem.Pipeline;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -180,6 +182,7 @@ public class RobotContainer {
         openHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
         closeHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
 
+        // Vision Subsytems
         enableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.enable()).ignoringDisable(true));
         disableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.disable()).ignoringDisable(true));
 
@@ -212,6 +215,11 @@ public class RobotContainer {
 
 
         SmartDashboard.putData("Zero With 180 Offset", new ZeroAndSetOffsetCommand(180));
+
+        SmartDashboard.putData("Vision.Enable Limelight", new RunWithDisabledInstantCommand(Subsystems.visionSubsystem::enable));
+        SmartDashboard.putData("Vision.Disable Limelight", new RunWithDisabledInstantCommand(Subsystems.visionSubsystem::disable));
+        SmartDashboard.putData("Vision.Select April Pipe", Subsystems.visionSubsystem.selectPipeline(Pipeline.April));
+        SmartDashboard.putData("Vision.Select Retro Pipe", Subsystems.visionSubsystem.selectPipeline(Pipeline.Retro));
 
     }
 
