@@ -37,7 +37,7 @@ public class Subsystems {
     private Subsystems() {
         swerveSubsystem = new Swerve();
         visionSubsystem = new VisionSubsystem();
-        // ledSubsystem = new LEDSubsystem();
+        ledSubsystem = new LEDSubsystem();
         elevator = new Elevator();
         ramp = new Ramp();
         pivot = new Pivot();

@@ -6,6 +6,10 @@ package frc.robot.subsystems.DMS;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.SerialPort.FlowControl;
+import edu.wpi.first.wpilibj.SerialPort.Parity;
+import edu.wpi.first.wpilibj.SerialPort.StopBits;
+import edu.wpi.first.wpilibj.SerialPort.WriteBufferMode;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,17 +38,20 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
     private int secondsToClimb = 30;
 
+    private static final int BUFFER_SIZE = 15;
 
     /** Creates a new LEDSubsystem. */
     public LEDSubsystem() {
         SmartDashboard.setDefaultNumber("LEDClimbTime", 30);
         try {
             if (running) {
-                serial = new SerialPort(57600, SerialPort.Port.kUSB2);
+                serial = new SerialPort(57600, SerialPort.Port.kUSB1, 8, Parity.kNone, StopBits.kOne);
+                serial.setWriteBufferSize(BUFFER_SIZE);
+                serial.setWriteBufferMode(WriteBufferMode.kFlushWhenFull);
             }
         } catch (Exception e) {
             System.err.println("Unable to create DMS/LED subsystem, problem with serial port: " + e.getMessage());
-            // TODO: probably set bool preventing running
+            running = false;
         }
     }
     
@@ -87,14 +94,33 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         } else if (DriverStation.getAlliance() == Alliance.Blue) {
             allianceColor = 2;
         }
-        byte[] buffer = new byte[6];
+
+        int partDetected = Subsystems.intake.isProxTripped() ? 1 : 0;
+
+        int robotPitch = (int) Subsystems.swerveSubsystem.gyro.getPitch();
+
+
+        byte[] buffer = new byte[BUFFER_SIZE];
 
         buffer[0] = (byte) 254;
-        buffer[1] = (byte) requestedPart;  // request part type
-        buffer[2] = (byte) (Subsystems.intake.isHandOpen() ? 1: 2); // part presence 
-        buffer[3] = (byte) robotState; // comm status
-        buffer[4] = (byte) allianceColor;
-        buffer[5] = (byte) 255;
+        // DMS info
+        buffer[1] = 0;
+        buffer[2] = 0;
+        buffer[3] = 0;
+        buffer[4] = 0;
+        buffer[5] = 0;
+        buffer[6] = 0;
+        buffer[7] = 0;
+        buffer[8] = 0;
+
+        buffer[9] = (byte) robotState; // comm status
+        buffer[10] = (byte) allianceColor;
+        buffer[11] = (byte) requestedPart;  // request part type
+        buffer[12] = (byte) partDetected;
+        buffer[13] = (byte) robotPitch;
+        buffer[14] = (byte) 255;
+
+        // System.out.println("[LED] Part Detected: " + (byte)partDetected);
 
         this.serial.write(buffer, buffer.length);
         this.serial.flush();
