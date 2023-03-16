@@ -28,8 +28,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
-    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.10;
-    private static final double DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED = 0.10;
+    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.08;
     private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.15;
 
     private boolean openLoop = true;
@@ -112,7 +111,6 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.setDefaultNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
         SmartDashboard.setDefaultNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
-        SmartDashboard.setDefaultNumber("Intake/TravelIntakeSpeed", DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED);
         SmartDashboard.setDefaultNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
 
         wrist.configForwardSoftLimitThreshold(40_000);
@@ -164,8 +162,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
         intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
     }
 
-    public void runTravelIntake() {
-        intakeSpeed = SmartDashboard.getNumber("Intake/TravelIntakeSpeed", DEFAULT_OPENLOOP_TRAVELINTAKE_SPEED);
+    public void runSlowIntake() {
+        intakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
     }
 
     public void setAtSubstation(boolean atSubstation) {

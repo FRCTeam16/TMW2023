@@ -17,22 +17,26 @@ import frc.robot.subsystems.vision.Limelight.SceneInfo;
 public class VisionSubsystem extends SubsystemBase implements Lifecycle {
   private final Limelight limelight;
   private VisionInfo visionInfo = new VisionInfo();
+  private ScorePositionDetector scorePosotionDetector = new ScorePositionDetector();
 
   private final double CAMERA_HEIGHT_IN;
   private final double TARGET_HEIGHT_IN;
-  private final double CAMERA_ANGLE_DEGREES = 28.0;
+  private final double CAMERA_ANGLE_DEGREES;
 
 
   /** Creates a new VisionSubsystem. */
   public VisionSubsystem() {
     limelight = new Limelight();
-    double defaultCameraHeight = 36.5;
-    double defaultTargetHeight = 104.0;
+    double defaultCameraHeight = 24.5;
+    double defaultTargetHeight = TargetInfo.LowPole.height;
+    double defaultCameraAngle = -1.0;
     
     SmartDashboard.setDefaultNumber("Vision/CameraHeightInches", defaultCameraHeight);
     SmartDashboard.setDefaultNumber("Vision/TargetHeightInches", defaultTargetHeight);
+    SmartDashboard.setDefaultNumber("Vision/CameraAngleDegrees", defaultCameraAngle);
     CAMERA_HEIGHT_IN = SmartDashboard.getNumber("Vision/CameraHeightInches", defaultCameraHeight);
     TARGET_HEIGHT_IN = SmartDashboard.getNumber("Vision/TargetHeightInches", defaultTargetHeight);
+    CAMERA_ANGLE_DEGREES = SmartDashboard.getNumber("Vision/CameraAngleDegrees", defaultCameraAngle);
   }
 
   public Limelight getLimelight() {
@@ -68,7 +72,15 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
     
     double distance_inches = -1.0;
     if (visionInfo.hasTarget) {
-      distance_inches = CalculateDistance(CAMERA_HEIGHT_IN, TARGET_HEIGHT_IN, CAMERA_ANGLE_DEGREES, visionInfo.yOffset);
+      double targetHeight = TargetInfo.LowPole.height;
+      Pipeline currentPipeline = Pipeline.findPipeline(limelight.getCurrentPipelin());
+      if (Pipeline.April == currentPipeline) {
+        targetHeight = TargetInfo.AprilTag.height;
+      }
+      SmartDashboard.putNumber("Vision/TargetHeightInches", targetHeight);
+
+      double cameraAngle = SmartDashboard.getNumber("Vision/CameraAngleDegrees", CAMERA_ANGLE_DEGREES);   // CAMERA_ANGLE_DEGREES
+      distance_inches = CalculateDistance(CAMERA_HEIGHT_IN, targetHeight, cameraAngle, visionInfo.yOffset);
     }
     visionInfo.distanceToTarget = distance_inches;
     
@@ -98,19 +110,12 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
     public double distanceToTarget = -1;
   }
 
-  public enum Pipeline {
-    April(0),
-    Retro(1);
-
-    public final int pipelineNumber;
-
-    private Pipeline(int number) {
-        this.pipelineNumber = number;
-    }
-  }
-
   public CommandBase selectPipeline(Pipeline pipeline) {
     return Commands.runOnce(() -> limelight.setCurrentPipeline(pipeline.pipelineNumber))
       .ignoringDisable(true);
+  }
+
+  public ScorePositionDetector getScorePositionDetector() {
+    return this.scorePosotionDetector;
   }
 }

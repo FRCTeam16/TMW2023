@@ -55,7 +55,7 @@ public class Limelight {
     }
 
     public int getCurrentPipelin() {
-        return (int) dataTable.getEntry("pipeline").getNumber(-1);
+        return Double.valueOf(dataTable.getEntry("pipeline").getDouble(-1.0)).intValue();
     }
 
     public void setCurrentPipeline(int pipeline) {

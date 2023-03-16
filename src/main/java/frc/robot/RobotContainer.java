@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -26,8 +27,9 @@ import frc.robot.commands.pose.PoseWrist;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
 import frc.robot.subsystems.Intake.WristPosition;
 import frc.robot.subsystems.Pivot.PivotPosition;
+import frc.robot.subsystems.vision.Pipeline;
+import frc.robot.subsystems.vision.TargetInfo;
 import frc.robot.subsystems.vision.VisionSubsystem;
-import frc.robot.subsystems.vision.VisionSubsystem.Pipeline;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -49,7 +51,7 @@ public class RobotContainer {
 
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
-    private final JoystickButton travelIntake = new JoystickButton(left, 2);
+    private final JoystickButton lockAngle = new JoystickButton(left, 2);
       
     private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
     private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
@@ -95,6 +97,8 @@ public class RobotContainer {
     private final JoystickButton robotCentric = new JoystickButton(left, 8);
     private final JoystickButton enableLimelight = new JoystickButton(left, 16);
     private final JoystickButton disableLimelight = new JoystickButton(left, 15);
+    private final JoystickButton detectScoreHighConePositionEnable = new JoystickButton(left, 14);
+    private final Trigger detectScorePositionTrigger = new Trigger(() -> Subsystems.visionSubsystem.getScorePositionDetector().inRequestedScoringPosition());
 
 
     /* Subsystems */
@@ -114,8 +118,9 @@ public class RobotContainer {
                 () -> -right.getY(),
                 () -> -right.getX(), 
                 () ->  -left.getX(),
-                () ->  robotCentric.getAsBoolean()
-            )
+                () ->  robotCentric.getAsBoolean(),
+                () -> lockAngle.getAsBoolean()
+            ).withLockAngle(180.0)
         );
 
         // Configure the button bindings
@@ -167,7 +172,6 @@ public class RobotContainer {
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         eject.onTrue(new InstantCommand(()     -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
-        travelIntake.onTrue(new InstantCommand(Subsystems.intake::runTravelIntake)).onFalse(new InstantCommand(Subsystems.intake::stopIntake));
 
         wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
@@ -182,9 +186,17 @@ public class RobotContainer {
         openHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.OpenHand()));
         closeHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
 
+        //
         // Vision Subsytems
+        //
         enableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.enable()).ignoringDisable(true));
         disableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.disable()).ignoringDisable(true));
+
+        // Vision-based automatic scoring
+        detectScoreHighConePositionEnable
+            .onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.getScorePositionDetector().setCurrentTarget(TargetInfo.HighPole)))
+            .onFalse(new InstantCommand(() -> Subsystems.visionSubsystem.getScorePositionDetector().setCurrentTarget(null)));
+        detectScoreHighConePositionEnable.and(detectScorePositionTrigger).onTrue(new InstantCommand(() -> new XWHeelLock()));
 
         new JoystickButton(right, 16).whileTrue(new Balance());
     }
@@ -219,7 +231,8 @@ public class RobotContainer {
         SmartDashboard.putData("Vision.Enable Limelight", new RunWithDisabledInstantCommand(Subsystems.visionSubsystem::enable));
         SmartDashboard.putData("Vision.Disable Limelight", new RunWithDisabledInstantCommand(Subsystems.visionSubsystem::disable));
         SmartDashboard.putData("Vision.Select April Pipe", Subsystems.visionSubsystem.selectPipeline(Pipeline.April));
-        SmartDashboard.putData("Vision.Select Retro Pipe", Subsystems.visionSubsystem.selectPipeline(Pipeline.Retro));
+        SmartDashboard.putData("Vision.Select Retro Pipe High", Subsystems.visionSubsystem.selectPipeline(Pipeline.RetroHigh));
+        SmartDashboard.putData("Vision.Select Retro Pipe Low", Subsystems.visionSubsystem.selectPipeline(Pipeline.RetroLow));
 
     }
 

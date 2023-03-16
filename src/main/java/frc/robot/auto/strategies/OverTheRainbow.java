@@ -74,19 +74,6 @@ public class OverTheRainbow extends SequentialCommandGroup {
                 return false;
             }
         }
-
-        public boolean shouldStop() {
-            double pitch = Subsystems.swerveSubsystem.gyro.getPitch();
-            if (!watchDropMode && pitch > 14) {
-                watchDropMode = true;
-                return false;
-            } else if (watchDropMode && pitch < 13.0) {
-                return true;
-            } else {
-                return false;
-            }
-        }
     }
-
     
 }

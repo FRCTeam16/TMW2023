@@ -5,9 +5,11 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
+import frc.robot.subsystems.RotationController;
 import frc.robot.subsystems.Swerve;
 
 
@@ -17,14 +19,18 @@ public class TeleopSwerve extends CommandBase {
     private DoubleSupplier strafeSup;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
+    private BooleanSupplier lockAngleSup;
 
     // Extended elevator constraints
     private static final double MAX_TRANSLATION_SPEED = 1.5;    // m/s
     private static final double DECEL_RATE = 0.07;
+    private static final double ROTATION_CLAMP_RAD_PER_SEC = 8;
 
     private Translation2d lastSpeed = new Translation2d(0,0);
+    private double lockAngle = 0.0;
 
-    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, BooleanSupplier robotCentricSup) {
+    public TeleopSwerve(Swerve s_Swerve, DoubleSupplier translationSup, DoubleSupplier strafeSup, DoubleSupplier rotationSup, 
+            BooleanSupplier robotCentricSup, BooleanSupplier lockAngleSup) {
         this.s_Swerve = s_Swerve;
         addRequirements(s_Swerve);
 
@@ -32,6 +38,14 @@ public class TeleopSwerve extends CommandBase {
         this.strafeSup = strafeSup;
         this.rotationSup = rotationSup;
         this.robotCentricSup = robotCentricSup;
+        this.lockAngleSup = lockAngleSup;
+
+        SmartDashboard.putNumber("RotationClamp", ROTATION_CLAMP_RAD_PER_SEC);
+    }
+
+    public TeleopSwerve withLockAngle(double lockAngle) {
+        this.lockAngle = lockAngle;
+        return this;
     }
 
     @Override
@@ -44,6 +58,7 @@ public class TeleopSwerve extends CommandBase {
         // Define maximum speeds
         double maxSpeed = Subsystems.elevator.isElevatorExtended() ? MAX_TRANSLATION_SPEED : Constants.Swerve.maxSpeed;
         final double maxRotation = Subsystems.elevator.isElevatorExtended() ? 4 : Constants.Swerve.maxAngularVelocity;
+        rotationVal *= maxRotation;
 
         // Target swerve velocity state
         final Translation2d swerveSpeed;
@@ -59,12 +74,22 @@ public class TeleopSwerve extends CommandBase {
             swerveSpeed = targetSpeed;
         }
 
+
+        // Determine if we need to lock to angle
+        if (lockAngleSup.getAsBoolean()) {
+            rotationVal = Math.toRadians(
+                Subsystems.swerveSubsystem.getRotationController().calculate(
+                    Subsystems.swerveSubsystem.getYaw().getDegrees(), lockAngle));
+            double clamp = SmartDashboard.getNumber("RotationClamp", ROTATION_CLAMP_RAD_PER_SEC);
+            rotationVal = MathUtil.clamp(rotationVal, -clamp, clamp);
+        }
+
         lastSpeed = swerveSpeed;
 
         /* Drive */
         s_Swerve.drive(
             swerveSpeed, 
-            rotationVal * maxRotation, 
+            rotationVal, 
             !robotCentricSup.getAsBoolean(), 
             true
         );
