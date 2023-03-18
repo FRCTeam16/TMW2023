@@ -10,20 +10,37 @@ import frc.robot.subsystems.Pivot.PivotPosition;
 
 class MoveToScoreConeHighPose extends SequentialCommandGroup {
     public MoveToScoreConeHighPose() {
-        addCommands(
-            new PosePivot(PivotPosition.Intermediate),
-            new PoseElevator(ElevatorPosition.Intermediate),
-            new WaitCommand(.25),
-            Commands.parallel(
-                new PosePivot(PivotPosition.ScoringAngle),
-                new PoseElevator(ElevatorPosition.ScoreConeHigh)
-            ),
-            new WaitCommand(0.25),
-            Commands.parallel(
-                Subsystems.intake.isHandOpen() ? 
-                    new PoseWrist(WristPosition.ScoreCubeHigh) :
-                    new PoseWrist(WristPosition.ScoreCone)
-            )
-        );
+        if(Subsystems.pivot.getPivotEncoderPosition() > 30000) {
+            addCommands(
+                new PosePivot(PivotPosition.Intermediate),
+                new PoseElevator(ElevatorPosition.Intermediate),
+                new WaitCommand(.25),
+                Commands.parallel(
+                    new PosePivot(PivotPosition.ScoringAngle),
+                    new PoseElevator(ElevatorPosition.ScoreConeHigh)
+                ),
+                new WaitCommand(0.25),
+                Commands.parallel(
+                    Subsystems.intake.isHandOpen() ? 
+                        new PoseWrist(WristPosition.ScoreCubeHigh) :
+                        new PoseWrist(WristPosition.ScoreCone)
+                )
+            );
+        }
+
+        else {
+            addCommands(
+                Commands.parallel(
+                    new PosePivot(PivotPosition.ScoringAngle),
+                    new PoseElevator(ElevatorPosition.ScoreConeHigh)
+                ),
+                new WaitCommand(0.25),
+                Commands.parallel(
+                    Subsystems.intake.isHandOpen() ? 
+                        new PoseWrist(WristPosition.ScoreCubeHigh) :
+                        new PoseWrist(WristPosition.ScoreCone)
+                )
+            );
+        }
     }
 }
