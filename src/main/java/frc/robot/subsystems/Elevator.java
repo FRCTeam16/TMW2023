@@ -31,7 +31,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         GroundPickup(28_600),
         SingleSubstationCone(2750),
         SingleSubstationCube(2750),
-        DoubleSubstation(23_314),
+        DoubleSubstation(24_314),
         ScoreConeMid(33_700),
         ScoreConeHigh(54_500),
         Stow(1000),
@@ -134,7 +134,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     }
 
     public boolean isElevatorExtended() {
-        return getRawElevatorPosition() > 15_000;
+        return getRawElevatorPosition() > 30_000;
     }
 
     @Override
