@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -29,7 +28,6 @@ import frc.robot.subsystems.Intake.WristPosition;
 import frc.robot.subsystems.Pivot.PivotPosition;
 import frc.robot.subsystems.vision.Pipeline;
 import frc.robot.subsystems.vision.TargetInfo;
-import frc.robot.subsystems.vision.VisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,15 +41,19 @@ public class RobotContainer {
     private final Joystick right   = new Joystick(1);
     private final XboxController gamepad = new XboxController(2);
 
+    private boolean lockAngleEnabled = false;
+    private double lockAngle = 0;
+
 
     //
     // Intake
     //
-    private final JoystickButton april     = new JoystickButton(left,    13);   // was 2
+    private final JoystickButton april     = new JoystickButton(left,    13);
 
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
-    private final JoystickButton lockAngle = new JoystickButton(left, 2);
+    private final JoystickButton lockAngle180 = new JoystickButton(left, 2);
+    private final JoystickButton lockAngleN90 = new JoystickButton(left, 7);    // FIXME
       
     private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
     private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
@@ -119,9 +121,8 @@ public class RobotContainer {
                 () -> -right.getX(), 
                 () ->  -left.getX(),
                 () ->  robotCentric.getAsBoolean(),
-                () -> lockAngle.getAsBoolean()
-            ).withLockAngle(180.0)
-        );
+                () -> this.getLockAngleEnabled(),
+                () -> this.getLockAngle()));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -130,6 +131,12 @@ public class RobotContainer {
         // Configure pneumatic pressures
         pneumaticHub.enableCompressorAnalog(60, 100);
     }
+
+    public double getLockAngle() { return this.lockAngle; }
+    
+    public boolean getLockAngleEnabled() { return this.lockAngleEnabled; }
+    private void enableLockAngle(double target) { this.lockAngle = target; this.lockAngleEnabled = true; }
+    private void disableLockAngle() { this.lockAngleEnabled = false; }
 
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
@@ -142,6 +149,14 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> Subsystems.swerveSubsystem.zeroGyro()).ignoringDisable(true));
 
         april.onTrue(new aprilAuto(right.getX(),right.getY()));
+
+        lockAngle180
+            .onTrue(new InstantCommand(() -> this.enableLockAngle(180)))
+            .onFalse(new InstantCommand(() -> this.disableLockAngle()));
+
+        lockAngleN90
+            .onTrue(new InstantCommand(() -> this.enableLockAngle(-90)))
+            .onFalse(new InstantCommand(() -> this.disableLockAngle()));
 
 
         rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp()))
