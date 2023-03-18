@@ -1,11 +1,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -17,17 +17,14 @@ import frc.robot.autos.aprilAuto;
 import frc.robot.commands.Balance;
 import frc.robot.commands.ConfigureSoftLimits;
 import frc.robot.commands.RunWithDisabledInstantCommand;
+import frc.robot.commands.SchedulePose;
+import frc.robot.commands.SimpleTimedDriveBack;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.XWHeelLock;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
-import frc.robot.commands.pose.PoseElevator;
+import frc.robot.commands.auto.ScoreConeHigh;
 import frc.robot.commands.pose.PoseManager.Pose;
-import frc.robot.commands.pose.PosePivot;
-import frc.robot.commands.pose.PoseWrist;
-import frc.robot.subsystems.Elevator.ElevatorPosition;
-import frc.robot.subsystems.Intake.WristPosition;
-import frc.robot.subsystems.Pivot.PivotPosition;
 import frc.robot.subsystems.vision.Pipeline;
 import frc.robot.subsystems.vision.TargetInfo;
 
@@ -188,6 +185,12 @@ public class RobotContainer {
         scoreConeMidPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreMidCone))));
         groundPickupPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.GroundPickup))));
         stowPose.onTrue(new InstantCommand(()             -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));
+
+        new JoystickButton(left, 5)
+            .onTrue(new SimpleTimedDriveBack(2.0)
+            .andThen(new ScoreConeHigh())
+            .andThen(new SchedulePose(Pose.SingleSubstation))
+        );
         
         xLock.whileTrue(new XWHeelLock());
         
@@ -199,7 +202,6 @@ public class RobotContainer {
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.storeAndScore())).onFalse(new InstantCommand(() -> Subsystems.intake.restoreStoredSetpoint()));
         
-        // padIntake.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand())).onFalse(new InstantCommand(() -> Subsystems.intake.OpenHand()));
 
         requestCone.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cone)).ignoringDisable(true));
         requestCube.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cube)).ignoringDisable(true));
@@ -230,16 +232,6 @@ public class RobotContainer {
         SmartDashboard.putData("Zero Elevator Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.elevator.zeroElevatorEncoder()));
         SmartDashboard.putData("Zero Wrist Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.intake.zeroWristEncoder()));
         SmartDashboard.putData("Zero Pivot Encoder", new RunWithDisabledInstantCommand(() -> Subsystems.pivot.zeroPivotEncoder()));
-
-        SmartDashboard.putData("Elev Move to Zero", new PoseElevator(ElevatorPosition.Down));
-        SmartDashboard.putData("Elev Move to GroundPickup", new PoseElevator(ElevatorPosition.GroundPickup));
-
-        SmartDashboard.putData("Pivot Move to Zero", new PosePivot(PivotPosition.Vertical));
-        SmartDashboard.putData("Pivot Move to Horizontal", new PosePivot(PivotPosition.Horizontal));
-        SmartDashboard.putData("Pivot Move to GroundPickup", new PosePivot(PivotPosition.GroundPickup));
-
-        SmartDashboard.putData("Wrist Move to Zero", new PoseWrist(WristPosition.Vertical));
-        SmartDashboard.putData("Wrist Move to GroundPickup", new PoseWrist(WristPosition.GroundPickup));
 
         SmartDashboard.putData("Enable Soft Limits", new ConfigureSoftLimits(true));
         SmartDashboard.putData("Disable Soft Limits", new ConfigureSoftLimits(false));
