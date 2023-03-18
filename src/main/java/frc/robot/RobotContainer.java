@@ -1,9 +1,11 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -55,7 +57,6 @@ public class RobotContainer {
     private final JoystickButton lockAngle180 = new JoystickButton(left, 2);
     private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 0);
     private final Trigger lockAngleN0 = new Trigger(() -> right.getPOV() >= 0);
-//    private final JoystickButton lockAngleN90 = new JoystickButton(left, 7);    // FIXME
       
     private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
     private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
@@ -157,7 +158,7 @@ public class RobotContainer {
             .onFalse(new InstantCommand(() -> this.disableLockAngle()));
 
         lockAngleN90
-            .onTrue(new InstantCommand(() -> this.enableLockAngle(-90)))
+            .onTrue(new InstantCommand(() -> this.enableLockAngle( DriverStation.getAlliance() == Alliance.Red ? -90 : 90)))
             .onFalse(new InstantCommand(() -> this.disableLockAngle()));
 
         lockAngleN0
