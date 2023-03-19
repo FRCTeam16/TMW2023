@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.08;
-    private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.15;
+    private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.13;
 
     private boolean openLoop = true;
     private double openLoopWristSpeed = 0.0;

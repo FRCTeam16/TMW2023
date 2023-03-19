@@ -16,6 +16,7 @@ public class TeleopSwerve extends CommandBase {
     private Swerve s_Swerve;    
     private DoubleSupplier translationSup;
     private DoubleSupplier strafeSup;
+    private boolean strafeDeadband = true;
     private DoubleSupplier rotationSup;
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier lockAngleEnabledSup;
@@ -49,16 +50,21 @@ public class TeleopSwerve extends CommandBase {
         SmartDashboard.putNumber("RotationClamp", ROTATION_CLAMP_RAD_PER_SEC);
     }
 
+    public void setStrafeSupplier(DoubleSupplier supplier, boolean strafeDeadband) {
+        this.strafeSup = supplier;
+        this.strafeDeadband = strafeDeadband;
+    }
+
     @Override
     public void execute() {
         /* Get Values, Deadband*/
         double translationVal = MathUtil.applyDeadband(translationSup.getAsDouble(), Constants.stickDeadband);
-        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), Constants.stickDeadband);
+        double strafeVal = MathUtil.applyDeadband(strafeSup.getAsDouble(), strafeDeadband? Constants.stickDeadband: 0);
         double rotationVal = MathUtil.applyDeadband(rotationSup.getAsDouble(), Constants.stickDeadband);
 
         // Define maximum speeds
         double maxSpeed = Subsystems.elevator.isElevatorExtended() ? MAX_TRANSLATION_SPEED : Constants.Swerve.maxSpeed;
-        final double maxRotation = Subsystems.elevator.isElevatorExtended() ? 4 : Constants.Swerve.maxAngularVelocity;
+        final double maxRotation = Subsystems.elevator.isElevatorExtended() ? 4 : 16; // Constants.Swerve.maxAngularVelocity;
         rotationVal *= maxRotation;
 
         // Target swerve velocity state

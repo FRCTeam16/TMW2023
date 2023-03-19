@@ -16,15 +16,18 @@ import frc.robot.auto.AutoManager;
 import frc.robot.autos.aprilAuto;
 import frc.robot.commands.Balance;
 import frc.robot.commands.ConfigureSoftLimits;
+import frc.robot.commands.EnableDriverCamera;
+import frc.robot.commands.EnableImageProcessing;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.SchedulePose;
+import frc.robot.commands.ScoreHighCone;
 import frc.robot.commands.SimpleTimedDriveBack;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.commands.XWHeelLock;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
-import frc.robot.commands.auto.ScoreConeHigh;
 import frc.robot.commands.pose.PoseManager.Pose;
+import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.Pipeline;
 import frc.robot.subsystems.vision.TargetInfo;
 
@@ -40,8 +43,14 @@ public class RobotContainer {
     private final Joystick right   = new Joystick(1);
     private final XboxController gamepad = new XboxController(2);
 
+
+    //
+    // Drive state management
+    //
     private boolean lockAngleEnabled = false;
     private double lockAngle = 0;
+    private boolean visionAlignmentEnabled = false;
+    private VisionAlignmentHelper visionAlignmentHelper = new VisionAlignmentHelper();
 
 
     //
@@ -52,8 +61,9 @@ public class RobotContainer {
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
     private final JoystickButton lockAngle180 = new JoystickButton(left, 2);
-    private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 0);
-    private final Trigger lockAngleN0 = new Trigger(() -> right.getPOV() >= 0);
+    private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 90);
+    private final Trigger lockAngleN0 = new Trigger(() -> left.getPOV() == 270);
+    private final Trigger visionAlign = new Trigger(() -> right.getPOV() >= 0);
       
     private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
     private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
@@ -118,7 +128,7 @@ public class RobotContainer {
             new TeleopSwerve(
                 Subsystems.swerveSubsystem,
                 () -> -right.getY(),
-                () -> -right.getX(), 
+                () -> getStrafeValue(),
                 () ->  -left.getX(),
                 () ->  robotCentric.getAsBoolean(),
                 () -> this.getLockAngleEnabled(),
@@ -137,6 +147,17 @@ public class RobotContainer {
     public boolean getLockAngleEnabled() { return this.lockAngleEnabled; }
     private void enableLockAngle(double target) { this.lockAngle = target; this.lockAngleEnabled = true; }
     private void disableLockAngle() { this.lockAngleEnabled = false; }
+
+    /**
+     * Strafe supplier for teleop.  Can be joystick or vision
+     */
+    public double getStrafeValue() {
+        if (visionAlignmentEnabled) {
+            return -visionAlignmentHelper.calculate();
+         } else {
+            return -right.getX();
+         } 
+    }
 
     /**
      * Use this method to define your button->command mappings. Buttons can be created by
@@ -161,6 +182,12 @@ public class RobotContainer {
         lockAngleN0
             .onTrue(new InstantCommand(() -> this.enableLockAngle(0)))
             .onFalse(new InstantCommand(() -> this.disableLockAngle()));
+
+        visionAlign
+            .onTrue(new EnableImageProcessing(Pipeline.RetroHigh)
+            .andThen(new InstantCommand(() -> this.visionAlignmentEnabled = true)))
+            .onFalse(new EnableDriverCamera()
+            .andThen(new InstantCommand(() -> this.visionAlignmentEnabled = false)));
 
 
         rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp()))
@@ -188,7 +215,7 @@ public class RobotContainer {
 
         new JoystickButton(left, 5)
             .onTrue(new SimpleTimedDriveBack(2.0)
-            .andThen(new ScoreConeHigh())
+            .andThen(new ScoreHighCone())
             .andThen(new SchedulePose(Pose.SingleSubstation))
         );
         
