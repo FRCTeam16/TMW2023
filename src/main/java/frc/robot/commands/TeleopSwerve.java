@@ -64,7 +64,7 @@ public class TeleopSwerve extends CommandBase {
 
         // Define maximum speeds
         double maxSpeed = Subsystems.elevator.isElevatorExtended() ? MAX_TRANSLATION_SPEED : Constants.Swerve.maxSpeed;
-        final double maxRotation = Subsystems.elevator.isElevatorExtended() ? 4 : 16; // Constants.Swerve.maxAngularVelocity;
+        final double maxRotation = Subsystems.elevator.isElevatorExtended() ? 4 : Constants.Swerve.maxAngularVelocity;
         rotationVal *= maxRotation;
 
         // Target swerve velocity state
