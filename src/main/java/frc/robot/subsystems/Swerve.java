@@ -127,13 +127,13 @@ public class Swerve extends SubsystemBase {
 
     public void DMSDrive(double speed) {
         for(SwerveModule mod : mSwerveMods) {
-            mod.setDriveMotorManually(1.0);
+            mod.setDriveMotorManually(speed);
         }
     }
 
     public void DMSSteer(double speed) {
         for(SwerveModule mod : mSwerveMods) {
-            mod.setWheelAnglePercentManually(1.0);
+            mod.setWheelAnglePercentManually(speed);
         }
     }
 

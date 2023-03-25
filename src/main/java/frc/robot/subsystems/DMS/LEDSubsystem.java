@@ -40,7 +40,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
     private int secondsToClimb = 30;
 
-    private static final int BUFFER_SIZE = 15;
+    private static final int BUFFER_SIZE = 16;
 
     /** Creates a new LEDSubsystem. */
     public LEDSubsystem() {
@@ -102,6 +102,11 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         double robotPitch = BSMath.map(Subsystems.swerveSubsystem.gyro.getPitch(),
             -30.0, 30.0,
             0, 255);
+
+        double elevatorPosition = BSMath.map(Subsystems.elevator.getRawElevatorPosition(),
+            0, 55_000,
+            0, 255);
+
        
 
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -122,7 +127,8 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         buffer[11] = (byte) requestedPart;  // request part type
         buffer[12] = (byte) partDetected;
         buffer[13] = (byte) Double.valueOf(robotPitch).intValue();
-        buffer[14] = (byte) 255;
+        buffer[14] = (byte) Double.valueOf(elevatorPosition).intValue();
+        buffer[15] = (byte) 255;
 
         // System.out.println("[LED] Part Detected: " + (byte)partDetected);
 
@@ -144,6 +150,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     }
 
     public void startDMS() {
+        System.out.println("*********************** STARTING DMS ****************************");
         timer.reset();
         timer.start();
         driveDmsStatus = new DMSStats();
@@ -160,7 +167,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     }
     
     public void stopDMS() {
-        System.out.println("Stopping DMS");
+        System.out.println("*********************** STOPPING DMS ****************************");
         currentPhase = DMSPhase.Stopped;
         
         driveStatus = new DriveInfo<Integer>(0);

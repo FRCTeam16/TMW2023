@@ -18,6 +18,7 @@ import frc.robot.commands.Balance;
 import frc.robot.commands.ConfigureSoftLimits;
 import frc.robot.commands.EnableDriverCamera;
 import frc.robot.commands.EnableImageProcessing;
+import frc.robot.commands.RunDMSCommand;
 import frc.robot.commands.RunWithDisabledInstantCommand;
 import frc.robot.commands.SchedulePose;
 import frc.robot.commands.ScoreHighCone;
@@ -111,6 +112,7 @@ public class RobotContainer {
     private final JoystickButton disableLimelight = new JoystickButton(left, 15);
     private final JoystickButton detectScoreHighConePositionEnable = new JoystickButton(left, 14);
     private final Trigger detectScorePositionTrigger = new Trigger(() -> Subsystems.visionSubsystem.getScorePositionDetector().inRequestedScoringPosition());
+    private final JoystickButton runDMS = new JoystickButton(right, 8);
 
 
     /* Subsystems */
@@ -213,6 +215,7 @@ public class RobotContainer {
         groundPickupPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.GroundPickup))));
         stowPose.onTrue(new InstantCommand(()             -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));
 
+        // DEBUG
         new JoystickButton(left, 5)
             .onTrue(new SimpleTimedDriveBack(2.0)
             .andThen(new ScoreHighCone())
@@ -220,6 +223,8 @@ public class RobotContainer {
         );
         
         xLock.whileTrue(new XWHeelLock());
+
+        runDMS.whileTrue(new RunDMSCommand());
         
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));

@@ -13,20 +13,17 @@ public class RunDMSCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // FIXME Subsystems.drivetrainSubsystem.setDmsMode(true);
     Subsystems.ledSubsystem.startDMS();
   }
 
   @Override
   public void end(boolean interrupted) {
-    // FIXME Subsystems.drivetrainSubsystem.setDmsMode(false);
     Subsystems.ledSubsystem.stopDMS();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    System.out.println("DMS isFinished");
     return Subsystems.ledSubsystem.isStopped() || DriverStation.isDisabled();
   }
 }

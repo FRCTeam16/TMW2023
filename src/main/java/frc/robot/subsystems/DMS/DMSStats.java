@@ -1,5 +1,10 @@
 package frc.robot.subsystems.DMS;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.DoubleToIntFunction;
+
 public class DMSStats {
     private static final double VEL_THRESHOLD = 0.85;
     private static final double AMP_THRESHOLD = 0.8;
@@ -68,4 +73,53 @@ public class DMSStats {
         }
     }
 
+    /**
+     * https://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm
+     * @return
+     */
+    public DriveInfo<Integer> calculateStatusMAD() {
+        DriveInfo<Integer> status = new DriveInfo<>(0);
+
+        double[] modifiedZCurrent = calculateModifiedZ(List.of(current.FL, current.FR, current.RL, current.RR));
+        double[] modifiedZVelocity = calculateModifiedZ(List.of(velocity.FL, velocity.FR, velocity.RL, velocity.RR));
+
+        double MAD_THRESHOLD = 3.5; // recommended as outlier
+        DoubleToIntFunction dif = (c -> Math.abs(c) < MAD_THRESHOLD ? 1 : 2);
+        int[] currentStatus = Arrays.stream(modifiedZCurrent).mapToInt(dif).toArray();
+        int[] velocityStatus = Arrays.stream(modifiedZVelocity).mapToInt(dif).toArray();
+
+
+        status.FL = calculateStatus(currentStatus[0], velocityStatus[0]);
+        status.FR = calculateStatus(currentStatus[1], velocityStatus[1]);
+        status.RL = calculateStatus(currentStatus[2], velocityStatus[2]);
+        status.RR = calculateStatus(currentStatus[3], velocityStatus[3]);
+
+        return status;
+    }
+
+    private double[] calculateModifiedZ(List<Double> data) {
+        Collections.sort(data);
+        // assume even number of observations-
+        double median = (data.get(1) + data.get(2)) / 2;
+        double[] deviations = data.stream().mapToDouble(c -> c - median).toArray();
+        double medianDeviation = (deviations[1] + deviations[2]) / 2;
+
+        double[] modifiedZ = data.stream().mapToDouble(c -> (0.6745 * (c - median) ) / medianDeviation).toArray();
+        return modifiedZ;
+    }
+
+    private int calculateStatus(int currentStatus, int velocityStatus) {
+        if (currentStatus == 0 && velocityStatus == 0) {
+            return 0;
+        } else if (currentStatus == 0 && velocityStatus == 1) {
+            return 1;
+        } else if (currentStatus == 1 && velocityStatus == 0) {
+            return 2;
+        } else if (currentStatus == 1 && velocityStatus == 1) {
+            return 3;
+        } else {
+            return 4;
+        }
+
+    }
 }
