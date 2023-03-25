@@ -3,7 +3,8 @@ package frc.robot.subsystems.vision;
 public enum Pipeline {
     April(0),
     RetroHigh(1),
-    RetroLow(2);
+    RetroLow(2),
+    Camera(3);
 
     public final int pipelineNumber;
 

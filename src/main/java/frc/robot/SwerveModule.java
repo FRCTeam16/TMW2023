@@ -128,4 +128,16 @@ public class SwerveModule {
             getAngle()
         );
     }
+
+    public double getDriveMotorCurrent() {
+        return mDriveMotor.getStatorCurrent();
+    }
+
+    public double getAngleMotorCurrent() {
+        return mAngleMotor.getStatorCurrent();
+    }
+
+    public double getAngleMotorVelocity() {
+        return mAngleMotor.getSelectedSensorVelocity();
+    }
 }

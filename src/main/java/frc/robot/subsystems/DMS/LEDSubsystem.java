@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems.DMS;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SerialPort.FlowControl;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Subsystems;
 import frc.robot.subsystems.Lifecycle;
 import frc.robot.subsystems.PartIndicator;
+import frc.robot.subsystems.util.BSMath;
 
 public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     private boolean running = true;
@@ -97,27 +99,29 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
 
         int partDetected = Subsystems.intake.isProxTripped() ? 1 : 0;
 
-        int robotPitch = (int) Subsystems.swerveSubsystem.gyro.getPitch();
-
+        double robotPitch = BSMath.map(Subsystems.swerveSubsystem.gyro.getPitch(),
+            -30.0, 30.0,
+            0, 255);
+       
 
         byte[] buffer = new byte[BUFFER_SIZE];
 
         buffer[0] = (byte) 254;
         // DMS info
-        buffer[1] = 0;
-        buffer[2] = 0;
-        buffer[3] = 0;
-        buffer[4] = 0;
-        buffer[5] = 0;
-        buffer[6] = 0;
-        buffer[7] = 0;
-        buffer[8] = 0;
+        buffer[1] = driveStatus.FL.byteValue();
+        buffer[2] = steerStatus.FL.byteValue();
+        buffer[3] = driveStatus.FR.byteValue();
+        buffer[4] = steerStatus.FR.byteValue();
+        buffer[5] = driveStatus.RL.byteValue();
+        buffer[6] = steerStatus.RL.byteValue();
+        buffer[7] = driveStatus.RR.byteValue();
+        buffer[8] = steerStatus.RR.byteValue();
 
         buffer[9] = (byte) robotState; // comm status
         buffer[10] = (byte) allianceColor;
         buffer[11] = (byte) requestedPart;  // request part type
         buffer[12] = (byte) partDetected;
-        buffer[13] = (byte) robotPitch;
+        buffer[13] = (byte) Double.valueOf(robotPitch).intValue();
         buffer[14] = (byte) 255;
 
         // System.out.println("[LED] Part Detected: " + (byte)partDetected);
@@ -190,22 +194,19 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                     displayResults();
                     break;
 
-            }
-            ;
+            };
         }
     }
 
     private void runMotorTest() {
         final double now = timer.get();
         if (now < MOTOR_TEST_TIME) {
-            // FIXME
-            // Subsystems.drivetrainSubsystem.DMSDrive(1.0);
-            // Subsystems.drivetrainSubsystem.DMSSteer(0.0);
+            Subsystems.swerveSubsystem.DMSDrive(1.0);
+            Subsystems.swerveSubsystem.DMSSteer(0.0);
 
             if (now > INITIAL_IGNORE_TIME) {
-                // FIXME
-                // driveDmsStatus.addDriveCurrent(Subsystems.drivetrainSubsystem.getDriveOutputCurrent());
-                // driveDmsStatus.addDriveVelocity(Subsystems.drivetrainSubsystem.getDriveVelocity());
+                driveDmsStatus.addDriveCurrent(Subsystems.swerveSubsystem.getDriveOutputCurrent());
+                driveDmsStatus.addDriveVelocity(Subsystems.swerveSubsystem.getDriveVelocity());
 
                 DMSStats.print("(DVel)", driveDmsStatus.velocity);
                 DMSStats.print("(DAmp)", driveDmsStatus.current);
@@ -239,14 +240,12 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     private void runSteerTest() {
         final double now = timer.get();
         if (now < MOTOR_TEST_TIME) {
-            // FIXME
-            // Subsystems.drivetrainSubsystem.DMSDrive(0.0);
-            // Subsystems.drivetrainSubsystem.DMSSteer(1.0);
+            Subsystems.swerveSubsystem.DMSDrive(0.0);
+            Subsystems.swerveSubsystem.DMSSteer(1.0);
 
             if (now > INITIAL_IGNORE_TIME) {
-                // FIXME
-                // steerDmsStatus.addDriveCurrent(Subsystems.drivetrainSubsystem.getSteerOutputCurrent());
-                // steerDmsStatus.addDriveVelocity(Subsystems.drivetrainSubsystem.getSteerVelocity());
+                steerDmsStatus.addDriveCurrent(Subsystems.swerveSubsystem.getSteerOutputCurrent());
+                steerDmsStatus.addDriveVelocity(Subsystems.swerveSubsystem.getSteerVelocity());
 
                 DMSStats.print("(SVel)", steerDmsStatus.velocity);
                 DMSStats.print("(SAmp)", steerDmsStatus.current);
@@ -259,9 +258,10 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                 DMSStats.print("[Steer Status]", steerStatus);
             } 
         } else {
-            // FIXME
-            // Subsystems.drivetrainSubsystem.DMSDrive(0.0);
-            // Subsystems.drivetrainSubsystem.DMSSteer(0.0);
+            // Stop motors
+            Subsystems.swerveSubsystem.DMSDrive(0.0);
+            Subsystems.swerveSubsystem.DMSSteer(0.0);
+
             currentPhase = DMSPhase.DisplayResults;
             SmartDashboard.putNumber("DMS/Result/FL/Steer/Status", steerStatus.FL);
             SmartDashboard.putNumber("DMS/Result/FL/Steer/Vel", steerDmsStatus.velocity.FL);

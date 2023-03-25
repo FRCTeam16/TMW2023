@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SwerveModule;
+import frc.robot.subsystems.DMS.DriveInfo;
 import frc.robot.subsystems.gyro.BSGyro;
 import frc.robot.subsystems.gyro.PigeonGyro;
 
@@ -122,5 +123,49 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("NavX", gyro.getGyroscopeRotation().getDegrees());
 
         SmartDashboard.putData("RotationController", this.rotationController);
+    }
+
+    public void DMSDrive(double speed) {
+        for(SwerveModule mod : mSwerveMods) {
+            mod.setDriveMotorManually(1.0);
+        }
+    }
+
+    public void DMSSteer(double speed) {
+        for(SwerveModule mod : mSwerveMods) {
+            mod.setWheelAnglePercentManually(1.0);
+        }
+    }
+
+    public DriveInfo<Double> getDriveOutputCurrent() {
+        return new DriveInfo<Double>(
+            mSwerveMods[0].getDriveMotorCurrent(),
+            mSwerveMods[1].getDriveMotorCurrent(),
+            mSwerveMods[2].getDriveMotorCurrent(),
+            mSwerveMods[3].getDriveMotorCurrent());
+    }
+
+    public DriveInfo<Double> getDriveVelocity() {
+        return new DriveInfo<Double> (
+            mSwerveMods[0].getState().speedMetersPerSecond,
+            mSwerveMods[1].getState().speedMetersPerSecond,
+            mSwerveMods[2].getState().speedMetersPerSecond,
+            mSwerveMods[3].getState().speedMetersPerSecond);
+    }
+
+    public DriveInfo<Double> getSteerOutputCurrent() {
+        return new DriveInfo<Double>(
+            mSwerveMods[0].getAngleMotorCurrent(),
+            mSwerveMods[1].getAngleMotorCurrent(),
+            mSwerveMods[2].getAngleMotorCurrent(),
+            mSwerveMods[3].getAngleMotorCurrent());
+    }
+
+    public DriveInfo<Double> getSteerVelocity() {
+        return new DriveInfo<Double>(
+            mSwerveMods[0].getAngleMotorVelocity(),
+            mSwerveMods[1].getAngleMotorVelocity(),
+            mSwerveMods[2].getAngleMotorVelocity(),
+            mSwerveMods[3].getAngleMotorVelocity());
     }
 }
