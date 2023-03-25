@@ -23,21 +23,34 @@ public class DoubleScore extends SequentialCommandGroup {
             new InstantCommand(Subsystems.intake::OpenHand),
             new InstantCommand(Subsystems.intake::eject),
 
-            new WaitCommand(3),
-            
-            new SchedulePose(Pose.SingleSubstation),
-            //there needs to be an intermdiary step here so it goes down correctly, else it will be considered ileagul and SPIN with the intake out
-            new WaitCommand(3),
+            new WaitCommand(5),
             Commands.parallel(
-            new SchedulePose(Pose.Stow),
-            new ProfiledDistanceDriveCommand(180, 0.1, 0, 0.5)
+                new SchedulePose(Pose.Stow),
+                new ProfiledDistanceDriveCommand(180, 0.15, 0, 0.5)
             ),
 
             new WaitCommand(5),
-            new SchedulePose(Pose.Zero)
+            new SchedulePose(Pose.Zero),
+            new WaitCommand(5)
 
-            
-            
+            //Do comment this out for now bc untested, Do test though
+
+            // new ProfiledDistanceDriveCommand(0, .05, 0, 0.25),
+            // new WaitCommand(1),
+            // new ProfiledDistanceDriveCommand(0, .05, 0, 1.5),
+            // new WaitCommand(8),
+            // new SchedulePose(Pose.SingleSubstation),
+            // new WaitCommand(3),
+            // Commands.parallel(
+            //     new SchedulePose(Pose.GroundPickup),
+            //     new InstantCommand(Subsystems.intake::intake)
+            // ),
+            // new WaitCommand(3),
+            // Commands.parallel(
+            // new ProfiledDistanceDriveCommand(0, 0.5, 0, .5),
+            // new InstantCommand(Subsystems.intake::CloseHand)
+            // )
+
         );
     }
 }
