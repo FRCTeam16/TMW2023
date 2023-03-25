@@ -51,11 +51,11 @@ public class PartIndicator extends SubsystemBase {
                 requestPin2.set(colorSignal);
                 break;
             case Cone:
-                requestPin1.set(false);
+                requestPin1.set(false); // Binary 1
                 requestPin2.set(true);
                 break;
             case Cube:
-                requestPin1.set(true);
+                requestPin1.set(true); // Binary 2
                 requestPin2.set(false);
                 break;
         }
