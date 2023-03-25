@@ -12,7 +12,7 @@ import frc.robot.auto.strategies.FlatOutRun;
 import frc.robot.auto.strategies.OverTheRainbow;
 import frc.robot.auto.strategies.ScoreAndBalance;
 import frc.robot.auto.strategies.ScoredStraight;
-import frc.robot.auto.strategies.TestDrive;
+import frc.robot.auto.strategies.ScoreConeThenCube;
 import frc.robot.auto.strategies.TestTrajectoryFactory;
 import frc.robot.autos.PDistTest;
 import frc.robot.auto.strategies.DoubleScore;
@@ -20,7 +20,7 @@ import frc.robot.auto.strategies.DoubleScore;
 public class AutoManager {
 
     public enum AutoStrategies {
-        DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, TestDrive,
+        DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, ConeThenCube,
         ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun, 
         OverTheRainbow,
         DoubleScore
@@ -39,7 +39,7 @@ public class AutoManager {
         registerStrategy("Scored Straight", AutoStrategies.ScoredStraight, ScoredStraight::new);
         registerStrategy("FlatOutRun", AutoStrategies.FlatOutRun, FlatOutRun::new);
         registerStrategy("DoubleScore", AutoStrategies.DoubleScore, DoubleScore::new);
-        registerStrategy("Test Drive", AutoStrategies.TestDrive, TestDrive::new);
+        registerStrategy("Score Cone then Cube", AutoStrategies.ConeThenCube, ScoreConeThenCube::new);
         registerStrategy("Over The Rainbow", AutoStrategies.OverTheRainbow, OverTheRainbow::new);
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.
