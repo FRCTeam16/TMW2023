@@ -73,6 +73,10 @@ public class SwerveModule {
         mAngleMotor.set(ControlMode.Position, Conversions.degreesToFalcon(targetAngle, Constants.Swerve.angleGearRatio));
     }
 
+    public void setWheelAnglePercentManually(double percentTargetAngle) {
+        mAngleMotor.set(ControlMode.PercentOutput, percentTargetAngle);
+    }
+
     public void setDriveMotorManually(double targetSpeed) {
         mDriveMotor.set(ControlMode.PercentOutput, targetSpeed);
     }

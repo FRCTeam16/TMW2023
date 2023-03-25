@@ -51,6 +51,15 @@ public class DoubleScore extends SequentialCommandGroup {
             // new InstantCommand(Subsystems.intake::CloseHand)
             // )
 
+            //another untested segment ( assume has cube )
+
+            // new SchedulePose(Pose.SingleSubstation),
+            // new WaitCommand(3),
+            // new SchedulePose(Pose.Stow),
+            // new WaitCommand(5),
+            // new ProfiledDistanceDriveCommand(180, 0.15, 0, -0.5),
+            // new WaitCommand(3),
+            // new ProfiledDistanceDriveCommand(0, 0.05, 0, 0)
         );
     }
 }
