@@ -13,6 +13,7 @@ import frc.robot.auto.strategies.OverTheRainbow;
 import frc.robot.auto.strategies.ScoreAndBalance;
 import frc.robot.auto.strategies.ScoredStraight;
 import frc.robot.auto.strategies.ScoreConeThenCube;
+import frc.robot.auto.strategies.ScoreLowConeThenLowCone;
 import frc.robot.auto.strategies.TestTrajectoryFactory;
 import frc.robot.autos.PDistTest;
 import frc.robot.auto.strategies.DoubleScore;
@@ -23,7 +24,7 @@ public class AutoManager {
         DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, ConeThenCube,
         ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun, 
         OverTheRainbow,
-        DoubleScore
+        DoubleScore, LowConeThenLowCone
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -41,6 +42,7 @@ public class AutoManager {
         registerStrategy("Experimental DoubleScore", AutoStrategies.DoubleScore, DoubleScore::new);
         registerStrategy("Score Cone then Cube", AutoStrategies.ConeThenCube, ScoreConeThenCube::new);
         registerStrategy("Over The Rainbow", AutoStrategies.OverTheRainbow, OverTheRainbow::new);
+        registerStrategy("Double Low Cone Balance", AutoStrategies.LowConeThenLowCone, ScoreLowConeThenLowCone::new);
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.
         SmartDashboard.putData("Auto Selector", chooser);

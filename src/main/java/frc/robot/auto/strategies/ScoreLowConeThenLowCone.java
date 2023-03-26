@@ -6,58 +6,45 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
+import frc.robot.auto.strategies.OverTheRainbow.PitchDropWatcher;
+import frc.robot.commands.Balance;
 import frc.robot.commands.SchedulePose;
+import frc.robot.commands.XWHeelLock;
 import frc.robot.commands.auto.ClampHandOnPart;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.pose.PoseManager.Pose;
 
-public class ScoreConeThenCube extends SequentialCommandGroup {
+public class ScoreLowConeThenLowCone extends SequentialCommandGroup {
 
     boolean coneMode = true;
+    PitchDropWatcher pitchWatcher = new PitchDropWatcher(-13.0);
 
-    public ScoreConeThenCube() {
+    public ScoreLowConeThenLowCone() {
         double pickupSpeed = coneMode ? 0.5 : 0.3;
         double pickupTimeout = coneMode ? 2.5 : 3.5;
-        // double pickupX = coneMode ? :;
-        // double pickupY = coneMode ? :;
+
 
         addCommands(
-            new InitializeAutoState(180),
-            new InstantCommand(Subsystems.intake::CloseHand),
-
-            new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.5),
-            new InstantCommand(Subsystems.intake::storeAndScore),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::OpenHand),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
-
-            new SchedulePose(Pose.SingleSubstation),
-            new WaitCommand(0.5),
-            new SchedulePose(Pose.Stow),
+            new InitializeAutoState(0),
+            Commands.parallel(
+                new SchedulePose(Pose.GroundPickup),
+                new WaitCommand(1.5),
+                new InstantCommand(Subsystems.intake::OpenHand),
+                new InstantCommand(Subsystems.intake::intake)
+            ).withTimeout(1.5),
 
             // Drive out of community
-            new ProfiledDistanceDriveCommand(180, 1, 1.9, 0)
-                .withEndSpeed(0.3)
+            new ProfiledDistanceDriveCommand(0, 1, 3, 0)
+                .withEndSpeed(pickupSpeed)
                 .withThreshold(0.1)
                 .withTimeout(3.0),
 
-            // Pose to ground pickup
-            Commands.parallel(
-                new SchedulePose(Pose.GroundPickup),
-                Commands.run(Subsystems.intake::intake),
-                Commands.run(Subsystems.intake::OpenHand),
-                new WaitCommand(0.5)
-            ).withTimeout(0.5),
-
-            new RotateToAngle(15).withTimeout(1),
 
             // Drive and pickup cube
             Commands.parallel(
-                new ProfiledDistanceDriveCommand(15, pickupSpeed, 2.35, 0.357)
+                new ProfiledDistanceDriveCommand(0, pickupSpeed, 1.5, 0)
                     .withEndSpeed(pickupSpeed)
                     .withThreshold(0.1)
                     .withTimeout(pickupTimeout),
@@ -80,13 +67,13 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
 
             // Drive towards targets
             (coneMode) ? Commands.print("cone mode skip pose") : new SchedulePose(Pose.ScoreHighCone),
-            new ProfiledDistanceDriveCommand(180, 1, -2.0, -0.1)
+            new ProfiledDistanceDriveCommand(180, 1, -2.5, -0.1)
                 .withEndSpeed(0.6)
                 .withThreshold(0.1)
                 .withTimeout(5.0),
 
             // Drive to front of target
-            new ProfiledDistanceDriveCommand(180, 0.6, -2.65, 0.35)
+            new ProfiledDistanceDriveCommand(180, 0.6, -2.15, 0.55)
                 .withEndSpeed(0.3)
                 .withThreshold(0.1)
                 .withTimeout(2.0),
@@ -94,11 +81,14 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
             // Score
             Commands.run(Subsystems.intake::eject).withTimeout(0.25),
             
-            (coneMode) ? Commands.print("Skip stow pose") : new SchedulePose(Pose.Stow),
-            (coneMode) ? Commands.print("Skip stop wait") : new WaitCommand(0.5),
             new ProfiledDistanceDriveCommand(180, 1, 1.75, 1.75)
-                .withTimeout(3)
-            
+                .withTimeout(3),
+            // new Balance(),
+            new ProfiledDistanceDriveCommand(180, 0.32, 2, 0)
+                .withEndSpeed(0.32)
+                .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
+                .withTimeout(5.0),
+            new XWHeelLock()
         );
     }
     

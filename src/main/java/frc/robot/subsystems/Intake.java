@@ -215,7 +215,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
         // Handle hasPart handling
         if (isProxTripped() && !hasPart) {
             hasPart = true;
-            intakeSpeed = 0.0; // hack for speed control?
+            if (!DriverStation.isAutonomousEnabled()) {
+                intakeSpeed = 0.0; // hack for speed control?
+            }
 
             // If we are not in Substation and picking up a cube then automatically close
             // the hand
@@ -282,5 +284,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public boolean isProxTripped(){
         return !ProxSence.get();
+    }
+
+    public boolean hasPart() {
+        return this.hasPart;
     }
 }

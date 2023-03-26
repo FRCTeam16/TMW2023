@@ -58,16 +58,21 @@ public class OverTheRainbow extends SequentialCommandGroup {
         return Math.abs(Subsystems.swerveSubsystem.gyro.getPitch()) > 5.0;
     }
 
-    static class PitchDropWatcher {
+    public static class PitchDropWatcher {
         boolean watchDropMode = false;
+        double angle = 13.0;
 
         PitchDropWatcher() {
+        }
+
+        PitchDropWatcher(double angle) {
+            this.angle = angle;
         }
 
         public boolean shouldStopNoMaxWatch() {
             double pitch = Subsystems.swerveSubsystem.gyro.getPitch();
 
-             if (pitch < 13.0) {
+             if (pitch < angle) {
                 return true;
             } else {
                 return false;
