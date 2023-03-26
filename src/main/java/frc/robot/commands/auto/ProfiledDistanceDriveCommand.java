@@ -7,9 +7,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
+import frc.robot.commands.TeleopSwerve;
 
 public class ProfiledDistanceDriveCommand extends CommandBase {
 
@@ -144,9 +146,12 @@ Test new
     double vyMetersPerSecond = speed * Math.sin(driveAngle);
 */
 
+    double clamp = SmartDashboard.getNumber("RotationClamp", TeleopSwerve.ROTATION_CLAMP_RAD_PER_SEC);
 
     var twist = Subsystems.swerveSubsystem.getRotationController().calculate(
         Subsystems.swerveSubsystem.gyro.getGyroscopeRotation().getDegrees(), angle);
+
+    double desiredRotation = MathUtil.clamp(Math.toRadians(twist), -clamp, clamp);
     var desiredTranslation = new Translation2d(vxMetersPerSecond, vyMetersPerSecond);
 
     
@@ -156,11 +161,13 @@ Test new
         " | VX: " + vxMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond + 
         " | VY: " + vyMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond +
         " | TW: " + twist);
+        System.out.println("DT: " + desiredTranslation);
+        System.out.println("SPEED: " + speed + " | VXM: " + vxMetersPerSecond + " | VYM: " + vyMetersPerSecond);
       }
 
     Subsystems.swerveSubsystem.drive(
       desiredTranslation, 
-      Math.toRadians(twist), 
+      desiredRotation, 
       fieldCentric, 
       true);
   }

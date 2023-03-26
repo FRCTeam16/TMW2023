@@ -38,7 +38,7 @@ public class AutoManager {
         registerStrategy("Score And Balance Other Side", AutoStrategies.ScoreAndBalanceOtherSide, () -> new ScoreAndBalance(true));
         registerStrategy("Scored Straight", AutoStrategies.ScoredStraight, ScoredStraight::new);
         registerStrategy("FlatOutRun", AutoStrategies.FlatOutRun, FlatOutRun::new);
-        registerStrategy("DoubleScore", AutoStrategies.DoubleScore, DoubleScore::new);
+        registerStrategy("Experimental DoubleScore", AutoStrategies.DoubleScore, DoubleScore::new);
         registerStrategy("Score Cone then Cube", AutoStrategies.ConeThenCube, ScoreConeThenCube::new);
         registerStrategy("Over The Rainbow", AutoStrategies.OverTheRainbow, OverTheRainbow::new);
 

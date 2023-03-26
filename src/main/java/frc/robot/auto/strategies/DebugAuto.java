@@ -6,13 +6,16 @@ package frc.robot.auto.strategies;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.auto.InitializeAutoState;
+import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 
 public class DebugAuto extends SequentialCommandGroup {
   public DebugAuto() {
     // double speed = 0.5;
     // double offset = -90.0;
     addCommands(
-      new InitializeAutoState(180)
+      new InitializeAutoState(180),
+      new ProfiledDistanceDriveCommand(180, 1.0, 3, 0)
+        .withEndSpeed(0)
     );
   }
 }

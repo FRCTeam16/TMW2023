@@ -20,7 +20,7 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
             new InstantCommand(Subsystems.intake::CloseHand),
 
             new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.0),
+            new WaitCommand(1.5),
             new InstantCommand(Subsystems.intake::storeAndScore),
             new WaitCommand(0.25),
             new InstantCommand(Subsystems.intake::OpenHand),
@@ -32,35 +32,33 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
             new SchedulePose(Pose.Stow),
 
             // Drive out of community
-            new ProfiledDistanceDriveCommand(180, 1, 2, 0)
+            new ProfiledDistanceDriveCommand(180, 1, 1.9, 0)
                 .withEndSpeed(0.3)
                 .withThreshold(0.1)
                 .withTimeout(3.0),
 
             // Pose to ground pickup
             Commands.parallel(
-                new SchedulePose(Pose.SingleSubstation),
+                new SchedulePose(Pose.GroundPickup),
                 Commands.run(Subsystems.intake::intake),
                 Commands.run(Subsystems.intake::OpenHand),
                 new WaitCommand(0.5)
-            ),
-            new SchedulePose(Pose.GroundPickup).withTimeout(0.5),
+            ).withTimeout(0.5),
 
             // Drive and pickup cube
-            new ProfiledDistanceDriveCommand(15, 0.3, 2.25, 0.35)
+            new ProfiledDistanceDriveCommand(15, 0.3, 2.25, 0.4)
                 .withEndSpeed(0.0)
                 .withThreshold(0.1)
-                .withTimeout(5.0),
+                .withTimeout(3.0),
             
             new PrintCommand("Finished pickup"),
 
             // Pose to stow
             Commands.parallel(
-                new SchedulePose(Pose.ScoreMidCone),
+                new SchedulePose(Pose.Stow),
                 Commands.run(Subsystems.intake::stopIntake),
                 new WaitCommand(0.5)
-            ),
-            new SchedulePose(Pose.Stow).withTimeout(0.25),
+            ).withTimeout(0.5),
 
             // Spin to face targets
             new ProfiledDistanceDriveCommand(180, 0.2, -0.5, -0.0)
@@ -75,10 +73,10 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
 
             // Drive to front of target
             new SchedulePose(Pose.ScoreHighCone),
-            new ProfiledDistanceDriveCommand(180, 0.6, -1.95, 0.45)
+            new ProfiledDistanceDriveCommand(180, 0.6, -2.0, 0.45)
                 .withEndSpeed(0.0)
                 .withThreshold(0.1)
-                .withTimeout(5.0),
+                .withTimeout(2.0),
 
             // Score
             Commands.run(Subsystems.intake::eject).withTimeout(0.25),

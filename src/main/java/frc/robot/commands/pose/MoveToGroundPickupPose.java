@@ -12,7 +12,7 @@ class MoveToGroundPickupPose extends SequentialCommandGroup {
 
         addCommands(
             new PoseElevator(ElevatorPosition.GroundPickup),
-            new WaitCommand(0.5),
+            new WaitCommand(0.3),
             Commands.parallel(
                 new PosePivot(PivotPosition.GroundPickup),
                 new PoseWrist(WristPosition.GroundPickup)

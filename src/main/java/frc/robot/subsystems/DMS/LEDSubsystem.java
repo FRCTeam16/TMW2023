@@ -38,6 +38,10 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     private static final double MOTOR_TEST_TIME = 4.0;
     private static final double RESULTS_DISPLAY_TIME = 10.0;
 
+    private int lastComm = 0;
+    private int noCommCounter = 0;  // avoid intermittent counter by looking for a set number before reporting this
+    private static final int NOCOMM_THRESHOLD = 4;
+
     private int secondsToClimb = 30;
 
     private static final int BUFFER_SIZE = 16;
@@ -87,6 +91,14 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         } else if (DriverStation.isTeleop()) {
             robotState = 3;
         }
+        if (robotState == 0) {
+            noCommCounter++;
+            robotState = (noCommCounter < NOCOMM_THRESHOLD) ? lastComm : 0;
+        } else {
+            noCommCounter = 0;
+        }
+        lastComm = robotState;
+      
 
         int requestedPart = (int) SmartDashboard.getNumber(PartIndicator.KEY, 0);
 
