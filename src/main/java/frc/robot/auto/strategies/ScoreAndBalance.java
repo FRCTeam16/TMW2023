@@ -40,10 +40,9 @@ public class ScoreAndBalance extends SequentialCommandGroup {
         addCommands(
             new InitializeAutoState(180),
             new InstantCommand(Subsystems.intake::CloseHand),
-            new WaitCommand(0.5),
 
             new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.0),
+            new WaitCommand(1.5),
             new InstantCommand(Subsystems.intake::storeAndScore),
             new WaitCommand(0.25),
             new InstantCommand(Subsystems.intake::OpenHand),
