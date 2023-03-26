@@ -100,7 +100,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         int partDetected = Subsystems.intake.isProxTripped() ? 1 : 0;
 
         double robotPitch = BSMath.map(Subsystems.swerveSubsystem.gyro.getPitch(),
-            -30.0, 30.0,
+            -15.0, 15.0,
             0, 255);
 
         double elevatorPosition = BSMath.map(Subsystems.elevator.getRawElevatorPosition(),

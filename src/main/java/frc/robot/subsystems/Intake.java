@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
+import frc.robot.commands.pose.PoseManager.Pose;
 import frc.robot.subsystems.PartIndicator.PartType;
 import frc.robot.subsystems.util.PIDHelper;
 
@@ -28,7 +29,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
     private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
-    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.08;
+    private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.05;
     private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.13;
 
     private boolean openLoop = true;
@@ -210,27 +211,35 @@ public class Intake extends SubsystemBase implements Lifecycle {
     @Override
     public void periodic() {
 
-        //Close hand if part detected
-        if(isProxTripped() && Subsystems.partIndicator.requestedPartType == PartType.Cone && !hasPart) {
-            CloseHand();
-            intakeSpeed = 0;
+        // Handle hasPart handling
+        if (isProxTripped() && !hasPart) {
             hasPart = true;
+            intakeSpeed = 0.0; // hack for speed control?
+
+            // If we are not in Substation and picking up a cube then automatically close
+            // the hand
+            if (Subsystems.poseManager.getCurrentPose() != Pose.SingleSubstation &&
+                    Subsystems.partIndicator.requestedPartType == PartType.Cone) {
+                CloseHand();
             }
+        }
 
 
-        //Intake Speed Control
+        // Intake Speed Control
         // Always run intake in open loop
-        if(isProxTripped() && Math.abs(intakeSpeed) < 0.01){
+        if (isProxTripped() && Math.abs(intakeSpeed) < 0.01) {
+            slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
             left.set(ControlMode.PercentOutput, slowIntakeSpeed);
-        } else{
+        } else {
             left.set(ControlMode.PercentOutput, intakeSpeed);
 
             // We had a part, signal we no longer have it
-            if (hasPart == true) {
+            if (!isProxTripped() && hasPart) {
                 hasPart = false;
                 Subsystems.partIndicator.requestPart(PartType.None);
             }
         }
+
 
         // Wrist can run in open loop or closed loop control
         if (openLoop) {
