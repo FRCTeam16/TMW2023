@@ -46,7 +46,7 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
             ).withTimeout(0.5),
 
             // Drive and pickup cube
-            new ProfiledDistanceDriveCommand(15, 0.3, 2.25, 0.4)
+            new ProfiledDistanceDriveCommand(15, 0.3, 2.25, 0.35)
                 .withEndSpeed(0.0)
                 .withThreshold(0.1)
                 .withTimeout(3.0),
@@ -57,8 +57,8 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
             Commands.parallel(
                 new SchedulePose(Pose.Stow),
                 Commands.run(Subsystems.intake::stopIntake),
-                new WaitCommand(0.5)
-            ).withTimeout(0.5),
+                new WaitCommand(0.3)
+            ).withTimeout(0.3),
 
             // Spin to face targets
             new ProfiledDistanceDriveCommand(180, 0.2, -0.5, -0.0)
@@ -66,14 +66,14 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
                 .withTimeout(5.0),
 
             // Drive towards targets
-            new ProfiledDistanceDriveCommand(180, 1, -2.0, -0.15)
+            new ProfiledDistanceDriveCommand(180, 1, -2.0, -0.1)
                 .withEndSpeed(0.5)
                 .withThreshold(0.1)
                 .withTimeout(5.0),
 
             // Drive to front of target
             new SchedulePose(Pose.ScoreHighCone),
-            new ProfiledDistanceDriveCommand(180, 0.6, -2.0, 0.45)
+            new ProfiledDistanceDriveCommand(180, 0.6, -2.0, 0.5)
                 .withEndSpeed(0.0)
                 .withThreshold(0.1)
                 .withTimeout(2.0),

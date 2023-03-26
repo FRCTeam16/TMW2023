@@ -146,7 +146,7 @@ Test new
     double vyMetersPerSecond = speed * Math.sin(driveAngle);
 */
 
-    double clamp = SmartDashboard.getNumber("RotationClamp", TeleopSwerve.ROTATION_CLAMP_RAD_PER_SEC);
+    double clamp = SmartDashboard.getNumber("AutoRotationClamp", 6);
 
     var twist = Subsystems.swerveSubsystem.getRotationController().calculate(
         Subsystems.swerveSubsystem.gyro.getGyroscopeRotation().getDegrees(), angle);
