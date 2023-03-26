@@ -1,5 +1,6 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -15,6 +16,7 @@ public class RotateToAngle extends CommandBase {
 
     @Override
     public void execute() {
+        double clamp = SmartDashboard.getNumber("AutoRotationClamp", 6);
         RotationController controller = Subsystems.swerveSubsystem.getRotationController();
         double twist = controller.calculate(
             //Subsystems.swerveSubsystem.getPose().getRotation().getDegrees(), 
@@ -23,7 +25,7 @@ public class RotateToAngle extends CommandBase {
         
         Subsystems.swerveSubsystem.drive(
             new Translation2d(0,0), 
-            Math.toRadians(twist), 
+            MathUtil.clamp(Math.toRadians(twist), -clamp, clamp),
             true,
             true);
 

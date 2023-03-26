@@ -11,11 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Subsystems;
-import frc.robot.commands.TeleopSwerve;
 
 public class ProfiledDistanceDriveCommand extends CommandBase {
 
-  public static boolean debug = true;  // controls writing sysouts
+  public static boolean debug = false;  // controls writing sysouts
 
   private double distanceThreshold = 0.05;
   private double angle;

@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -227,7 +228,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
         // Intake Speed Control
         // Always run intake in open loop
-        if (isProxTripped() && Math.abs(intakeSpeed) < 0.01) {
+        if (isProxTripped() && Math.abs(intakeSpeed) < 0.01 && !DriverStation.isAutonomousEnabled()) {
             slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
             left.set(ControlMode.PercentOutput, slowIntakeSpeed);
         } else {

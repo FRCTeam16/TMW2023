@@ -9,6 +9,7 @@ import frc.robot.Subsystems;
 import frc.robot.commands.SchedulePose;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
+import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.pose.PoseManager.Pose;
 
 public class ScoreConeThenCube extends SequentialCommandGroup {
@@ -45,11 +46,14 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
                 new WaitCommand(0.5)
             ).withTimeout(0.5),
 
+            new RotateToAngle(15).withTimeout(1),
+
             // Drive and pickup cube
-            new ProfiledDistanceDriveCommand(15, 0.3, 2.25, 0.35)
-                .withEndSpeed(0.0)
+            // 2.25 0.35
+            new ProfiledDistanceDriveCommand(15, 0.3, 2.35, 0.365)
+                .withEndSpeed(0.3)
                 .withThreshold(0.1)
-                .withTimeout(3.0),
+                .withTimeout(3.5),
             
             new PrintCommand("Finished pickup"),
 
@@ -66,14 +70,14 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
                 .withTimeout(5.0),
 
             // Drive towards targets
+            new SchedulePose(Pose.ScoreHighCone),
             new ProfiledDistanceDriveCommand(180, 1, -2.0, -0.1)
                 .withEndSpeed(0.5)
                 .withThreshold(0.1)
                 .withTimeout(5.0),
 
             // Drive to front of target
-            new SchedulePose(Pose.ScoreHighCone),
-            new ProfiledDistanceDriveCommand(180, 0.6, -2.0, 0.5)
+            new ProfiledDistanceDriveCommand(180, 0.6, -2.5, 0.5)
                 .withEndSpeed(0.0)
                 .withThreshold(0.1)
                 .withTimeout(2.0),
