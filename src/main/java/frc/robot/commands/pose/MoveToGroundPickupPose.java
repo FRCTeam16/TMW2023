@@ -9,11 +9,10 @@ import frc.robot.subsystems.Pivot.PivotPosition;
 
 class MoveToGroundPickupPose extends SequentialCommandGroup {
     public MoveToGroundPickupPose() {
+
         addCommands(
-            Commands.race(
-                new PoseElevator(ElevatorPosition.GroundPickup),
-                new WaitCommand(0.5)
-            ),
+            new PoseElevator(ElevatorPosition.GroundPickup),
+            new WaitCommand(0.5),
             Commands.parallel(
                 new PosePivot(PivotPosition.GroundPickup),
                 new PoseWrist(WristPosition.GroundPickup)

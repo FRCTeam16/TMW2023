@@ -1,6 +1,5 @@
 package frc.robot.commands.pose;
 
-import java.sql.Driver;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -22,6 +21,7 @@ public class PoseManager {
     }
 
     private Pose currentPose = Pose.StartingConfig;
+    private Pose lastPose = Pose.StartingConfig;
     private Map<Pose, Supplier<Command>> commandRegistry = new HashMap<>();
 
     public PoseManager() {
@@ -39,13 +39,7 @@ public class PoseManager {
         System.out.println("PoseManager getPose: " + currentPose + " => " + requestedPose);
         boolean illegal = false;
 
-
-        if (currentPose == Pose.Stow && (requestedPose == Pose.GroundPickup)) {
-            illegal = true;
-        }
-        else if (currentPose == Pose.GroundPickup && (requestedPose == Pose.Stow || requestedPose == Pose.Zero || requestedPose == Pose.SingleSubstation || requestedPose == Pose.DoubleSubstation)) {
-            illegal = true;
-        }
+        // Can add state checks of currentPose vs. requestedPose to prevent movements
 
         if (DriverStation.isTeleop()) {
             if (illegal) {
@@ -57,6 +51,7 @@ public class PoseManager {
 
         // Look up pose
         if (commandRegistry.containsKey(requestedPose)) {
+            lastPose = currentPose;
             currentPose = requestedPose;
             return commandRegistry.get(requestedPose).get();
         } else {
@@ -66,5 +61,9 @@ public class PoseManager {
 
     public Pose getCurrentPose() {
         return this.currentPose;
+    }
+
+    public Pose getLastPose() {
+        return this.lastPose;
     }
 }
