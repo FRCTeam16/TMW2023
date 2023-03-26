@@ -1,5 +1,6 @@
 package frc.robot.subsystems.DMS;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -83,43 +84,65 @@ public class DMSStats {
         double[] modifiedZCurrent = calculateModifiedZ(List.of(current.FL, current.FR, current.RL, current.RR));
         double[] modifiedZVelocity = calculateModifiedZ(List.of(velocity.FL, velocity.FR, velocity.RL, velocity.RR));
 
+        System.out.println("[calculateStatusMAD] current : " + printDoubleArray(modifiedZCurrent));
+        System.out.println("[calculateStatusMAD] velocity: " + printDoubleArray(modifiedZVelocity));
+
         double MAD_THRESHOLD = 3.5; // recommended as outlier
         DoubleToIntFunction dif = (c -> Math.abs(c) < MAD_THRESHOLD ? 1 : 2);
         int[] currentStatus = Arrays.stream(modifiedZCurrent).mapToInt(dif).toArray();
         int[] velocityStatus = Arrays.stream(modifiedZVelocity).mapToInt(dif).toArray();
 
 
-        status.FL = calculateStatus(currentStatus[0], velocityStatus[0]);
-        status.FR = calculateStatus(currentStatus[1], velocityStatus[1]);
-        status.RL = calculateStatus(currentStatus[2], velocityStatus[2]);
-        status.RR = calculateStatus(currentStatus[3], velocityStatus[3]);
+        status.FL = calculateStatusCode(currentStatus[0], velocityStatus[0]);
+        status.FR = calculateStatusCode(currentStatus[1], velocityStatus[1]);
+        status.RL = calculateStatusCode(currentStatus[2], velocityStatus[2]);
+        status.RR = calculateStatusCode(currentStatus[3], velocityStatus[3]);
 
         return status;
     }
 
-    private double[] calculateModifiedZ(List<Double> data) {
+    private String printDoubleArray(double[] array) {
+        StringBuffer sb = new StringBuffer();
+        for (var d : array) {
+            sb.append( d + " | ");
+        }
+        return sb.toString();
+    }
+
+    /** Calcualtes modified Z using median deviation */
+    private double[] calculateModifiedZ(List<Double> initialData) {
+        List<Double> data = new ArrayList<>(initialData);   // make mutable
+        System.out.println(data);
         Collections.sort(data);
+        System.out.println(data);
         // assume even number of observations-
         double median = (data.get(1) + data.get(2)) / 2;
+        System.out.println("median = " + median);
         double[] deviations = data.stream().mapToDouble(c -> c - median).toArray();
+        System.out.println(printDoubleArray(deviations));
         double medianDeviation = (deviations[1] + deviations[2]) / 2;
+        System.out.println(medianDeviation);
 
         double[] modifiedZ = data.stream().mapToDouble(c -> (0.6745 * (c - median) ) / medianDeviation).toArray();
+        System.out.println(printDoubleArray(modifiedZ));
+        System.out.println("***");
         return modifiedZ;
     }
 
-    private int calculateStatus(int currentStatus, int velocityStatus) {
+    /**
+     * Status coding
+     */
+    private int calculateStatusCode(int currentStatus, int velocityStatus) {
         if (currentStatus == 0 && velocityStatus == 0) {
-            return 0;
-        } else if (currentStatus == 0 && velocityStatus == 1) {
             return 1;
-        } else if (currentStatus == 1 && velocityStatus == 0) {
+        } else if (currentStatus == 0 && velocityStatus == 1) {
             return 2;
-        } else if (currentStatus == 1 && velocityStatus == 1) {
+        } else if (currentStatus == 1 && velocityStatus == 0) {
             return 3;
-        } else {
+        } else if (currentStatus == 1 && velocityStatus == 1) {
             return 4;
+        } else {
+            return 5;
         }
-
     }
 }

@@ -236,6 +236,8 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                 
                 driveStatus = driveDmsStatus.calculateStatus();
                 DMSStats.print("[Drive Status]", driveStatus);
+
+                DMSStats.print("[New DMS Drive]", driveDmsStatus.calculateStatusMAD());
             }
         } else {
             SmartDashboard.putNumber("DMS/Result/FL/Drive/Status", driveStatus.FL);
@@ -275,6 +277,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
                 
                 steerStatus = steerDmsStatus.calculateStatus();
                 DMSStats.print("[Steer Status]", steerStatus);
+                DMSStats.print("[New DMS Steer]", steerDmsStatus.calculateStatusMAD());
             } 
         } else {
             // Stop motors
