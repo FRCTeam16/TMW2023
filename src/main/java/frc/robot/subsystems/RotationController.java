@@ -20,6 +20,10 @@ public class RotationController extends PIDController {
         this(kP, kI, kD);
     }
 
+    public void resetTolerance() {
+        this.setTolerance(tolerance);
+    }
+
     public RotationController(double kp, double ki, double kd) {
         super(kp, ki, kd);
         this.enableContinuousInput(-180, 180);

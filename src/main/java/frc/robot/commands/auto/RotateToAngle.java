@@ -14,6 +14,12 @@ public class RotateToAngle extends CommandBase {
         this.targetAngleDegrees = targetAngleDegrees;
     }
 
+    public RotateToAngle withThreshold(double threshold) {
+        RotationController controller = Subsystems.swerveSubsystem.getRotationController();
+        controller.setTolerance(threshold);
+        return this;
+    }
+
     @Override
     public void execute() {
         double clamp = SmartDashboard.getNumber("AutoRotationClamp", 6);
@@ -35,6 +41,11 @@ public class RotateToAngle extends CommandBase {
     @Override
     public boolean isFinished() {
         return Subsystems.swerveSubsystem.getRotationController().atSetpoint();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        Subsystems.swerveSubsystem.getRotationController().resetTolerance();
     }
     
 }

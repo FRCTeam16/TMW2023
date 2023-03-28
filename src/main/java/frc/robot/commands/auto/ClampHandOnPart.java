@@ -1,6 +1,5 @@
 package frc.robot.commands.auto;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Subsystems;
 
@@ -15,8 +14,9 @@ public class ClampHandOnPart extends CommandBase {
         //     sawPart = true;
         //     sawPartTime = Timer.getFPGATimestamp();
         // }
-        if (Subsystems.intake.hasPart()) {
+        if (Subsystems.intake.isProxTripped()) {
             Subsystems.intake.CloseHand();
+            Subsystems.intake.runSlowIntake();
             sawPart = true;
             // sawPartTime = Timer.getFPGATimestamp();
         }

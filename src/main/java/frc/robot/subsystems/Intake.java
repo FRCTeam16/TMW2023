@@ -39,7 +39,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private double intakeSpeed = 0.0;
     private double slowIntakeSpeed = DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED;
 
-    private PIDHelper pidHelper = new PIDHelper("Intake");
+    private PIDHelper pidHelper = new PIDHelper("Intake", false);
     private double setpoint = 0.0;
     private double storedSetpoint = 0.0;
 
@@ -173,7 +173,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
             intake();
         }
         else {
-            stopIntake();
+            if (!DriverStation.isAutonomous()) {
+                stopIntake();
+            }
         }
     }
 
@@ -212,36 +214,41 @@ public class Intake extends SubsystemBase implements Lifecycle {
     @Override
     public void periodic() {
 
-        // Handle hasPart handling
-        if (isProxTripped() && !hasPart) {
-            hasPart = true;
-            if (!DriverStation.isAutonomousEnabled()) {
+        if (!DriverStation.isAutonomousEnabled()) {
+            // Handle hasPart handling
+            if (isProxTripped() && !hasPart) {
+                hasPart = true;
                 intakeSpeed = 0.0; // hack for speed control?
+
+                // If we are not in Substation and picking up a cube then automatically close
+                // the hand
+                if (Subsystems.poseManager.getCurrentPose() != Pose.SingleSubstation &&
+                        Subsystems.partIndicator.requestedPartType == PartType.Cone) {
+                    CloseHand();
+                }
             }
 
-            // If we are not in Substation and picking up a cube then automatically close
-            // the hand
-            if (Subsystems.poseManager.getCurrentPose() != Pose.SingleSubstation &&
-                    Subsystems.partIndicator.requestedPartType == PartType.Cone) {
-                CloseHand();
+
+            // Intake Speed Control
+            // Always run intake in open loop
+            if (isProxTripped() && Math.abs(intakeSpeed) < 0.01) {
+                slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
+                left.set(ControlMode.PercentOutput, slowIntakeSpeed);
+            } else {
+                left.set(ControlMode.PercentOutput, intakeSpeed);
+
+                // We had a part, signal we no longer have it
+                if (!isProxTripped() && hasPart) {
+                    hasPart = false;
+                    Subsystems.partIndicator.requestPart(PartType.None);
+                }
             }
-        }
-
-
-        // Intake Speed Control
-        // Always run intake in open loop
-        if (isProxTripped() && Math.abs(intakeSpeed) < 0.01 && !DriverStation.isAutonomousEnabled()) {
-            slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
-            left.set(ControlMode.PercentOutput, slowIntakeSpeed);
         } else {
+            // Auto keeps running
             left.set(ControlMode.PercentOutput, intakeSpeed);
-
-            // We had a part, signal we no longer have it
-            if (!isProxTripped() && hasPart) {
-                hasPart = false;
-                Subsystems.partIndicator.requestPart(PartType.None);
-            }
         }
+
+        
 
 
         // Wrist can run in open loop or closed loop control

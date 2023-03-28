@@ -56,7 +56,7 @@ public class ScoreLowConeThenLowCone extends SequentialCommandGroup {
             // Pose to stow
             Commands.parallel(
                 new SchedulePose(Pose.Stow),
-                Commands.run(Subsystems.intake::stopIntake),
+                // Commands.run(Subsystems.intake::stopIntake),
                 new WaitCommand(0.3)
             ).withTimeout(0.3),
 

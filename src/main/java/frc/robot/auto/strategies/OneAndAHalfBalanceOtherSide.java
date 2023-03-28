@@ -20,23 +20,12 @@ import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.auto.StopDrive;
 import frc.robot.commands.pose.PoseManager.Pose;
 
-public class OneAndAHalfBalance extends SequentialCommandGroup {
+public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
 
     private PitchDropWatcher pitchWatcher = new PitchDropWatcher();
 
 
-    public OneAndAHalfBalance() {
-        this(false);
-    }
-
-    public OneAndAHalfBalance(boolean invertSide) {
-
-        int DIR = (DriverStation.getAlliance() == Alliance.Red) ? 1 : -1;
-
-        if (invertSide) {
-            System.out.println("Inverting Score And Balance direction");
-            DIR *= -1;
-        }
+    public OneAndAHalfBalanceOtherSide() {
 
         addCommands(
             new InitializeAutoState(180),
@@ -55,7 +44,7 @@ public class OneAndAHalfBalance extends SequentialCommandGroup {
             new SchedulePose(Pose.PreGroundPickup),
 
             // Drive out of community
-            new ProfiledDistanceDriveCommand(180, 1, 1.9, 0)
+            new ProfiledDistanceDriveCommand(180, 1, 2.4, -0.25)
                 .withEndSpeed(0.3)
                 .withThreshold(0.1)
                 .withTimeout(3.0),
@@ -64,46 +53,43 @@ public class OneAndAHalfBalance extends SequentialCommandGroup {
             Commands.parallel(
                 new SchedulePose(Pose.PreGroundPickup),
                 Commands.run(Subsystems.intake::intake),
-                Commands.run(Subsystems.intake::OpenHand),
+                // Commands.run(Subsystems.intake::OpenHand),
                 new WaitCommand(0.5)
             ).withTimeout(0.5),
 
-            new RotateToAngle(15).withTimeout(1),
+            new RotateToAngle(-7.5).withThreshold(1).withTimeout(1),
             Commands.parallel(
                 new StopDrive(),
                 new SchedulePose(Pose.GroundPickup),
                 new WaitCommand(0.25)
-            ),
+            ).withTimeout(0.25),
 
             // Drive and pickup cube
             new PrintCommand("Starting pickup"),
             Commands.parallel(
-                new ProfiledDistanceDriveCommand(15, 0.5, 1.6, 0.018)
-                    .withEndSpeed(0.5)
-                    .withThreshold(0.1)
-                    .withTimeout(2.5),
-                new ClampHandOnPart().withTimeout(2.5)
-            ).withTimeout(2.5),
-            // new InstantCommand(Subsystems.intake::CloseHand),
+                new ProfiledDistanceDriveCommand(-7.5, 0.25, 1.9, 0)
+                    .withEndSpeed(0.25)
+                    .withTimeout(10),
+                new ClampHandOnPart()
+            ).withTimeout(10),
             new PrintCommand("Finished pickup"),
 
             // Pose to stow
             Commands.print("Stowing"),
             Commands.parallel(
                 new SchedulePose(Pose.Stow),
-                new RotateToAngle(180).withTimeout(1.5)
+                new RotateToAngle(-178).withThreshold(10).withTimeout(1.5)
             ).withTimeout(1.5),
 
-            Commands.print("Moving Left"),
-            new ProfiledDistanceDriveCommand(180, 0.4, -0.5, 1.5)
-                // .withConstraints(new TrapezoidProfile.Constraints(0.4, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2))
+            Commands.print("Moving Right"),
+            new ProfiledDistanceDriveCommand(-178, 0.4, -0.8, -1.5)
                 .withEndSpeed(0.4)
                 .withThreshold(0.1)
                 .withTimeout(1.5),
 
-            new PrintCommand("Move Left"),
+            new PrintCommand("Move Right"),
 
-            new ProfiledDistanceDriveCommand(180, 0.4, -2.5, 0)
+            new ProfiledDistanceDriveCommand(180, 0.4, -2.75, 0)
                 .withEndSpeed(0.4)
                 .withThreshold(0.1)
                 .withTimeout(2),
