@@ -110,8 +110,10 @@ public class RobotContainer {
     //
     private final JoystickButton zeroGyro     = new JoystickButton(gamepad, XboxController.Button.kStart.value);
     private final JoystickButton robotCentric = new JoystickButton(left, 8);
-    private final JoystickButton enableLimelight = new JoystickButton(left, 16);
-    private final JoystickButton disableLimelight = new JoystickButton(left, 15);
+    //private final JoystickButton enableLimelight = new JoystickButton(left, 16);
+    //private final JoystickButton disableLimelight = new JoystickButton(left, 15);
+    private final JoystickButton StickPoseSS = new JoystickButton(left, 16);
+    private final JoystickButton StickPoseDS = new JoystickButton(left, 15);
     private final JoystickButton detectScoreHighConePositionEnable = new JoystickButton(left, 14);
     private final Trigger detectScorePositionTrigger = new Trigger(() -> Subsystems.visionSubsystem.getScorePositionDetector().inRequestedScoringPosition());
     private final JoystickButton runDMS = new JoystickButton(right, 8);
@@ -217,7 +219,11 @@ public class RobotContainer {
 
 
         singleSubstationPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.SingleSubstation))));
+        StickPoseSS.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.SingleSubstation))));
+
         doubleSubstationPose.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.DoubleSubstation))));
+        StickPoseDS.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.DoubleSubstation))));
+        
         scoreConeHighPose.onTrue(new InstantCommand(()    -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreHighCone))));
         scoreConeMidPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.ScoreMidCone))));
         groundPickupPose.onTrue(new InstantCommand(()     -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.GroundPickup))));
@@ -252,10 +258,10 @@ public class RobotContainer {
         closeHandJoy.onTrue(new InstantCommand(() -> Subsystems.intake.CloseHand()));
 
         //
-        // Vision Subsytems
+        // Vision Subsytems - TEMP DISABLED FOR OTHER CONTROLLS
         //
-        enableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.enable()).ignoringDisable(true));
-        disableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.disable()).ignoringDisable(true));
+        //enableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.enable()).ignoringDisable(true));
+        //disableLimelight.onTrue(new InstantCommand(() -> Subsystems.visionSubsystem.disable()).ignoringDisable(true));
 
         // Vision-based automatic scoring
         detectScoreHighConePositionEnable

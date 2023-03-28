@@ -10,56 +10,71 @@ import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 import frc.robot.commands.pose.PoseManager;
 import frc.robot.commands.pose.PoseManager.Pose;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake;
+
 
 public class DoubleScore extends SequentialCommandGroup {
-    public DoubleScore(){
+    
+    public DoubleScore() {
 
         addCommands(
             new InitializeAutoState(180),
+            new InstantCommand(Subsystems.intake::CloseHand),
+            new WaitCommand(0.5),
 
             new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.5),
-
+            new WaitCommand(1.0),
+            new InstantCommand(Subsystems.intake::storeAndScore),
+            new WaitCommand(0.25),
             new InstantCommand(Subsystems.intake::OpenHand),
-            new InstantCommand(Subsystems.intake::eject),
+            new WaitCommand(0.5),
+            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
 
-            new WaitCommand(5),
+            new SchedulePose(Pose.SingleSubstation),
+            new WaitCommand(0.5),
+            new SchedulePose(Pose.Stow),
+
+            new ProfiledDistanceDriveCommand(180, 1, 0.5, 0)
+                     .withEndSpeed(0.5)
+                     .withThreshold(0.1)
+                     .withTimeout(5.0),
+
+            //here we need to turn
+            new ProfiledDistanceDriveCommand(0, 0.5, 0.25, 0)
+                     .withEndSpeed(0.5)
+                     .withThreshold(0.1)
+                     .withTimeout(0.3),
+
+            // Do drive to balance
             Commands.parallel(
-                new SchedulePose(Pose.Stow),
-                new ProfiledDistanceDriveCommand(180, 0.15, 0, 0.5)
+                new ProfiledDistanceDriveCommand(0, 1, 3, 0)
+                     .withEndSpeed(0.5)
+                     .withThreshold(0.1)
+                     .withTimeout(5.0),
+
+                new SchedulePose(Pose.SingleSubstation),
+                new InstantCommand(Subsystems.intake::OpenHand),
+                new InstantCommand(Subsystems.intake::intake),
+                new WaitCommand(0.5)
             ),
+            new SchedulePose(Pose.GroundPickup),
+            new WaitCommand(0.5),
 
-            new WaitCommand(5),
-            new SchedulePose(Pose.Zero),
-            new WaitCommand(5)
+            new ProfiledDistanceDriveCommand(0, 1, 0.2, 0)
+                     .withEndSpeed(0.5)
+                     .withThreshold(0.1)
+                     .withTimeout(5.0)
 
-            //Do comment this out for now bc untested, Do test though
 
-            // new ProfiledDistanceDriveCommand(0, .05, 0, 0.25),
-            // new WaitCommand(1),
-            // new ProfiledDistanceDriveCommand(0, .05, 0, 1.5),
-            // new WaitCommand(8),
-            // new SchedulePose(Pose.SingleSubstation),
-            // new WaitCommand(3),
-            // Commands.parallel(
-            //     new SchedulePose(Pose.GroundPickup),
-            //     new InstantCommand(Subsystems.intake::intake)
-            // ),
-            // new WaitCommand(3),
-            // Commands.parallel(
-            // new ProfiledDistanceDriveCommand(0, 0.5, 0, .5),
-            // new InstantCommand(Subsystems.intake::CloseHand)
-            // )
+            
 
-            //another untested segment ( assume has cube )
-
-            // new SchedulePose(Pose.SingleSubstation),
-            // new WaitCommand(3),
-            // new SchedulePose(Pose.Stow),
-            // new WaitCommand(5),
-            // new ProfiledDistanceDriveCommand(180, 0.15, 0, -0.5),
-            // new WaitCommand(3),
-            // new ProfiledDistanceDriveCommand(0, 0.05, 0, 0)
+            // new ProfiledDistanceDriveCommand(180, 0.75, 0, DIR * 2)
+            //     .withEndSpeed(0.5)
+            //     .withTimeout(2.0)
         );
     }
 }
