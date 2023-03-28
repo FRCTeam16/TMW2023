@@ -9,22 +9,26 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.strategies.DebugAuto;
 import frc.robot.auto.strategies.FlatOutRun;
+import frc.robot.auto.strategies.OneAndAHalfBalance;
 import frc.robot.auto.strategies.OverTheRainbow;
 import frc.robot.auto.strategies.ScoreAndBalance;
 import frc.robot.auto.strategies.ScoredStraight;
 import frc.robot.auto.strategies.ScoreConeThenCube;
 import frc.robot.auto.strategies.ScoreLowConeThenLowCone;
 import frc.robot.auto.strategies.TestTrajectoryFactory;
+import frc.robot.auto.strategies.TryForThree;
 import frc.robot.autos.PDistTest;
 import frc.robot.auto.strategies.DoubleScore;
 
 public class AutoManager {
 
     public enum AutoStrategies {
-        DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, ConeThenCube,
+        DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, 
         ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun, 
         OverTheRainbow,
-        DoubleScore, LowConeThenLowCone
+        ConeThenCube,
+        DoubleScore, LowConeThenLowCone,
+        TryForThree, OneAndAHalfBalance
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -43,6 +47,8 @@ public class AutoManager {
         registerStrategy("Score Cone then Cube", AutoStrategies.ConeThenCube, ScoreConeThenCube::new);
         registerStrategy("Over The Rainbow", AutoStrategies.OverTheRainbow, OverTheRainbow::new);
         registerStrategy("Double Low Cone Balance", AutoStrategies.LowConeThenLowCone, ScoreLowConeThenLowCone::new);
+        registerStrategy("Try For Three", AutoStrategies.TryForThree, TryForThree::new);
+        registerStrategy("1.5 Balance", AutoStrategies.OneAndAHalfBalance, OneAndAHalfBalance::new);
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.
         SmartDashboard.putData("Auto Selector", chooser);

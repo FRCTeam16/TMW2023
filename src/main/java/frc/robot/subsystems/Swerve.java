@@ -78,6 +78,10 @@ public class Swerve extends SubsystemBase {
         swerveOdometry.resetPosition(getYaw(), getModulePositions(), pose);
     }
 
+    public void hardResetOdometry(double yaw) {
+        swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, Rotation2d.fromDegrees(yaw), getModulePositions());
+    }
+
     public SwerveModuleState[] getModuleStates(){
         SwerveModuleState[] states = new SwerveModuleState[4];
         for(SwerveModule mod : mSwerveMods){
@@ -112,7 +116,7 @@ public class Swerve extends SubsystemBase {
 
     @Override
     public void periodic(){
-        swerveOdometry.update(getYaw(), getModulePositions());  
+        swerveOdometry.update(getYaw(), getModulePositions());
 
         for(SwerveModule mod : mSwerveMods){
             SmartDashboard.putNumber("Mod " + mod.moduleNumber + " Cancoder", mod.getCanCoder().getDegrees());
@@ -123,6 +127,9 @@ public class Swerve extends SubsystemBase {
         SmartDashboard.putNumber("NavX", gyro.getGyroscopeRotation().getDegrees());
 
         SmartDashboard.putData("RotationController", this.rotationController);
+
+        SmartDashboard.putNumber("PoseX", this.getPose().getTranslation().getX());
+        SmartDashboard.putNumber("PoseY", this.getPose().getTranslation().getY());
     }
 
     public void DMSDrive(double speed) {

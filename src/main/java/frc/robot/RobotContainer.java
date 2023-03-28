@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -115,6 +117,12 @@ public class RobotContainer {
     private final JoystickButton runDMS = new JoystickButton(right, 8);
 
 
+    //
+    //
+    //
+    // private DigitalInput dmsButtonInput = new DigitalInput(1);
+    // private final Trigger dmsButton = new Trigger(() -> dmsButtonInput.get());
+
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
     private final AutoManager autoManager = new AutoManager();
@@ -225,6 +233,7 @@ public class RobotContainer {
         xLock.whileTrue(new XWHeelLock());
 
         runDMS.whileTrue(new RunDMSCommand());
+        // dmsButton.whileTrue(new RunDMSCommand());
         
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));

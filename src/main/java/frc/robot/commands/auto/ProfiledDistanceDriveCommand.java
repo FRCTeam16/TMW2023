@@ -14,7 +14,7 @@ import frc.robot.Subsystems;
 
 public class ProfiledDistanceDriveCommand extends CommandBase {
 
-  public static boolean debug = false;  // controls writing sysouts
+  public static boolean debug = true;  // controls writing sysouts
 
   private double distanceThreshold = 0.05;
   private double angle;
@@ -130,6 +130,7 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
     
     // TODO: may just need to add 90 to driveAngle and use true quadrant sign values
     if (currentPose.getY() > targetPose.getY()) {
+      if (debug) System.out.println("*** inverting VYM: " + currentPose.getY() + " > " + targetPose.getY());
       vyMetersPerSecond = -vyMetersPerSecond;
     }
     if (currentPose.getX() > targetPose.getX()) {
@@ -157,6 +158,7 @@ Test new
     if (debug) {
       System.out.println(
         "DA: " + driveAngle +
+        " | Yaw: " + Subsystems.swerveSubsystem.getYaw().getDegrees() + 
         " | VX: " + vxMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond + 
         " | VY: " + vyMetersPerSecond / Constants.AutoConstants.kMaxSpeedMetersPerSecond +
         " | TW: " + twist);
@@ -189,6 +191,10 @@ Test new
     if (debug) {
       System.out.println("DIST: " + distance + " | T:" + targetPose + " | C:" + Subsystems.swerveSubsystem.getPose().getTranslation());
     }
+    if (distance < distanceThreshold) {
+      System.out.println(("=======> SDDC HIT DISTANCE <========"));
+    }
+    System.out.println("->End PDDC Scan<-");
     return (distance < distanceThreshold);
   }
 }

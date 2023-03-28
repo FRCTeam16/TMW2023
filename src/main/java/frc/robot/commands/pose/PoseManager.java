@@ -13,6 +13,7 @@ public class PoseManager {
         StartingConfig,
         SingleSubstation,
         DoubleSubstation,
+        PreGroundPickup,
         GroundPickup,
         Stow,
         ScoreMidCone,
@@ -25,6 +26,7 @@ public class PoseManager {
     private Map<Pose, Supplier<Command>> commandRegistry = new HashMap<>();
 
     public PoseManager() {
+        commandRegistry.put(Pose.PreGroundPickup, MoveToPreGroundPickupPose::new);
         commandRegistry.put(Pose.GroundPickup, MoveToGroundPickupPose::new);
         commandRegistry.put(Pose.Stow, MoveToStowPose::new);
         commandRegistry.put(Pose.SingleSubstation, MoveToSingleSubstationPose::new);

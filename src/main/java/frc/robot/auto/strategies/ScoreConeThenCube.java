@@ -47,7 +47,7 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
 
             // Pose to ground pickup
             Commands.parallel(
-                new SchedulePose(Pose.GroundPickup),
+                new SchedulePose(Pose.PreGroundPickup),
                 Commands.run(Subsystems.intake::intake),
                 Commands.run(Subsystems.intake::OpenHand),
                 new WaitCommand(0.5)
@@ -55,9 +55,11 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
 
             new RotateToAngle(15).withTimeout(1),
 
+
             // Drive and pickup cube
             Commands.parallel(
-                new ProfiledDistanceDriveCommand(15, pickupSpeed, 2.35, 0.357)
+                new SchedulePose(Pose.GroundPickup),
+                new ProfiledDistanceDriveCommand(15, pickupSpeed, 1.8, 0.022)
                     .withEndSpeed(pickupSpeed)
                     .withThreshold(0.1)
                     .withTimeout(pickupTimeout),
@@ -95,10 +97,7 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
             Commands.run(Subsystems.intake::eject).withTimeout(0.25),
             
             (coneMode) ? Commands.print("Skip stow pose") : new SchedulePose(Pose.Stow),
-            (coneMode) ? Commands.print("Skip stop wait") : new WaitCommand(0.5),
-            new ProfiledDistanceDriveCommand(180, 1, 1.75, 1.75)
-                .withTimeout(3)
-            
+            (coneMode) ? Commands.print("Skip stop wait") : new WaitCommand(0.5)
         );
     }
     
