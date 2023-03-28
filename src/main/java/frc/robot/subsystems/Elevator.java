@@ -65,7 +65,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         left.configAllSettings(config); // apply the config settings; this selects the quadrature encoder
         right.configAllSettings(config);
 
-        pidHelper.initialize(0.037, 0, 0, 0, 12_000, 10_000);
+        pidHelper.initialize(0.037, 0, 0, 0, 10_000, 19_000);
         pidHelper.updateTalonFX(left, 0);
 
         SmartDashboard.setDefaultNumber("Elevator/OpenLoopSpeed", DEFAULT_OPENLOOP_SPEED);

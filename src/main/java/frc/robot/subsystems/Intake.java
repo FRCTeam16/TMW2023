@@ -213,6 +213,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     @Override
     public void periodic() {
+        slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
 
         if (!DriverStation.isAutonomousEnabled()) {
             // Handle hasPart handling
@@ -232,10 +233,14 @@ public class Intake extends SubsystemBase implements Lifecycle {
             // Intake Speed Control
             // Always run intake in open loop
             if (isProxTripped() && Math.abs(intakeSpeed) < 0.01) {
-                slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
                 left.set(ControlMode.PercentOutput, slowIntakeSpeed);
             } else {
-                left.set(ControlMode.PercentOutput, intakeSpeed);
+
+                if (hasPart && Subsystems.poseManager.getCurrentPose() == Pose.SingleSubstation) {
+                    left.set(ControlMode.PercentOutput, slowIntakeSpeed);
+                } else {
+                    left.set(ControlMode.PercentOutput, intakeSpeed);
+                }
 
                 // We had a part, signal we no longer have it
                 if (!isProxTripped() && hasPart) {
