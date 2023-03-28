@@ -47,9 +47,9 @@ public class OverTheRainbowPlusPickup extends SequentialCommandGroup {
                 .withThreshold(0.1)
                 .withTimeout(8.0),
 
-            new RotateToAngle(90).withThreshold(20).withTimeout(1),
+            // new RotateToAngle(90).withThreshold(20).withTimeout(1),
             Commands.parallel(
-                new RotateToAngle(0).withTimeout(1),
+                new RotateToAngle(0).withTimeout(2),
                 new SchedulePose(Pose.GroundPickup)
             ),
 
@@ -64,9 +64,9 @@ public class OverTheRainbowPlusPickup extends SequentialCommandGroup {
             ).withTimeout(3),
             new PrintCommand("Finished pickup"),
 
-            new RotateToAngle(90).withThreshold(20).withTimeout(1),
+            // new RotateToAngle(90).withThreshold(20).withTimeout(1),
             Commands.parallel(
-                new RotateToAngle(180).withTimeout(1),
+                new RotateToAngle(180).withTimeout(2),
                 new SchedulePose(Pose.Stow)
             ),
 
