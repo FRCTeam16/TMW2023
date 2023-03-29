@@ -122,8 +122,8 @@ public class RobotContainer {
     //
     //
     //
-    // private DigitalInput dmsButtonInput = new DigitalInput(1);
-    // private final Trigger dmsButton = new Trigger(() -> dmsButtonInput.get());
+    private DigitalInput dmsButtonInput = new DigitalInput(1);
+    private final Trigger dmsButton = new Trigger(dmsButtonInput::get);
 
     /* Subsystems */
     private final Subsystems subsystems = Subsystems.getInstance();
@@ -239,7 +239,7 @@ public class RobotContainer {
         xLock.whileTrue(new XWHeelLock());
 
         runDMS.whileTrue(new RunDMSCommand());
-        // dmsButton.whileTrue(new RunDMSCommand());
+        dmsButton.whileTrue(new RunDMSCommand());
         
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));

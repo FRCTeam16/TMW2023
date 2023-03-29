@@ -29,9 +29,6 @@ public class PartIndicator extends SubsystemBase {
     // 02 - cube
     // 11 - no request if blue allianc
     //  
-    private DigitalOutput requestPin1 = new DigitalOutput(1);
-    private DigitalOutput requestPin2 = new DigitalOutput(2);
-
     public PartType requestedPartType = PartType.None;
     
     public PartIndicator() {
@@ -40,24 +37,5 @@ public class PartIndicator extends SubsystemBase {
     public void requestPart(PartType partType) {
         this.requestedPartType = partType;
         SmartDashboard.putNumber(KEY, this.requestedPartType.value);
-    }
-
-    @Override
-    public void periodic() {
-        switch (requestedPartType) {
-            case None:
-                boolean colorSignal  = DriverStation.getAlliance() == Alliance.Blue;
-                requestPin1.set(colorSignal);
-                requestPin2.set(colorSignal);
-                break;
-            case Cone:
-                requestPin1.set(false); // Binary 1
-                requestPin2.set(true);
-                break;
-            case Cube:
-                requestPin1.set(true); // Binary 2
-                requestPin2.set(false);
-                break;
-        }
     }
 }
