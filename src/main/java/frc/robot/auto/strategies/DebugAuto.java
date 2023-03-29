@@ -15,11 +15,11 @@ public class DebugAuto extends SequentialCommandGroup {
     // double speed = 0.5;
     // double offset = -90.0;
     addCommands(
-      new InitializeAutoState(0),
-      new SchedulePose(Pose.Stow),
-      new ProfiledDistanceDriveCommand(0, 0.5, 3, 0)
-        .withEndSpeed(0),
-        new ProfiledDistanceDriveCommand(0, 0, 0, 0)
-    );
+      new InitializeAutoState(0));
+    //   new SchedulePose(Pose.Stow),
+    //   new ProfiledDistanceDriveCommand(0, 0.5, 3, 0)
+    //     .withEndSpeed(0),
+    //     new ProfiledDistanceDriveCommand(0, 0, 0, 0)
+    // );
   }
 }

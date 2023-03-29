@@ -55,7 +55,7 @@ public class OneAndAHalfBalance extends SequentialCommandGroup {
             new SchedulePose(Pose.PreGroundPickup),
 
             // Drive out of community
-            new ProfiledDistanceDriveCommand(180, 1, 1.9, 0)
+            new ProfiledDistanceDriveCommand(180 * DIR, 1, 1.9, 0 * DIR)
                 .withEndSpeed(0.3)
                 .withThreshold(0.1)
                 .withTimeout(3.0),
@@ -68,7 +68,7 @@ public class OneAndAHalfBalance extends SequentialCommandGroup {
                 new WaitCommand(0.5)
             ).withTimeout(0.5),
 
-            new RotateToAngle(15).withTimeout(1),
+            new RotateToAngle(15 * DIR).withTimeout(1),
             Commands.parallel(
                 new StopDrive(),
                 new SchedulePose(Pose.GroundPickup),
@@ -78,7 +78,7 @@ public class OneAndAHalfBalance extends SequentialCommandGroup {
             // Drive and pickup cube
             new PrintCommand("Starting pickup"),
             Commands.parallel(
-                new ProfiledDistanceDriveCommand(15, 0.5, 1.6, 0.018)
+                new ProfiledDistanceDriveCommand(15 * DIR, 0.5, 1.6, 0.018 * DIR)
                     .withEndSpeed(0.5)
                     .withThreshold(0.1)
                     .withTimeout(2.5),
@@ -91,25 +91,24 @@ public class OneAndAHalfBalance extends SequentialCommandGroup {
             Commands.print("Stowing"),
             Commands.parallel(
                 new SchedulePose(Pose.Stow),
-                new RotateToAngle(180).withTimeout(1.5)
+                new RotateToAngle(180 * DIR).withTimeout(1.5)
             ).withTimeout(1.5),
 
             Commands.print("Moving Left"),
-            new ProfiledDistanceDriveCommand(180, 0.4, -0.5, 1.5)
-                // .withConstraints(new TrapezoidProfile.Constraints(0.4, Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared / 2))
+            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -0.5, 1.5 * DIR)
                 .withEndSpeed(0.4)
                 .withThreshold(0.1)
                 .withTimeout(1.5),
 
             new PrintCommand("Move Left"),
 
-            new ProfiledDistanceDriveCommand(180, 0.4, -2.5, 0)
+            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -2.5, 0 * DIR)
                 .withEndSpeed(0.4)
                 .withThreshold(0.1)
                 .withTimeout(2),
             new PrintCommand("Finished moving to ramp"),
 
-            new ProfiledDistanceDriveCommand(180, 0.4, -1, 0)
+            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -1, 0 * DIR)
                 .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
                 .withThreshold(0.1)
                 .withTimeout(2),
