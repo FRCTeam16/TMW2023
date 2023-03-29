@@ -44,12 +44,12 @@ public class AutoManager {
         registerStrategy("Score And Balance Other Side", AutoStrategies.ScoreAndBalanceOtherSide, () -> new ScoreAndBalance(true));
         registerStrategy("Scored Straight", AutoStrategies.ScoredStraight, ScoredStraight::new);
         registerStrategy("FlatOutRun", AutoStrategies.FlatOutRun, FlatOutRun::new);
-        registerStrategy("Experimental DoubleScore", AutoStrategies.DoubleScore, DoubleScore::new);
-        registerStrategy("Score Cone then Cube", AutoStrategies.ConeThenCube, ScoreConeThenCube::new);
+        // registerStrategy("Experimental DoubleScore", AutoStrategies.DoubleScore, DoubleScore::new);
+        // registerStrategy("Score Cone then Cube", AutoStrategies.ConeThenCube, ScoreConeThenCube::new);
         registerStrategy("Over The Rainbow", AutoStrategies.OverTheRainbow, OverTheRainbow::new);
         registerStrategy("Over The Rainbow Plus Pickup", AutoStrategies.OverTheRainbowPlusPickup, OverTheRainbowPlusPickup::new);
-        registerStrategy("Double Low Cone Balance", AutoStrategies.LowConeThenLowCone, ScoreLowConeThenLowCone::new);
-        registerStrategy("Try For Three", AutoStrategies.TryForThree, TryForThree::new);
+        // registerStrategy("Double Low Cone Balance", AutoStrategies.LowConeThenLowCone, ScoreLowConeThenLowCone::new);
+        // registerStrategy("Try For Three", AutoStrategies.TryForThree, TryForThree::new);
         registerStrategy("1.5 Balance", AutoStrategies.OneAndAHalfBalance, OneAndAHalfBalance::new);
         registerStrategy("1.5 Balance Other", AutoStrategies.OneAndAHalfBalanceOtherSide, OneAndAHalfBalanceOtherSide::new);
 
