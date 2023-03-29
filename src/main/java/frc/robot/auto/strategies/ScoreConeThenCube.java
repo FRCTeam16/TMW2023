@@ -11,6 +11,7 @@ import frc.robot.commands.auto.ClampHandOnPart;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 import frc.robot.commands.auto.RotateToAngle;
+import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.pose.PoseManager.Pose;
 
 public class ScoreConeThenCube extends SequentialCommandGroup {
@@ -25,15 +26,12 @@ public class ScoreConeThenCube extends SequentialCommandGroup {
 
         addCommands(
             new InitializeAutoState(180),
-            new InstantCommand(Subsystems.intake::CloseHand),
+            new InstantCommand(Subsystems.intake::CloseHand)
+        );
 
-            new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.5),
-            new InstantCommand(Subsystems.intake::storeAndScore),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::OpenHand),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
+        ScoreHighHelper.scoreHighCone(this);
+
+        addCommands(
 
             new SchedulePose(Pose.SingleSubstation),
             new WaitCommand(0.5),

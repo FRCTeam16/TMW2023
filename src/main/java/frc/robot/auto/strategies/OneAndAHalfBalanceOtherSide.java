@@ -1,6 +1,5 @@
 package frc.robot.auto.strategies;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -8,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants;
 import frc.robot.Subsystems;
 import frc.robot.auto.strategies.OverTheRainbow.PitchDropWatcher;
 import frc.robot.commands.SchedulePose;
@@ -17,6 +15,7 @@ import frc.robot.commands.auto.ClampHandOnPart;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 import frc.robot.commands.auto.RotateToAngle;
+import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.auto.StopDrive;
 import frc.robot.commands.pose.PoseManager.Pose;
 
@@ -31,16 +30,11 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
 
         addCommands(
             new InitializeAutoState(180),
-            new InstantCommand(Subsystems.intake::CloseHand),
+            new InstantCommand(Subsystems.intake::CloseHand)
+        );
+        ScoreHighHelper.scoreHighCone(this);
 
-            new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.5),
-            new InstantCommand(Subsystems.intake::storeAndScore),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::OpenHand),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
-
+        addCommands(
             new SchedulePose(Pose.SingleSubstation),
             new WaitCommand(0.5),
             new SchedulePose(Pose.PreGroundPickup),
@@ -70,7 +64,8 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
             Commands.parallel(
                 new ProfiledDistanceDriveCommand(-7.5 * DIR, 0.25, 1.9, 0 * DIR)
                     .withEndSpeed(0.25)
-                    .withTimeout(2),
+                    .withTimeout(2)
+                    .andThen(new StopDrive()),
                 new ClampHandOnPart()
             ).withTimeout(2),
             new PrintCommand("Finished pickup"),

@@ -23,6 +23,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private Solenoid upper = new Solenoid(PneumaticsModuleType.REVPH, 0);
     private Solenoid lower = new Solenoid(PneumaticsModuleType.REVPH, 1);
     private boolean Solstend = false;
+    private boolean solenoidStateChanged = false;
 
     private TalonFX left = new TalonFX(Constants.Intake.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Intake.rightMotorId);
@@ -277,16 +278,21 @@ public class Intake extends SubsystemBase implements Lifecycle {
         SmartDashboard.putString("Intake/LastError", wrist.getLastError().toString());
         SmartDashboard.putBoolean("Intake/ObjectDetected", this.isProxTripped());
 
-        upper.set(Solstend); // open/close solinoids
-        lower.set(!Solstend);
+        if (solenoidStateChanged) {
+            upper.set(Solstend); // open/close solinoids
+            lower.set(!Solstend);
+            solenoidStateChanged = false;
+        }
     }
 
     // solinoid is all I think about
     public void OpenHand(){
+        solenoidStateChanged = true;
         Solstend = false;
     }
 
     public void CloseHand(){
+        solenoidStateChanged = true;
         Solstend = true;
     }
 

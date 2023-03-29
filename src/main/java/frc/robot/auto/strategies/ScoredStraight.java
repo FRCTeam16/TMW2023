@@ -9,6 +9,7 @@ import frc.robot.Subsystems;
 import frc.robot.commands.SchedulePose;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
+import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.pose.PoseManager.Pose;
 
 public class ScoredStraight extends SequentialCommandGroup {
@@ -18,17 +19,12 @@ public class ScoredStraight extends SequentialCommandGroup {
 
         addCommands(
             new InitializeAutoState(180),
-            new InstantCommand(Subsystems.intake::CloseHand),
-            new WaitCommand(0.5),
-            
-            new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.0),
-            new InstantCommand(Subsystems.intake::storeAndScore),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::OpenHand),
-            new WaitCommand(0.5),
-            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
+            new InstantCommand(Subsystems.intake::CloseHand)
+        );
+        
+        ScoreHighHelper.scoreHighCone(this);
 
+        addCommands(
             new SchedulePose(Pose.SingleSubstation),
             new WaitCommand(0.5),
             new SchedulePose(Pose.Stow),

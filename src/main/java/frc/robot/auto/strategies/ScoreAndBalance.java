@@ -19,6 +19,7 @@ import frc.robot.commands.Balance;
 import frc.robot.commands.SchedulePose;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
+import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.pose.PoseManager.Pose;
 
 public class ScoreAndBalance extends SequentialCommandGroup {
@@ -39,8 +40,12 @@ public class ScoreAndBalance extends SequentialCommandGroup {
        
         addCommands(
             new InitializeAutoState(180),
-            new InstantCommand(Subsystems.intake::CloseHand),
+            new InstantCommand(Subsystems.intake::CloseHand)
+        );
 
+        ScoreHighHelper.scoreHighCone(this);
+
+        addCommands(
             new SchedulePose(Pose.ScoreHighCone),
             new WaitCommand(1.5),
             new InstantCommand(Subsystems.intake::storeAndScore),
