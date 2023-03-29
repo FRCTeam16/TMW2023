@@ -64,9 +64,9 @@ public class RobotContainer {
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
     private final JoystickButton lockAngle180 = new JoystickButton(left, 2);
-    private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 90);
-    private final Trigger lockAngleN0 = new Trigger(() -> left.getPOV() == 270);
-    private final Trigger visionAlign = new Trigger(() -> right.getPOV() >= 0);
+    private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 0);
+    private final Trigger lockAngleN0 = new Trigger(() -> right.getPOV() >= 0);
+    private final Trigger visionAlign = new JoystickButton(right, 11);
       
     private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
     private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
