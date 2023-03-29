@@ -30,7 +30,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private TalonFX wrist = new TalonFX(Constants.Intake.wristMotorId);
 
     private static final double DEFAULT_OPENLOOP_WRIST_SPEED = 0.25;
-    private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.25;
+    private static final double DEFAULT_OPENLOOP_INTAKE_SPEED = 0.50;
     private static final double DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED = 0.05;
     private static final double DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED = 0.13;
 
