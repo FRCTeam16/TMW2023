@@ -18,17 +18,17 @@ public class DMSStats {
     public void addDriveCurrent(DriveInfo<Double> driveOutputCurrent) {
         currentLoops++;
         current.FL = current.FL + Math.abs(driveOutputCurrent.FL) / currentLoops;
-        current.FR = (current.FR + Math.abs(driveOutputCurrent.FR)) / 2.0;
-        current.RL = (current.RL + Math.abs(driveOutputCurrent.RL)) / 2.0;
-        current.RR = (current.RR + Math.abs(driveOutputCurrent.RR)) / 2.0;
+        current.FR = current.FR + Math.abs(driveOutputCurrent.FR) / currentLoops;
+        current.RL = current.RL + Math.abs(driveOutputCurrent.RL) / currentLoops;
+        current.RR = current.RR + Math.abs(driveOutputCurrent.RR) / currentLoops;
     }
 
     public void addDriveVelocity(DriveInfo<Double> driveVelocity) {
         veloLoops++;
-        velocity.FL = (velocity.FL + Math.abs(driveVelocity.FL)) / 2.0;
-        velocity.FR = (velocity.FR + Math.abs(driveVelocity.FR)) / 2.0;
-        velocity.RL = (velocity.RL + Math.abs(driveVelocity.RL)) / 2.0;
-        velocity.RR = (velocity.RR + Math.abs(driveVelocity.RR)) / 2.0;
+        velocity.FL = velocity.FL + Math.abs(driveVelocity.FL) / veloLoops;
+        velocity.FR = velocity.FR + Math.abs(driveVelocity.FR) / veloLoops;
+        velocity.RL = velocity.RL + Math.abs(driveVelocity.RL) / veloLoops;
+        velocity.RR = velocity.RR + Math.abs(driveVelocity.RR) / veloLoops;
     }
 
     public static void print(String label, DriveInfo<?> info) {
