@@ -85,7 +85,7 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
 
             new PrintCommand("Move Right"),
 
-            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -2.75, 0 * DIR)
+            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -1.8, 0 * DIR)
                 .withEndSpeed(0.4)
                 .withThreshold(0.1)
                 .withTimeout(2),

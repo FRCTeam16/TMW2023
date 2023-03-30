@@ -77,7 +77,7 @@ public class OneAndAHalfOtherSide extends SequentialCommandGroup {
                 new RotateToAngle(-178  * DIR).withThreshold(10).withTimeout(1.5)
             ).withTimeout(1.5),
 
-            new ProfiledDistanceDriveCommand(180 * DIR, 1, -2.0, -0.25 * DIR)
+            new ProfiledDistanceDriveCommand(180 * DIR, 1, -4.0, -0.25 * DIR)
             .withEndSpeed(0.3)
             .withThreshold(0.1)
             .withTimeout(3.0)
