@@ -53,12 +53,12 @@ public class OverTheRainbowPlusPickup extends SequentialCommandGroup {
             // Pickup
             new PrintCommand("Starting pickup"),
             Commands.parallel(
-                new ProfiledDistanceDriveCommand(0, 0.25, 1, 0)
+                new ProfiledDistanceDriveCommand(0, 0.25, .7, -.2)
                     .withEndSpeed(0.25)
                     .withThreshold(0.1)
-                    .withTimeout(3),
+                    .withTimeout(2),
                 new ClampHandOnPart()
-            ).withTimeout(3),
+            ).withTimeout(2),
             new PrintCommand("Finished pickup"),
 
             // new RotateToAngle(90).withThreshold(20).withTimeout(1),
@@ -67,13 +67,13 @@ public class OverTheRainbowPlusPickup extends SequentialCommandGroup {
                 new SchedulePose(Pose.Stow)
             ),
 
-            new ProfiledDistanceDriveCommand(180, 0.6, -2.7, 0)
+            new ProfiledDistanceDriveCommand(180, 0.4, -2.4, 0)
                 // .withStopCondition(this::stopOPitch)
-                .withEndSpeed(0.5)
+                .withEndSpeed(0.4)
                 .withTimeout(4.0),
 
-            new ProfiledDistanceDriveCommand(180, 0.32, -3.5, 0)
-                .withEndSpeed(0.32)
+            new ProfiledDistanceDriveCommand(180, 0.25, -3.5, 0)
+                .withEndSpeed(0.25)
                 .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
                 .withTimeout(8.0),
             new XWHeelLock()
@@ -86,7 +86,7 @@ public class OverTheRainbowPlusPickup extends SequentialCommandGroup {
 
     public static class PitchDropWatcher {
         boolean watchDropMode = false;
-        double angle = 13.0;
+        double angle = 12.0;
 
         PitchDropWatcher() {
         }

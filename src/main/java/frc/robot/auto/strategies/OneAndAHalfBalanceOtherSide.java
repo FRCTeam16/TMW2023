@@ -91,11 +91,12 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
                 .withTimeout(2),
             new PrintCommand("Finished moving to ramp"),
 
-            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -1, 0 * DIR)
+            new ProfiledDistanceDriveCommand(180 * DIR, 0.25, -1, 0 * DIR)
                 .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
                 .withThreshold(0.1)
                 .withTimeout(2),
             new XWHeelLock()
+
         );
     }
     

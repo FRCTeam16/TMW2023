@@ -19,16 +19,16 @@ import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.auto.StopDrive;
 import frc.robot.commands.pose.PoseManager.Pose;
 
-public class OneAndAHalfBalance extends SequentialCommandGroup {
+public class OneAndAHalf extends SequentialCommandGroup {
 
     private PitchDropWatcher pitchWatcher = new PitchDropWatcher();
 
 
-    public OneAndAHalfBalance() {
+    public OneAndAHalf() {
         this(false);
     }
 
-    public OneAndAHalfBalance(boolean invertSide) {
+    public OneAndAHalf(boolean invertSide) {
 
         int DIR = (DriverStation.getAlliance() == Alliance.Red) ? 1 : -1;
 
@@ -88,27 +88,7 @@ public class OneAndAHalfBalance extends SequentialCommandGroup {
             Commands.parallel(
                 new SchedulePose(Pose.Stow),
                 new RotateToAngle(180 * DIR).withTimeout(1.5)
-            ).withTimeout(1.5),
-
-            Commands.print("Moving Left"),
-            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -0.5, 1.5 * DIR)
-                .withEndSpeed(0.4)
-                .withThreshold(0.1)
-                .withTimeout(1.5),
-
-            new PrintCommand("Move Left"),
-
-            new ProfiledDistanceDriveCommand(180 * DIR, 0.4, -2.5, 0 * DIR)
-                .withEndSpeed(0.4)
-                .withThreshold(0.1)
-                .withTimeout(2),
-            new PrintCommand("Finished moving to ramp"),
-
-            new ProfiledDistanceDriveCommand(180 * DIR, 0.25, -1, 0 * DIR)
-                .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
-                .withThreshold(0.1)
-                .withTimeout(2),
-            new XWHeelLock()
+            ).withTimeout(1.5)
         );
     }
     

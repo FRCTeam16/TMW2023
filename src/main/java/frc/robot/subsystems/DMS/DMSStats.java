@@ -7,20 +7,24 @@ import java.util.function.DoubleToIntFunction;
 
 public class DMSStats {
     private static final double VEL_THRESHOLD = 0.85;
-    private static final double AMP_THRESHOLD = 0.8;
+    private static final double AMP_THRESHOLD = .71;
 
     public DriveInfo<Double> current = new DriveInfo<>(0.0);
     public DriveInfo<Double> velocity = new DriveInfo<>(0.0);
+    private int currentLoops = 0;
+    private int veloLoops = 0;
 
 
     public void addDriveCurrent(DriveInfo<Double> driveOutputCurrent) {
-        current.FL = (current.FL + Math.abs(driveOutputCurrent.FL)) / 2.0;
+        currentLoops++;
+        current.FL = current.FL + Math.abs(driveOutputCurrent.FL) / currentLoops;
         current.FR = (current.FR + Math.abs(driveOutputCurrent.FR)) / 2.0;
         current.RL = (current.RL + Math.abs(driveOutputCurrent.RL)) / 2.0;
         current.RR = (current.RR + Math.abs(driveOutputCurrent.RR)) / 2.0;
     }
 
     public void addDriveVelocity(DriveInfo<Double> driveVelocity) {
+        veloLoops++;
         velocity.FL = (velocity.FL + Math.abs(driveVelocity.FL)) / 2.0;
         velocity.FR = (velocity.FR + Math.abs(driveVelocity.FR)) / 2.0;
         velocity.RL = (velocity.RL + Math.abs(driveVelocity.RL)) / 2.0;

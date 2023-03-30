@@ -38,13 +38,13 @@ public class OverTheRainbow extends SequentialCommandGroup {
                 .withThreshold(0.1)
                 .withTimeout(8.0),
 
-            new ProfiledDistanceDriveCommand(180, 0.6, -2.1, 0)
+            new ProfiledDistanceDriveCommand(180, 0.4, -1.7, 0)
                 // .withStopCondition(this::stopOnPitch)
-                .withEndSpeed(0.5)
+                .withEndSpeed(0.4)
                 .withTimeout(4.0),
 
-            new ProfiledDistanceDriveCommand(180, 0.32, -3.5, 0)
-                .withEndSpeed(0.32)
+            new ProfiledDistanceDriveCommand(180, 0.15, -3.5, 0)
+                .withEndSpeed(0.15)
                 .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
                 .withTimeout(8.0),
             new XWHeelLock()
@@ -57,7 +57,7 @@ public class OverTheRainbow extends SequentialCommandGroup {
 
     public static class PitchDropWatcher {
         boolean watchDropMode = false;
-        double angle = 13.0;    // THIS IS WHERE WE CHANGE THE ANGLE 
+        double angle = 10;    // THIS IS WHERE WE CHANGE THE ANGLE 
                                 // charge station is 60.69 inches from front of grid
 
         PitchDropWatcher() {
