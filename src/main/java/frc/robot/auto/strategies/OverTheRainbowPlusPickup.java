@@ -67,7 +67,7 @@ public class OverTheRainbowPlusPickup extends SequentialCommandGroup {
                 new SchedulePose(Pose.Stow)
             ),
 
-            new ProfiledDistanceDriveCommand(180, 0.4, -2.4, 0)
+            new ProfiledDistanceDriveCommand(180, 0.4, -2.1, 0)
                 // .withStopCondition(this::stopOPitch)
                 .withEndSpeed(0.4)
                 .withTimeout(4.0),

@@ -7,7 +7,7 @@ import java.util.function.DoubleToIntFunction;
 
 public class DMSStats {
     private static final double VEL_THRESHOLD = 0.85;
-    private static final double AMP_THRESHOLD = .71;
+    private static final double AMP_THRESHOLD = 1.4;
 
     public DriveInfo<Double> current = new DriveInfo<>(0.0);
     public DriveInfo<Double> velocity = new DriveInfo<>(0.0);
@@ -64,7 +64,7 @@ public class DMSStats {
             return 5;
         }
         boolean velOutside = (vel / velAvg) < VEL_THRESHOLD;
-        boolean ampOutside = (amp / ampAvg) < AMP_THRESHOLD;
+        boolean ampOutside = (amp / ampAvg) > AMP_THRESHOLD;
 
         if (!velOutside && !ampOutside) {
             return 1; // good
@@ -73,7 +73,7 @@ public class DMSStats {
         } else if (velOutside && !ampOutside) {
             return 3;
         } else {
-            return 2;   // both out of range
+            return 4;   // both out of range
         }
     }
 

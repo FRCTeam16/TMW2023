@@ -220,7 +220,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
     private void runMotorTest() {
         final double now = timer.get();
         if (now < MOTOR_TEST_TIME) {
-            Subsystems.swerveSubsystem.DMSDrive(1.0);
+            Subsystems.swerveSubsystem.DMSDrive(.5);
             Subsystems.swerveSubsystem.DMSSteer(0.0);
 
             if (now > INITIAL_IGNORE_TIME) {
@@ -260,7 +260,7 @@ public class LEDSubsystem extends SubsystemBase implements Lifecycle {
         final double now = timer.get();
         if (now < MOTOR_TEST_TIME) {
             Subsystems.swerveSubsystem.DMSDrive(0.0);
-            Subsystems.swerveSubsystem.DMSSteer(1.0);
+            Subsystems.swerveSubsystem.DMSSteer(0.5);
 
             if (now > INITIAL_IGNORE_TIME) {
                 steerDmsStatus.addDriveCurrent(Subsystems.swerveSubsystem.getSteerOutputCurrent());
