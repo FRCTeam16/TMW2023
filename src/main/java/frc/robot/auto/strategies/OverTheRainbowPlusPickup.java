@@ -86,7 +86,7 @@ public class OverTheRainbowPlusPickup extends SequentialCommandGroup {
 
     public static class PitchDropWatcher {
         boolean watchDropMode = false;
-        double angle = 12.0;
+        double angle = 13.0;
 
         PitchDropWatcher() {
         }

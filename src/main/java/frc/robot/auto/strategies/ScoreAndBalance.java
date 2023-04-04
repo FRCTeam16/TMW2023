@@ -46,17 +46,18 @@ public class ScoreAndBalance extends SequentialCommandGroup {
         ScoreHighHelper.scoreHighCone(this);
 
         addCommands(
-            new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.5),
-            new InstantCommand(Subsystems.intake::storeAndScore),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::OpenHand),
-            new WaitCommand(0.5),
-            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
+            // new SchedulePose(Pose.ScoreHighCone),
+            // new WaitCommand(1.5),
+            // new InstantCommand(Subsystems.intake::storeAndScore),
+            // new WaitCommand(0.25),
+            // new InstantCommand(Subsystems.intake::OpenHand),
+            // new WaitCommand(0.5),
+            // new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
 
-            new SchedulePose(Pose.SingleSubstation),
-            new WaitCommand(0.5),
+            // new SchedulePose(Pose.SingleSubstation),
+            // new WaitCommand(0.5),
             new SchedulePose(Pose.Stow),
+            new WaitCommand(0.25),
 
             // Do drive
             new ProfiledDistanceDriveCommand(180, 1, 3.75, 0)
@@ -67,7 +68,7 @@ public class ScoreAndBalance extends SequentialCommandGroup {
                 .withEndSpeed(0.5)
                 .withTimeout(2.0),
 
-            new ProfiledDistanceDriveCommand(180, 0.6, -2, 0)
+            new ProfiledDistanceDriveCommand(180, 0.6, -2.25, 0)
                 .withStopCondition(this::stopOnPitch)
                 .withTimeout(4.0),
             new Balance(0.5)

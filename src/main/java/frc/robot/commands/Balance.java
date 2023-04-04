@@ -15,7 +15,7 @@ import frc.robot.subsystems.util.PIDHelper;
 public class Balance extends CommandBase implements Lifecycle {
     
     private final double pitchThreshold;
-    private final static double BALANCE_TRANSLATION_SPEED = Constants.Swerve.maxSpeed / 8;
+    private final static double BALANCE_TRANSLATION_SPEED = Constants.Swerve.maxSpeed / 6.5;
 
 
     private PIDController pidController = new PIDController(0.082, 0, 0.01);
@@ -23,7 +23,7 @@ public class Balance extends CommandBase implements Lifecycle {
 
 
     public Balance() {
-        this(3.0);
+        this(3);
         addRequirements(Subsystems.swerveSubsystem);
         pidController.setSetpoint(0);
         pidController.setTolerance(0.5);

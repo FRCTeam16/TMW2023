@@ -57,7 +57,7 @@ public class OverTheRainbow extends SequentialCommandGroup {
 
     public static class PitchDropWatcher {
         boolean watchDropMode = false;
-        double angle = 10;    // THIS IS WHERE WE CHANGE THE ANGLE 
+        double angle = 13;    // THIS IS WHERE WE CHANGE THE ANGLE 
                                 // charge station is 60.69 inches from front of grid
 
         PitchDropWatcher() {
