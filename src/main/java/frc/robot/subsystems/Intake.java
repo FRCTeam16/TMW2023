@@ -25,17 +25,17 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private boolean Solstend = false;
     private boolean solenoidStateChanged = false;
 
-    private Solenoid extraSol1 = new Solenoid(PneumaticsModuleType.REVPH, 2);
-    private Solenoid extraSol2 = new Solenoid(PneumaticsModuleType.REVPH, 3);
+    // private Solenoid extraSol1 = new Solenoid(PneumaticsModuleType.REVPH, 2);
+    // private Solenoid extraSol2 = new Solenoid(PneumaticsModuleType.REVPH, 3);
 
-    private Solenoid extraSol3 = new Solenoid(PneumaticsModuleType.REVPH, 4);
-    private Solenoid extraSol4 = new Solenoid(PneumaticsModuleType.REVPH, 5);
+    // private Solenoid extraSol3 = new Solenoid(PneumaticsModuleType.REVPH, 4);
+    // private Solenoid extraSol4 = new Solenoid(PneumaticsModuleType.REVPH, 5);
 
-    private Solenoid extraSol5 = new Solenoid(PneumaticsModuleType.REVPH, 6);
-    private Solenoid extraSol6 = new Solenoid(PneumaticsModuleType.REVPH, 7);
+    // private Solenoid extraSol5 = new Solenoid(PneumaticsModuleType.REVPH, 6);
+    // private Solenoid extraSol6 = new Solenoid(PneumaticsModuleType.REVPH, 7);
 
-    private Solenoid extraSol7 = new Solenoid(PneumaticsModuleType.REVPH, 8);
-    private Solenoid extraSol8 = new Solenoid(PneumaticsModuleType.REVPH, 9);
+    // private Solenoid extraSol7 = new Solenoid(PneumaticsModuleType.REVPH, 8);
+    // private Solenoid extraSol8 = new Solenoid(PneumaticsModuleType.REVPH, 9);
 
     private TalonFX left = new TalonFX(Constants.Intake.leftMotorId);
     private TalonFX right = new TalonFX(Constants.Intake.rightMotorId);
@@ -297,14 +297,14 @@ public class Intake extends SubsystemBase implements Lifecycle {
         }
 
 
-        extraSol1.set(true);
-        extraSol2.set(false);
-        extraSol3.set(true);
-        extraSol4.set(false);
-        extraSol5.set(true);
-        extraSol6.set(false);
-        extraSol7.set(true);
-        extraSol8.set(false);
+        // extraSol1.set(true);
+        // extraSol2.set(false);
+        // extraSol3.set(true);
+        // extraSol4.set(false);
+        // extraSol5.set(true);
+        // extraSol6.set(false);
+        // extraSol7.set(true);
+        // extraSol8.set(false);
         
 
     }
