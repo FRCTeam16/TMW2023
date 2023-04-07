@@ -18,6 +18,7 @@ import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.auto.StopDrive;
 import frc.robot.commands.pose.PoseManager.Pose;
+import frc.robot.commands.Balance;
 
 public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
 
@@ -40,7 +41,7 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
             new SchedulePose(Pose.PreGroundPickup),
 
             // Drive out of community
-            new ProfiledDistanceDriveCommand(180 * DIR, 1, 2.4, -0.25 * DIR)
+            new ProfiledDistanceDriveCommand(180 * DIR, 1, 2.4, -0.26 * DIR)
                 .withEndSpeed(0.3)
                 .withThreshold(0.1)
                 .withTimeout(3.0),
@@ -52,7 +53,7 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
                 new WaitCommand(0.5)
             ).withTimeout(0.5),
 
-            new RotateToAngle(-7.5  * DIR).withThreshold(1).withTimeout(1),
+            new RotateToAngle(-7.4  * DIR).withThreshold(1).withTimeout(1),
             Commands.parallel(
                 new StopDrive(),
                 new SchedulePose(Pose.GroundPickup),
@@ -62,7 +63,7 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
             // Drive and pickup cube
             new PrintCommand("Starting pickup"),
             Commands.parallel(
-                new ProfiledDistanceDriveCommand(-7.5 * DIR, 0.25, 1.9, 0 * DIR)
+                new ProfiledDistanceDriveCommand(-7.53 * DIR, 0.25, 1.75, 0 * DIR)
                     .withEndSpeed(0.25)
                     .withTimeout(2)
                     .andThen(new StopDrive()),
@@ -78,7 +79,7 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
             ).withTimeout(1.5),
 
             Commands.print("Moving Right"),
-            new ProfiledDistanceDriveCommand(-178 * DIR, 0.4, -0.8, -1.5 * DIR)
+            new ProfiledDistanceDriveCommand(-178 * DIR, 0.4, -0.78, -1.5 * DIR)
                 .withEndSpeed(0.4)
                 .withThreshold(0.1)
                 .withTimeout(1.5),
@@ -95,7 +96,7 @@ public class OneAndAHalfBalanceOtherSide extends SequentialCommandGroup {
                 .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
                 .withThreshold(0.1)
                 .withTimeout(2),
-            new XWHeelLock()
+            new Balance(0.5)
 
         );
     }

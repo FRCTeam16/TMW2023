@@ -118,9 +118,6 @@ public class RobotContainer {
     private final Trigger detectScorePositionTrigger = new Trigger(() -> Subsystems.visionSubsystem.getScorePositionDetector().inRequestedScoringPosition());
     private final JoystickButton runDMS = new JoystickButton(right, 8);
 
-
-    //
-    //
     //
     private DigitalInput dmsButtonInput = new DigitalInput(1);
     private final Trigger dmsButton = new Trigger(dmsButtonInput::get);
@@ -151,7 +148,7 @@ public class RobotContainer {
         // Configure software buttons
         configureDashboardButtons();
         // Configure pneumatic pressures
-        pneumaticHub.enableCompressorAnalog(60, 100);
+        pneumaticHub.enableCompressorAnalog(100, 120);
     }
 
     public double getLockAngle() { return this.lockAngle; }
