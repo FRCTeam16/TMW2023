@@ -1,8 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -38,4 +35,7 @@ public class PartIndicator extends SubsystemBase {
         this.requestedPartType = partType;
         SmartDashboard.putNumber(KEY, this.requestedPartType.value);
     }
+
+    public boolean isConeRequested() { return PartType.Cone == this.requestedPartType; }
+    public boolean isCubeRequested() { return PartType.Cube == this.requestedPartType; }
 }

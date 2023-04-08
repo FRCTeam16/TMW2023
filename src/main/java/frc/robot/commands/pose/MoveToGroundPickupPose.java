@@ -19,7 +19,10 @@ class MoveToGroundPickupPose extends SequentialCommandGroup {
             Commands.parallel(
                 (DriverStation.isTeleop() && !Subsystems.intake.hasPart()) ? new InstantCommand(Subsystems.intake::OpenHand) : new InstantCommand(), 
                 new PosePivot(PivotPosition.GroundPickup),
-                new PoseWrist(WristPosition.GroundPickup)
+                new PoseWrist(
+                    (Subsystems.partIndicator.isCubeRequested()) ? 
+                        WristPosition.GroundPickupCube :
+                        WristPosition.GroundPickup)
             )
         );
     }
