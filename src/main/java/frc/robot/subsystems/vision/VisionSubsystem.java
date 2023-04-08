@@ -110,6 +110,10 @@ public class VisionSubsystem extends SubsystemBase implements Lifecycle {
     public double distanceToTarget = -1;
   }
 
+  public void selectPipelineSync(Pipeline pipeline) {
+    limelight.setCurrentPipeline(pipeline.pipelineNumber);
+  }
+
   public CommandBase selectPipeline(Pipeline pipeline) {
     return Commands.runOnce(() -> limelight.setCurrentPipeline(pipeline.pipelineNumber))
       .ignoringDisable(true);

@@ -26,6 +26,7 @@ import frc.robot.commands.SchedulePose;
 import frc.robot.commands.ScoreHighCone;
 import frc.robot.commands.SimpleTimedDriveBack;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.commands.VisionAlign;
 import frc.robot.commands.XWHeelLock;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
@@ -67,6 +68,8 @@ public class RobotContainer {
     private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 0);
     private final Trigger lockAngleN0 = new Trigger(() -> right.getPOV() >= 0);
     private final Trigger visionAlign = new JoystickButton(right, 11);
+    private final Trigger visionAlignCmd = new JoystickButton(right, 12);
+    private final Trigger visionAlignCmdZero = new JoystickButton(right, 13);
       
     private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
     private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
@@ -162,7 +165,8 @@ public class RobotContainer {
      */
     public double getStrafeValue() {
         if (visionAlignmentEnabled) {
-            return -visionAlignmentHelper.calculate();
+            double direction = (Math.abs(Subsystems.swerveSubsystem.getYaw().getDegrees()) < 90) ? 1 : -1;
+            return direction * visionAlignmentHelper.calculate();
          } else {
             return -right.getX();
          } 
@@ -193,10 +197,13 @@ public class RobotContainer {
             .onFalse(new InstantCommand(() -> this.disableLockAngle()));
 
         visionAlign
-            .onTrue(new EnableImageProcessing(Pipeline.RetroHigh)
+            .onTrue(new EnableImageProcessing(Pipeline.Cone)
             .andThen(new InstantCommand(() -> this.visionAlignmentEnabled = true)))
             .onFalse(new EnableDriverCamera()
             .andThen(new InstantCommand(() -> this.visionAlignmentEnabled = false)));
+
+        visionAlignCmd.whileTrue(new VisionAlign());
+        visionAlignCmdZero.whileTrue(new VisionAlign().withRobotAngle(0));
 
 
         rotateArmUp.onTrue(new InstantCommand(() -> Subsystems.pivot.openLoopUp()))
@@ -290,7 +297,7 @@ public class RobotContainer {
         SmartDashboard.putData("Vision.Disable Limelight", new RunWithDisabledInstantCommand(Subsystems.visionSubsystem::disable));
         SmartDashboard.putData("Vision.Select April Pipe", Subsystems.visionSubsystem.selectPipeline(Pipeline.April));
         SmartDashboard.putData("Vision.Select Retro Pipe High", Subsystems.visionSubsystem.selectPipeline(Pipeline.RetroHigh));
-        SmartDashboard.putData("Vision.Select Retro Pipe Low", Subsystems.visionSubsystem.selectPipeline(Pipeline.RetroLow));
+        SmartDashboard.putData("Vision.Select Retro Pipe Low", Subsystems.visionSubsystem.selectPipeline(Pipeline.Cone));
 
     }
 

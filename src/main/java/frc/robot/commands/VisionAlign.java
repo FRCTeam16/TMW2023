@@ -13,9 +13,16 @@ import frc.robot.subsystems.vision.Pipeline;
 public class VisionAlign extends CommandBase {
     private VisionAlignmentHelper helper = new VisionAlignmentHelper();
     private double robotAngle = 180.0;
+    private Pipeline visionPipeline = Pipeline.RetroHigh;
+    private double robotSpeed = 0.25;
 
     public VisionAlign() {
         addRequirements(Subsystems.swerveSubsystem);
+    }
+
+    public VisionAlign withVisionPipeline(Pipeline pipeline) {
+        this.visionPipeline = pipeline;
+        return this;
     }
 
     public VisionAlign withRobotAngle(double angle) {
@@ -27,12 +34,17 @@ public class VisionAlign extends CommandBase {
         this.helper.setTolerance(tolerance);
         return this;
     }
+
+    public VisionAlign withRobotSpeed(double speedPercent) {
+        this.robotSpeed = speedPercent;
+        return this;
+    }
     
     @Override
     public void initialize() {
         Subsystems.visionSubsystem.getLimelight().setCameraMode(CameraMode.ImageProcessing);
-        // FIXME: NOT WORKING Subsystems.visionSubsystem.selectPipeline(Pipeline.RetroHigh);
-        Subsystems.visionSubsystem.getLimelight().setCurrentPipeline(Pipeline.RetroHigh.pipelineNumber);
+        Subsystems.visionSubsystem.selectPipelineSync(this.visionPipeline);
+        // Subsystems.visionSubsystem.getLimelight().setCurrentPipeline(Pipeline.RetroHigh.pipelineNumber);
         Subsystems.visionSubsystem.getLimelight().setLEDMode(LEDMode.CurrentPipeline);
     }
 
@@ -40,13 +52,16 @@ public class VisionAlign extends CommandBase {
     @Override
     public void execute() {
         RotationController controller = Subsystems.swerveSubsystem.getRotationController();
-        double twist = controller.calculate(
-                Subsystems.swerveSubsystem.getYaw().getDegrees(), robotAngle);
+        double currentAngle = Subsystems.swerveSubsystem.getYaw().getDegrees();
+        double twist = controller.calculate(currentAngle, robotAngle);
+        double horizontalComponent = this.helper.calculate();
 
-        Translation2d translation = new Translation2d(0,  -this.helper.calculate());
+        // assuming field relative
+        double direction = (Math.abs(Subsystems.swerveSubsystem.getYaw().getDegrees()) < 90) ? 1 : -1;
+        Translation2d translation = new Translation2d(0, direction * horizontalComponent);
 
         Subsystems.swerveSubsystem.drive(
-            translation.times(Constants.Swerve.maxSpeed / 4), 
+            translation.times(robotSpeed * Constants.Swerve.maxSpeed), 
             Math.toRadians(twist), 
             true, 
             true);
@@ -54,7 +69,6 @@ public class VisionAlign extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        // return this.pid.atSetpoint();
-        return false;
+        return this.helper.inPosition();
     }
 }
