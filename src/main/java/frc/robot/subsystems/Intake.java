@@ -58,6 +58,21 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private DigitalInput ProxSence = new DigitalInput(0); // Digital input might be 9 but we'll go w/ 0 for now
 
+    public enum IntakeConditions {
+        Stop(0),
+        Eject(1),
+        Intake(2),
+        Hold(3);
+    
+        public final int setIntakeSate;
+
+        private IntakeConditions(int setIntakeSate) {
+            this.setIntakeSate = setIntakeSate;
+        }
+    }
+
+    private IntakeConditions IntakeState = IntakeConditions.Stop;
+
     boolean hasPart = false;
 
     public enum WristPosition {
@@ -172,14 +187,16 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public void intake() {
         intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
+        IntakeState = IntakeConditions.Intake;
     }
 
     public void eject() {
         intakeSpeed = -SmartDashboard.getNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED);
-    }
+        IntakeState = IntakeConditions.Eject;    }
 
     public void runSlowIntake() {
         intakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
+        IntakeState = IntakeConditions.Hold;
     }
 
     public void setAtSubstation(boolean atSubstation) {
@@ -195,6 +212,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public void stopIntake() {
         intakeSpeed = 0.0;
+        IntakeState = IntakeConditions.Stop;
     }
 
     public void holdWrist() {
@@ -229,6 +247,40 @@ public class Intake extends SubsystemBase implements Lifecycle {
     public void periodic() {
         slowIntakeSpeed = SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED);
 
+        if (!DriverStation.isAutonomousEnabled()) {
+            // Handle hasPart handling
+            if (isProxTripped() && !hasPart) {
+                hasPart = true;
+
+                // If we are not in Substation and picking up a cube then automatically close
+                // the hand
+                if (Subsystems.poseManager.getCurrentPose() != Pose.SingleSubstation &&
+                        Subsystems.partIndicator.requestedPartType == PartType.Cone) {
+                    CloseHand();
+                        }
+                    }
+                    
+                if (IntakeState == IntakeConditions.Stop && hasPart) {
+                    IntakeState = IntakeConditions.Hold;
+                    }
+
+        switch (IntakeState) {
+            case Stop: left.set(ControlMode.PercentOutput, 0);
+                break;
+            case Eject: left.set(ControlMode.PercentOutput, -SmartDashboard.getNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED));
+                break;
+            case Intake: left.set(ControlMode.PercentOutput, SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED));
+                break;
+            case Hold: left.set(ControlMode.PercentOutput, SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED));
+                break;
+            }
+
+        } else {
+            // Auto keeps running
+            left.set(ControlMode.PercentOutput, intakeSpeed);
+       }
+ 
+       /*   ***************Removed for code above... but i'm not totally confident in it.  :)
         if (!DriverStation.isAutonomousEnabled()) {
             // Handle hasPart handling
             if (isProxTripped() && !hasPart) {
@@ -268,7 +320,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
         }
 
         
-
+*/
 
         // Wrist can run in open loop or closed loop control
         if (openLoop) {
