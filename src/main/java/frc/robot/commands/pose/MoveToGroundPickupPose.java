@@ -14,11 +14,17 @@ class MoveToGroundPickupPose extends SequentialCommandGroup {
     public MoveToGroundPickupPose() {
 
         addCommands(
-            new PoseElevator(ElevatorPosition.GroundPickup),
+            new PoseElevator(
+                (Subsystems.partIndicator.isCubeRequested()) ? 
+                ElevatorPosition.GroundPickupCube:
+                ElevatorPosition.GroundPickup),
             new WaitCommand(0.3),
             Commands.parallel(
                 (DriverStation.isTeleop() && !Subsystems.intake.hasPart()) ? new InstantCommand(Subsystems.intake::OpenHand) : new InstantCommand(), 
-                new PosePivot(PivotPosition.GroundPickup),
+                new PosePivot(
+                    (Subsystems.partIndicator.isCubeRequested()) ?
+                    PivotPosition.GroundPickupCube :
+                    PivotPosition.GroundPickup),
                 new PoseWrist(
                     (Subsystems.partIndicator.isCubeRequested()) ? 
                         WristPosition.GroundPickupCube :

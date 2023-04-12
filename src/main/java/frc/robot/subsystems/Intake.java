@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -22,6 +23,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private Solenoid upper = new Solenoid(PneumaticsModuleType.REVPH, 0);
     private Solenoid lower = new Solenoid(PneumaticsModuleType.REVPH, 1);
+    private DoubleSolenoid puncher = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3);
     private boolean Solstend = false;
     private boolean solenoidStateChanged = false;
 
@@ -82,7 +84,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
         ScoreCone(1000),
         ScoreCube(1000),
         GroundPickup(30_850),
-        GroundPickupCube(30_850),
+        GroundPickupCube(-35124),
         Stow(-63_467),
         ScoreCubeHigh(-150_383),
         ScoreCubeMid(-150_242),
@@ -258,11 +260,17 @@ public class Intake extends SubsystemBase implements Lifecycle {
                         Subsystems.partIndicator.requestedPartType == PartType.Cone) {
                     CloseHand();
                         }
-                    }
-                    
+                }
+
+                // We had a part, signal we no longer have it
+                if (!isProxTripped() && hasPart) {
+                    hasPart = false;
+                    Subsystems.partIndicator.requestPart(PartType.None);
+                }
+
                 if (IntakeState == IntakeConditions.Stop && hasPart) {
                     IntakeState = IntakeConditions.Hold;
-                    }
+            }
 
         switch (IntakeState) {
             case Stop: left.set(ControlMode.PercentOutput, 0);
@@ -279,6 +287,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
             // Auto keeps running
             left.set(ControlMode.PercentOutput, intakeSpeed);
        }
+
+       //need to set logic for punching cube/cone
+       puncher.set(DoubleSolenoid.Value.kForward);
  
        /*   ***************Removed for code above... but i'm not totally confident in it.  :)
         if (!DriverStation.isAutonomousEnabled()) {
@@ -348,16 +359,6 @@ public class Intake extends SubsystemBase implements Lifecycle {
             lower.set(!Solstend);
             solenoidStateChanged = false;
         }
-
-
-        // extraSol1.set(true);
-        // extraSol2.set(false);
-        // extraSol3.set(true);
-        // extraSol4.set(false);
-        // extraSol5.set(true);
-        // extraSol6.set(false);
-        // extraSol7.set(true);
-        // extraSol8.set(false);
         
 
     }

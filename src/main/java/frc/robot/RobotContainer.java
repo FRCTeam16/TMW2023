@@ -151,7 +151,7 @@ public class RobotContainer {
         // Configure software buttons
         configureDashboardButtons();
         // Configure pneumatic pressures
-        pneumaticHub.enableCompressorAnalog(100, 120);
+        pneumaticHub.enableCompressorAnalog(80, 100);
     }
 
     public double getLockAngle() { return this.lockAngle; }
