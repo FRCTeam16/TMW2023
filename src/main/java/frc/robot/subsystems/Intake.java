@@ -202,7 +202,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     }
 
     public void setAtSubstation(boolean atSubstation) {
-        if(atSubstation) {
+        if(atSubstation && !isProxTripped()) {
             intake();
         }
         else {
