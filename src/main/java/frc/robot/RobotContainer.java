@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -31,6 +30,7 @@ import frc.robot.commands.XWHeelLock;
 import frc.robot.commands.ZeroAndSetOffsetCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.pose.PoseManager.Pose;
+import frc.robot.subsystems.Pivot.PivotPosition;
 import frc.robot.subsystems.util.VisionAlignmentHelper;
 import frc.robot.subsystems.vision.Pipeline;
 import frc.robot.subsystems.vision.TargetInfo;
@@ -74,6 +74,7 @@ public class RobotContainer {
     private final Trigger wristOpenLoopDown = new JoystickButton(gamepad, XboxController.Button.kLeftBumper.value);
     private final Trigger wristOpenLoopUp   = new JoystickButton(gamepad, XboxController.Button.kRightBumper.value);
     private final Trigger wristTempDown     = new JoystickButton(right, 2);
+    private final Trigger wristElevatorBumpSelector = new Trigger(this::wristOrElevatorOffset);
 
     private final JoystickButton openHandJoy = new JoystickButton(left, 4);
     private final JoystickButton closeHandJoy = new JoystickButton(left, 3);
@@ -251,7 +252,15 @@ public class RobotContainer {
 
         wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
-        wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.storeAndScore())).onFalse(new InstantCommand(() -> Subsystems.intake.restoreStoredSetpoint()));
+       // wristTempDown.onTrue(new InstantCommand(()     -> Subsystems.intake.storeAndScore())).onFalse(new InstantCommand(() -> Subsystems.intake.restoreStoredSetpoint()));
+
+        wristTempDown.and(wristElevatorBumpSelector)
+            .whileTrue(new InstantCommand(() -> Subsystems.intake.storeAndScore()))
+            .onFalse(new InstantCommand(() -> Subsystems.intake.restoreStoredSetpoint()));
+
+        wristTempDown.and(wristElevatorBumpSelector.negate())
+            .whileTrue(new InstantCommand(() -> Subsystems.pivot.addOffset()))
+            .onFalse(new InstantCommand(() -> Subsystems.pivot.setPivotPosition(PivotPosition.GroundPickup)));
         
 
         requestCone.onTrue(new InstantCommand(() -> Subsystems.partIndicator.requestPart(frc.robot.subsystems.PartIndicator.PartType.Cone)).ignoringDisable(true));
@@ -276,6 +285,19 @@ public class RobotContainer {
         new JoystickButton(right, 16).whileTrue(new Balance());
     }
 
+
+    /**
+     * True for wrist bump, false for elevator bump
+     * @return
+     */
+    private final boolean wristOrElevatorOffset() {
+
+        if (Subsystems.poseManager.getCurrentPose() == Pose.GroundPickup && !Subsystems.intake.isHandOpen()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     private void configureDashboardButtons() {
         SmartDashboard.putData("Zero Gyro", new RunWithDisabledInstantCommand(Subsystems.swerveSubsystem::zeroGyro));

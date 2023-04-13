@@ -24,7 +24,8 @@ public class Pivot extends SubsystemBase implements Lifecycle {
 
     private final PIDHelper pidHelper = new PIDHelper("Pivot");
     private double setpoint = 0.0;
-
+    
+    private static final double BUMP_OFFSET = 60_000;
 
     public enum PivotPosition {
         Vertical(0),
@@ -125,6 +126,10 @@ public class Pivot extends SubsystemBase implements Lifecycle {
         ErrorCode result = left.configForwardSoftLimitEnable(enable);
         System.out.println("ErrorCode: " + result.toString());
         left.configReverseSoftLimitEnable(enable);
+    }
+
+    public void addOffset() {
+        this.setPivotSetpoint(this.getPivotEncoderPosition() - BUMP_OFFSET);
     }
 
     /**
