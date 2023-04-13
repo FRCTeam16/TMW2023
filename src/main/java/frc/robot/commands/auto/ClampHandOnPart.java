@@ -6,6 +6,15 @@ import frc.robot.Subsystems;
 public class ClampHandOnPart extends CommandBase {
     private double sawPartTime = 0;
     private boolean sawPart = false;
+    private boolean closeHand = true;
+
+    public ClampHandOnPart() {
+        this(true);
+    }
+
+    public ClampHandOnPart(boolean closeHand) {
+        this.closeHand = closeHand;
+    }
 
     @Override
     public void execute() {
@@ -15,7 +24,9 @@ public class ClampHandOnPart extends CommandBase {
         //     sawPartTime = Timer.getFPGATimestamp();
         // }
         if (Subsystems.intake.isProxTripped()) {
-            Subsystems.intake.CloseHand();
+            if (this.closeHand) {
+                Subsystems.intake.CloseHand();
+            }
             Subsystems.intake.runSlowIntake();
             sawPart = true;
             // sawPartTime = Timer.getFPGATimestamp();

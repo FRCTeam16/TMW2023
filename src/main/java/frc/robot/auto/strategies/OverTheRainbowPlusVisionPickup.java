@@ -73,7 +73,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
                     .withEndSpeed(0.25)
                     .withThreshold(0.1)
                     .withTimeout(2),
-                new ClampHandOnPart()
+                new ClampHandOnPart(visionPipeline == Pipeline.Cone)
             ).withTimeout(2),
             new PrintCommand("Finished pickup"),
 
