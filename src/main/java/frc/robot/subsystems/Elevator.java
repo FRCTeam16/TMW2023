@@ -135,7 +135,7 @@ public class Elevator extends SubsystemBase implements Lifecycle {
     }
 
     public boolean isElevatorExtended() {
-        return getRawElevatorPosition() > 30_000;
+        return getRawElevatorPosition() > 40_000;
     }
 
     @Override
