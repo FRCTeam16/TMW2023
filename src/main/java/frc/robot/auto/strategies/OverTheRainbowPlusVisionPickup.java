@@ -24,6 +24,10 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
     private StopAfterDriveOverWatcher driveWatcher = new StopAfterDriveOverWatcher();
 
     public OverTheRainbowPlusVisionPickup() {
+        this(Pipeline.Cone);
+    }
+
+    public OverTheRainbowPlusVisionPickup(Pipeline visionPipeline) {
         addCommands(
             new InitializeAutoState(180),
             new InstantCommand(Subsystems.intake::CloseHand)
@@ -53,7 +57,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
             // Spin to face target
             new RotateToAngle(0).withTimeout(2),
             new VisionAlign()
-                .withVisionPipeline(Pipeline.Cone)
+                .withVisionPipeline(visionPipeline)
                 .withRobotAngle(0)
                 .withRobotSpeed(0.5)
                 .withTimeout(4.0),

@@ -4,7 +4,7 @@ public enum Pipeline {
     April(0),
     RetroHigh(1),
     Cone(2),
-    Camera(3);
+    Cube(3);
 
     public final int pipelineNumber;
 

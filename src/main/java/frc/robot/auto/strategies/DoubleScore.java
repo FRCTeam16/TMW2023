@@ -8,6 +8,7 @@ import frc.robot.Subsystems;
 import frc.robot.commands.SchedulePose;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
+import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.pose.PoseManager;
 import frc.robot.commands.pose.PoseManager.Pose;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,17 +24,12 @@ public class DoubleScore extends SequentialCommandGroup {
 
         addCommands(
             new InitializeAutoState(180),
-            new InstantCommand(Subsystems.intake::CloseHand),
-            new WaitCommand(0.5),
+            new InstantCommand(Subsystems.intake::CloseHand)
+        );
 
-            new SchedulePose(Pose.ScoreHighCone),
-            new WaitCommand(1.0),
-            new InstantCommand(Subsystems.intake::storeAndScore),
-            new WaitCommand(0.25),
-            new InstantCommand(Subsystems.intake::OpenHand),
-            new WaitCommand(0.5),
-            new InstantCommand(Subsystems.intake::restoreStoredSetpoint),
+        ScoreHighHelper.scoreHighCone(this);
 
+        addCommands(
             new SchedulePose(Pose.SingleSubstation),
             new WaitCommand(0.5),
             new SchedulePose(Pose.Stow),
@@ -49,7 +45,6 @@ public class DoubleScore extends SequentialCommandGroup {
                      .withThreshold(0.1)
                      .withTimeout(0.3),
 
-            // Do drive to balance
             Commands.parallel(
                 new ProfiledDistanceDriveCommand(0, 1, 3, 0)
                      .withEndSpeed(0.5)

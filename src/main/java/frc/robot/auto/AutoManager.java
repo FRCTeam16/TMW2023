@@ -22,13 +22,14 @@ import frc.robot.auto.strategies.ScoreConeThenCube;
 import frc.robot.auto.strategies.ScoreLowConeThenLowCone;
 import frc.robot.auto.strategies.ScoredStraight;
 import frc.robot.auto.strategies.TryForThree;
+import frc.robot.subsystems.vision.Pipeline;
 
 public class AutoManager {
 
     public enum AutoStrategies {
         DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, 
         ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun, 
-        OverTheRainbow, OverTheRainbowPlusPickup, OTRNext,
+        OverTheRainbow, OverTheRainbowPlusPickup, OTRNext, OTRNextCube,
         ConeThenCube,
         DoubleScore, LowConeThenLowCone,
         TryForThree, 
@@ -52,6 +53,7 @@ public class AutoManager {
         registerStrategy("Over The Rainbow", AutoStrategies.OverTheRainbow, OverTheRainbow::new);
         registerStrategy("Over The Rainbow Plus Pickup", AutoStrategies.OverTheRainbowPlusPickup, OverTheRainbowPlusPickup::new);
         registerStrategy("OTRNext", AutoStrategies.OTRNext, OverTheRainbowPlusVisionPickup::new);
+        registerStrategy("OTRNextCube", AutoStrategies.OTRNextCube, () -> new OverTheRainbowPlusVisionPickup(Pipeline.Cube));
         // registerStrategy("Double Low Cone Balance", AutoStrategies.LowConeThenLowCone, ScoreLowConeThenLowCone::new);
         // registerStrategy("Try For Three", AutoStrategies.TryForThree, TryForThree::new);
         registerStrategy("1.5 Balance", AutoStrategies.OneAndAHalfBalance, OneAndAHalfBalance::new);
