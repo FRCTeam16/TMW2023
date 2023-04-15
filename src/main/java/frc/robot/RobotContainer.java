@@ -293,8 +293,7 @@ public class RobotContainer {
      * @return
      */
     private final boolean wristOrElevatorOffset() {
-        if (Subsystems.poseManager.getCurrentPose() == Pose.GroundPickup && 
-            Subsystems.partIndicator.isConeRequested()) {
+        if (Subsystems.poseManager.getCurrentPose() == Pose.GroundPickup) {
             return false;
         } else {
             return true;

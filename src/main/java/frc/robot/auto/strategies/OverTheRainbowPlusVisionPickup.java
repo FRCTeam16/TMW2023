@@ -1,6 +1,7 @@
 package frc.robot.auto.strategies;
 
 import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -56,6 +57,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
 
             // Spin to face target
             new RotateToAngle(0).withTimeout(2),
+            //important
             new VisionAlign()
                 .withVisionPipeline(visionPipeline)
                 .withRobotAngle(0)
@@ -125,6 +127,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
         private boolean sawDriveUp;
         private boolean sawDriveDown;
         private LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
+        private Timer endTimer = new Timer();
 
         StopAfterDriveOverWatcher() {}
 
@@ -137,10 +140,12 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
             } else if (!sawDriveDown) {
                 if (pitch > 10) {
                     sawDriveDown = true;
+                    endTimer.start();
                 }
             } else {
                 // we have driven up and down
-                if (Math.abs(pitch) < 2.75) {
+                // TODO: determine if we need a small drive forward timer at the end
+                if (Math.abs(pitch) < 2.75 /*&& endTimer.hasElapsed(0.5)*/) {
                     return true;
                 }
             }
