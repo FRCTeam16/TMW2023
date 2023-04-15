@@ -18,7 +18,8 @@ public class PoseManager {
         Stow,
         ScoreMidCone,
         ScoreHighCone,
-        Zero
+        Zero,
+        Shoot
     }
 
     private Pose currentPose = Pose.StartingConfig;
@@ -34,6 +35,7 @@ public class PoseManager {
         commandRegistry.put(Pose.ScoreMidCone, MoveToScoreConeMidPose::new);
         commandRegistry.put(Pose.ScoreHighCone, MoveToScoreConeHighPose::new);
         commandRegistry.put(Pose.Zero, MoveToZeroPose::new);
+        commandRegistry.put(Pose.Shoot, MoveToShootPose::new);
     }
 
     public Command getPose(Pose requestedPose) {

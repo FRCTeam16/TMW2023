@@ -37,8 +37,8 @@ public class Elevator extends SubsystemBase implements Lifecycle {
         ScoreConeHigh(54_500),
         Stow(1000),
         Zero(0), //TUNE THIS
-        Intermediate(2300);
-
+        Intermediate(2300),
+        Shooter(17463); // SHOOTER IS ZERO POSE UNTIL WE GET VALS 
         public final double setpoint;
 
         private ElevatorPosition(double setpoint) {

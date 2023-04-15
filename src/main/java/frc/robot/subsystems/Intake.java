@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
     private DoubleSolenoid puncher = new DoubleSolenoid(PneumaticsModuleType.REVPH, 2, 3);
     private boolean Solstend = false;
     private boolean solenoidStateChanged = false;
+    private boolean puncherStateChanged = false;
+    private DoubleSolenoid.Value punchExtend = Value.kReverse;
+    private boolean launchStart = false;
+    private int launchDelayCounter = 0;
 
     // private Solenoid extraSol1 = new Solenoid(PneumaticsModuleType.REVPH, 2);
     // private Solenoid extraSol2 = new Solenoid(PneumaticsModuleType.REVPH, 3);
@@ -64,7 +69,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
         Stop(0),
         Eject(1),
         Intake(2),
-        Hold(3);
+        Launch(3),
+        Hold(4);
     
         public final int setIntakeSate;
 
@@ -88,13 +94,17 @@ public class Intake extends SubsystemBase implements Lifecycle {
         Stow(-63_467),
         ScoreCubeHigh(-150_383),
         ScoreCubeMid(-150_242),
-        WristScore(-75_843);
+        WristScore(-75_843),
+        Shooter(-577889); // GET VALS FOR THIS
 
         public final double setpoint;
 
         private WristPosition(double setpoint) {
             this.setpoint = setpoint;
         }
+
+
+
     }
 
     public enum HandState {
@@ -160,6 +170,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
     public void teleopInit() {
         setpoint = wrist.getSelectedSensorPosition();
         hasPart = false;
+        ClosePuncher();
     }
 
     @Override
@@ -281,6 +292,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
                 break;
             case Hold: left.set(ControlMode.PercentOutput, SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED));
                 break;
+            case Launch: left.set(ControlMode.PercentOutput, -1.0);
             }
 
         } else {
@@ -288,8 +300,19 @@ public class Intake extends SubsystemBase implements Lifecycle {
             left.set(ControlMode.PercentOutput, intakeSpeed);
        }
 
-       //need to set logic for punching cube/cone
-       puncher.set(DoubleSolenoid.Value.kForward);
+       if (launchStart) {
+            if(launchDelayCounter < 12) {
+                launchDelayCounter++;
+            }
+            else {
+                IntakeState = IntakeConditions.Launch;   
+            }
+       }
+       else {
+        launchDelayCounter = 0;
+       }
+
+       
  
        /*   ***************Removed for code above... but i'm not totally confident in it.  :)
         if (!DriverStation.isAutonomousEnabled()) {
@@ -359,7 +382,13 @@ public class Intake extends SubsystemBase implements Lifecycle {
             lower.set(!Solstend);
             solenoidStateChanged = false;
         }
-        
+
+        //need to set logic for punching cube/cone
+        //puncher.set(DoubleSolenoid.Value.kForward);
+        if (puncherStateChanged){
+            puncher.set(punchExtend);
+            puncherStateChanged = false;
+        }
 
     }
 
@@ -384,5 +413,20 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     public boolean hasPart() {
         return this.hasPart;
+    }
+
+    //puncher
+    public void OpenPuncher(){
+        puncherStateChanged = true;
+        punchExtend = Value.kReverse;
+        //CloseHand();
+        launchStart = true;
+    }
+
+    public void ClosePuncher(){
+        puncherStateChanged = true;
+        punchExtend = Value.kForward;
+        IntakeState = IntakeConditions.Stop;
+        launchStart = false;
     }
 }

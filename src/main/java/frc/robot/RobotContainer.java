@@ -64,6 +64,7 @@ public class RobotContainer {
 
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
+    private final JoystickButton punch     = new JoystickButton(left, 9);
     private final JoystickButton lockAngle180 = new JoystickButton(left, 2);
     private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 0);
     private final Trigger lockAngleN0 = new Trigger(() -> right.getPOV() >= 0);
@@ -249,6 +250,7 @@ public class RobotContainer {
         /* Intake Controls */
         intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         eject.onTrue(new InstantCommand(()     -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        punch.onTrue(new InstantCommand(()     -> Subsystems.intake.OpenPuncher())).onFalse(new InstantCommand(() -> Subsystems.intake.ClosePuncher()));
 
         wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
         wristOpenLoopDown.onTrue(new InstantCommand(() -> Subsystems.intake.lowerWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));
