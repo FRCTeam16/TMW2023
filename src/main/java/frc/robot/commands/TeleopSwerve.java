@@ -4,6 +4,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -21,13 +22,16 @@ public class TeleopSwerve extends CommandBase {
     private BooleanSupplier robotCentricSup;
     private BooleanSupplier lockAngleEnabledSup;
     private DoubleSupplier lockAngleSup;
-
+    
     // Extended elevator constraints
     private static final double MAX_TRANSLATION_SPEED = 4.0;    // m/s
     private static final double DECEL_RATE = 0.07;
     public static final double ROTATION_CLAMP_RAD_PER_SEC = 8;
 
     private Translation2d lastSpeed = new Translation2d(0,0);
+
+    private SlewRateLimiter transLimiter = new SlewRateLimiter(0.5);
+    private SlewRateLimiter strafeLimiter = new SlewRateLimiter(0.5);
 
     public TeleopSwerve(
             Swerve s_Swerve, 
@@ -64,22 +68,30 @@ public class TeleopSwerve extends CommandBase {
 
         // Define maximum speeds
         double maxSpeed = Subsystems.elevator.isElevatorExtended() ? MAX_TRANSLATION_SPEED : Constants.Swerve.maxSpeed;
+        maxSpeed = Constants.Swerve.maxSpeed;  // Temporary Testing for relaxing fine alignment
         final double maxRotation = Subsystems.elevator.isElevatorExtended() ? 4 : Constants.Swerve.maxAngularVelocity;
         rotationVal *= maxRotation;
 
         // Target swerve velocity state
-        final Translation2d swerveSpeed;
-        Translation2d targetSpeed = new Translation2d(translationVal, strafeVal).times(maxSpeed);
-        if (Subsystems.elevator.isElevatorExtended() && 
-            (lastSpeed.getX() >= targetSpeed.getX() || lastSpeed.getY() >= targetSpeed.getY())) {
-                // Interpolate slowly towards target if we are extended and going faster than target velocity
-            swerveSpeed = new Translation2d(
-                MathUtil.interpolate(lastSpeed.getX(), targetSpeed.getX(), DECEL_RATE),
-                MathUtil.interpolate(lastSpeed.getY(), targetSpeed.getY(), DECEL_RATE)
-            );
+        if (Subsystems.elevator.isElevatorExtended()) {
+            translationVal = transLimiter.calculate(translationVal);
+            strafeVal = strafeLimiter.calculate(strafeVal);
         } else {
-            swerveSpeed = targetSpeed;
+            transLimiter.reset(translationVal);
+            strafeLimiter.reset(strafeVal);
         }
+        Translation2d targetSpeed = new Translation2d(translationVal, strafeVal).times(maxSpeed);
+        final Translation2d swerveSpeed = targetSpeed;
+        // if (Subsystems.elevator.isElevatorExtended() && 
+        //     (lastSpeed.getX() >= targetSpeed.getX() || lastSpeed.getY() >= targetSpeed.getY())) {
+        //         // Interpolate slowly towards target if we are extended and going faster than target velocity
+        //     swerveSpeed = new Translation2d(
+        //         MathUtil.interpolate(lastSpeed.getX(), targetSpeed.getX(), DECEL_RATE),
+        //         MathUtil.interpolate(lastSpeed.getY(), targetSpeed.getY(), DECEL_RATE)
+        //     );
+        // } else {
+        //     swerveSpeed = targetSpeed;
+        // }
 
 
         // Determine if we need to lock to angle

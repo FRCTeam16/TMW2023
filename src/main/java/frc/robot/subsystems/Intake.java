@@ -268,9 +268,10 @@ public class Intake extends SubsystemBase implements Lifecycle {
                 // If we are not in Substation and picking up a cube then automatically close
                 // the hand
                 if (Subsystems.poseManager.getCurrentPose() != Pose.SingleSubstation &&
+                    Subsystems.poseManager.getCurrentPose() != Pose.GroundPickup &&
                         Subsystems.partIndicator.requestedPartType == PartType.Cone) {
                     CloseHand();
-                        }
+                    }
                 }
 
                 // We had a part, signal we no longer have it
