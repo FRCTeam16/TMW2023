@@ -64,7 +64,9 @@ public class RobotContainer {
 
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
-    private final JoystickButton punch     = new JoystickButton(left, 9);
+    //private final JoystickButton punch     = new JoystickButton(left, 9);
+    private final Trigger punch = new Trigger(() -> gamepad.getLeftTriggerAxis() > 0.1); 
+
     private final JoystickButton lockAngle180 = new JoystickButton(left, 2);
     private final Trigger lockAngleN90 = new Trigger(() -> left.getPOV() >= 0);
     private final Trigger lockAngleN0 = new Trigger(() -> right.getPOV() >= 0);

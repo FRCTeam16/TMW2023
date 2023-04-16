@@ -33,7 +33,7 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
   private boolean fieldCentric = true;
 
   public BooleanSupplier stopFunction;  // optional stop function evaluated for early termination
-  public DoubleSupplier xTranslationFunction; // optional x-direction supplier, e.g. vision
+  public DoubleSupplier yTranslationFunction; // optional x-direction supplier, e.g. vision
 
 
   /**
@@ -87,8 +87,8 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
     return this;
   }
 
-  public ProfiledDistanceDriveCommand withXSupplier(DoubleSupplier xSupplier) {
-    this.xTranslationFunction = xSupplier;
+  public ProfiledDistanceDriveCommand withYSupplier(DoubleSupplier ySupplier) {
+    this.yTranslationFunction = ySupplier;
     return this;
   }
 
@@ -144,11 +144,11 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
     }
 
     // Handle override
-    if (xTranslationFunction != null) {
-      double percentX = xTranslationFunction.getAsDouble();
-      if (debug) System.out.print("[PDDC] Original vxMetersPerSec: " + vxMetersPerSecond );
-      vxMetersPerSecond = percentX * Constants.Swerve.maxSpeed;
-      if (debug) System.out.println(" | Override VX = " + vxMetersPerSecond);
+    if (yTranslationFunction != null) {
+      double percentX = yTranslationFunction.getAsDouble();
+      if (debug) System.out.print("[PDDC] Original vxMetersPerSec: " + vyMetersPerSecond );
+      vyMetersPerSecond = percentX * Constants.Swerve.maxSpeed;
+      if (debug) System.out.println(" | Override VX = " + vyMetersPerSecond);
     }
 
 /* 

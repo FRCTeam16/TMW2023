@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
+import frc.robot.commands.Balance;
 import frc.robot.commands.SchedulePose;
 import frc.robot.commands.VisionAlign;
 import frc.robot.commands.XWHeelLock;
@@ -62,10 +63,10 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
                 .withVisionPipeline(visionPipeline)
                 .withRobotAngle(0)
                 .withRobotSpeed(0.5)
-                .withTimeout(4.0),
+                .withTimeout(3.0),
 
             new SchedulePose(Pose.GroundPickup),
-            new WaitCommand(0.5),
+            new WaitCommand(1),
 
 
             // Pickup
@@ -96,7 +97,8 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
                 .withEndSpeed(0.25)
                 .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
                 .withTimeout(8.0),
-            new XWHeelLock()
+            new Balance()    
+            // new XWHeelLock()
         );
     }
 

@@ -2,6 +2,7 @@ package frc.robot.auto.strategies;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Subsystems;
 import frc.robot.commands.EnableImageProcessing;
 import frc.robot.commands.auto.InitializeAutoState;
@@ -19,13 +20,15 @@ public class VisionTestStrategy extends SequentialCommandGroup {
     public VisionTestStrategy(Pipeline pipeline) {
         addCommands(
             new InitializeAutoState(0),
+            new InstantCommand(() -> Subsystems.swerveSubsystem.hardResetOdometry(0)),
+            new WaitCommand(.1),
             // new InstantCommand(Subsystems.intake::CloseHand),
             new EnableImageProcessing(pipeline)
         );
 
         addCommands(
             new ProfiledDistanceDriveCommand(0, 0.3, 2, 0)
-                .withXSupplier(visionHelper::calculate)
+                .withYSupplier(visionHelper::calculate)
                 .withTimeout(5)
         );
     }
