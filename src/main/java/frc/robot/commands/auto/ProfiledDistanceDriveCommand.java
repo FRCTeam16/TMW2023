@@ -1,6 +1,7 @@
 package frc.robot.commands.auto;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -32,6 +33,7 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
   private boolean fieldCentric = true;
 
   public BooleanSupplier stopFunction;  // optional stop function evaluated for early termination
+  public DoubleSupplier xTranslationFunction; // optional x-direction supplier, e.g. vision
 
 
   /**
@@ -85,6 +87,11 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
     return this;
   }
 
+  public ProfiledDistanceDriveCommand withXSupplier(DoubleSupplier xSupplier) {
+    this.xTranslationFunction = xSupplier;
+    return this;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -127,7 +134,6 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
     double vxMetersPerSecond = Math.abs(speed * Math.cos(driveAngle));
     double vyMetersPerSecond = Math.abs(speed * Math.sin(driveAngle));
     
-    
     // TODO: may just need to add 90 to driveAngle and use true quadrant sign values
     if (currentPose.getY() > targetPose.getY()) {
       if (debug) System.out.println("*** inverting VYM: " + currentPose.getY() + " > " + targetPose.getY());
@@ -136,6 +142,15 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
     if (currentPose.getX() > targetPose.getX()) {
       vxMetersPerSecond = -vxMetersPerSecond;
     }
+
+    // Handle override
+    if (xTranslationFunction != null) {
+      double percentX = xTranslationFunction.getAsDouble();
+      if (debug) System.out.print("[PDDC] Original vxMetersPerSec: " + vxMetersPerSecond );
+      vxMetersPerSecond = percentX * Constants.Swerve.maxSpeed;
+      if (debug) System.out.println(" | Override VX = " + vxMetersPerSecond);
+    }
+
 /* 
 Test new
     var driveAngle = Math.atan2(
