@@ -90,7 +90,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
         ScoreCone(1000),
         ScoreCube(1000),
         GroundPickup(30_850),
-        GroundPickupCube(-35124),
+        GroundPickupCube(-50_000),
         Stow(-63_467),
         ScoreCubeHigh(-150_383),
         ScoreCubeMid(-150_242),

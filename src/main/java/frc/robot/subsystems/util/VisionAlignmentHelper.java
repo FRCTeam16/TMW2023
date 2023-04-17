@@ -20,6 +20,11 @@ public class VisionAlignmentHelper {
         SmartDashboard.setDefaultNumber("VisionAlign/maxSpeed", maxSpeed);
     }
 
+    public VisionAlignmentHelper overrideMaxSpeed(double speed) {
+        this.maxSpeed = speed;
+        return this;
+    }
+
     public void setTolerance(double tolerance) {
         this.tolerance = tolerance;
     }
@@ -32,7 +37,8 @@ public class VisionAlignmentHelper {
         if (visionInfo.hasTarget) {
             output = this.pid.calculate(visionInfo.xOffset, 0);
         }
-        double clampVal = SmartDashboard.getNumber("VisionAlign/maxSpeed", maxSpeed);
+        // double clampVal = SmartDashboard.getNumber("VisionAlign/maxSpeed", maxSpeed);
+        double clampVal = maxSpeed;
         double clampedValue = MathUtil.clamp(output, -clampVal, clampVal);
         return clampedValue;
     }
