@@ -9,9 +9,9 @@ public class DebugAuto extends SequentialCommandGroup {
     // double speed = 0.5;
     // double offset = -90.0;
     addCommands(
-      new InitializeAutoState(180),
-      new RotateToAngle(0)
-        .withTimeout(3)
+      new InitializeAutoState(180)
+      // new RotateToAngle(0)
+      //   .withTimeout(3)
     );
     //   new SchedulePose(Pose.Stow),
     //   new ProfiledDistanceDriveCommand(0, 0.5, 3, 0)

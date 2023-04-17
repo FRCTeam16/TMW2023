@@ -115,7 +115,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
             //     .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
             //     .withTimeout(8.0),
             new InstantCommand(() -> Subsystems.partIndicator.requestPart(!isCone ? PartType.Cone : PartType.Cube)),
-            new Balance().withSpeed(2.0)
+            new Balance()
             // new XWHeelLock()
         );
     }

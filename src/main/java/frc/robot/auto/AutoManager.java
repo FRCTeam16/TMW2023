@@ -8,28 +8,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.auto.strategies.DebugAuto;
-import frc.robot.auto.strategies.DoubleScore;
+import frc.robot.auto.strategies.DebugBalance;
 import frc.robot.auto.strategies.FlatOutRun;
+import frc.robot.auto.strategies.OneAndAHalf;
 import frc.robot.auto.strategies.OneAndAHalfBalance;
 import frc.robot.auto.strategies.OneAndAHalfBalanceOtherSide;
-import frc.robot.auto.strategies.OneAndAHalf;
 import frc.robot.auto.strategies.OneAndAHalfOtherSide;
 import frc.robot.auto.strategies.OverTheRainbow;
 import frc.robot.auto.strategies.OverTheRainbowPlusPickup;
 import frc.robot.auto.strategies.OverTheRainbowPlusVisionPickup;
 import frc.robot.auto.strategies.ScoreAndBalance;
-import frc.robot.auto.strategies.ScoreConeThenCube;
-import frc.robot.auto.strategies.ScoreLowConeThenLowCone;
 import frc.robot.auto.strategies.ScoredStraight;
-import frc.robot.auto.strategies.TryForThree;
 import frc.robot.auto.strategies.TwoScoreOtherSide;
-import frc.robot.auto.strategies.VisionTestStrategy;
 import frc.robot.subsystems.vision.Pipeline;
 
 public class AutoManager {
 
     public enum AutoStrategies {
-        DebugAuto, ExampleAuto, PDistTest, TestTrajectoryFactory, VisionTest,
+        DebugAuto, DebugBalance,
+        ExampleAuto, PDistTest, TestTrajectoryFactory, VisionTest,
         ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun, 
         OverTheRainbow, OverTheRainbowPlusPickup, OTRNext, OTRNextCube,
         ConeThenCube,
@@ -44,7 +41,8 @@ public class AutoManager {
 
     public AutoManager() {
         registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
-        registerStrategy("Vision Test", AutoStrategies.VisionTest, VisionTestStrategy::new);
+        registerStrategy("Debug Balance", AutoStrategies.DebugBalance, DebugBalance::new);
+        // registerStrategy("Vision Test", AutoStrategies.VisionTest, VisionTestStrategy::new);
         // registerStrategy("exampleAuto", AutoStrategies.ExampleAuto, new exampleAuto(Subsystems.swerveSubsystem));
         // registerStrategy("pdist test", AutoStrategies.PDistTest, PDistTest::new);
         // registerStrategy("TestTrajectoryFactory", AutoStrategies.TestTrajectoryFactory, TestTrajectoryFactory::new, true);

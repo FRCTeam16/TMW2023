@@ -15,7 +15,8 @@ import frc.robot.subsystems.util.PIDHelper;
 public class Balance extends CommandBase implements Lifecycle {
     
     private final double pitchThreshold;
-    private double BALANCE_TRANSLATION_SPEED = Constants.Swerve.maxSpeed / 6.5;
+    private double towardsDriverStationSpeed = 1.0;
+    private double awayDriverStationSpeed = 2.5;
 
 
     private PIDController pidController = new PIDController(0.082, 0, 0.01);
@@ -29,14 +30,22 @@ public class Balance extends CommandBase implements Lifecycle {
         pidController.setTolerance(0.5);
 
         pidHelper.initialize(0.08, 0, 0.01, 0, 0, 0);   // kP = 0.1 for shelter
+
+        SmartDashboard.setDefaultNumber("BalanceForwardSpeed", towardsDriverStationSpeed);
+        SmartDashboard.setDefaultNumber("BalanceAwaySpeed", awayDriverStationSpeed);
     }
 
     public Balance(double pitchThreshold) {
         this.pitchThreshold = pitchThreshold;
     }
 
-    public Balance withSpeed(double speed) {
-        this.BALANCE_TRANSLATION_SPEED = speed;
+    public Balance withTowardsSpeed(double speed) {
+        this.towardsDriverStationSpeed = speed;
+        return this;
+    }
+
+    public Balance withAwaySpeed(double speed) {
+        this.awayDriverStationSpeed = speed;
         return this;
     }
 
@@ -47,9 +56,18 @@ public class Balance extends CommandBase implements Lifecycle {
 
         final double currentPitch = Subsystems.swerveSubsystem.gyro.getPitch();
 
+        if (currentPitch < 0) {
+            
+        }
+
         double output = pidController.calculate(currentPitch);
 
-        Translation2d translation = new Translation2d(output, 0).times(BALANCE_TRANSLATION_SPEED);
+        double speed = SmartDashboard.getNumber("BalanceForwardSpeed", towardsDriverStationSpeed);
+        if (currentPitch < 0) {
+            speed = SmartDashboard.getNumber("BalanceAwaySpeed", towardsDriverStationSpeed);
+        }
+
+        Translation2d translation = new Translation2d(output, 0).times(speed);
         Subsystems.swerveSubsystem.drive(translation, 0, true, true);
     }
 
