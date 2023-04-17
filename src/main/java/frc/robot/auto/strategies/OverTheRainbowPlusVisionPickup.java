@@ -19,6 +19,7 @@ import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.auto.ScoreHighHelper;
 import frc.robot.commands.auto.StopDrive;
 import frc.robot.commands.pose.PoseManager.Pose;
+import frc.robot.subsystems.PartIndicator.PartType;
 import frc.robot.subsystems.vision.Pipeline;
 
 public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
@@ -38,9 +39,11 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
 
         ScoreHighHelper.scoreHighCone(this);
 
+        boolean isCone = visionPipeline == Pipeline.Cone;
+
         addCommands(
-            new SchedulePose(Pose.SingleSubstation),
-            new WaitCommand(0.5),
+            // new SchedulePose(Pose.SingleSubstation),
+            // new WaitCommand(0.5),
             new SchedulePose(Pose.Stow),
             new WaitCommand(0.5),
 
@@ -58,31 +61,38 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
                 .withTimeout(8.0),
 
             new StopDrive(),
+            new InstantCommand(() -> Subsystems.intake.intake()),
 
             // Spin to face target
             new RotateToAngle(0)
+                .withThreshold(10)
                 .withTimeout(1.5),
 
             //important
+            new SchedulePose(Pose.AutoPreGroundPickup),
             new VisionAlign()
                 .withVisionPipeline(visionPipeline)
                 .withRobotAngle(0)
+                .withTolerance(6)
                 .withRobotSpeed(0.5)
-                .withTimeout(3.0),
+                .withTimeout(1.5),
 
+            new InstantCommand(() -> Subsystems.partIndicator.requestPart(isCone ? PartType.Cone : PartType.Cube)),
             new SchedulePose(Pose.GroundPickup),
-            new WaitCommand(1),
+            new WaitCommand(0.5),
 
 
             // Pickup
             new PrintCommand("Starting pickup"),
-            Commands.parallel(
+            Commands.race(
                 new ProfiledDistanceDriveCommand(0, 0.25, .7, 0)
                     .withEndSpeed(0.25)
                     .withThreshold(0.1)
+                    .withRobotCentric()
                     .withTimeout(2),
-                new ClampHandOnPart(visionPipeline == Pipeline.Cone)
+                new ClampHandOnPart(isCone)
             ).withTimeout(2),
+            isCone ? new InstantCommand(() -> Subsystems.intake.CloseHand()) : new PrintCommand("Skip close for cube"),
             new PrintCommand("Finished pickup"),
 
             // Spin
@@ -94,17 +104,18 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
             ),
 
             // Drive onto ramp
-            new ProfiledDistanceDriveCommand(180, 0.4, -2.1, 0)
+            new ProfiledDistanceDriveCommand(180, 0.4, -2.0, 0)         // 3.1 for drivethru non race pickup
                 // .withStopCondition(this::stopOPitch)
                 .withEndSpeed(0.4)
-                .withTimeout(4.0),
+                .withTimeout(3.0),
 
             // Drive until we see our pitch
-            new ProfiledDistanceDriveCommand(180, 0.25, -3.5, 0)
-                .withEndSpeed(0.25)
-                .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
-                .withTimeout(8.0),
-            new Balance()    
+            // new ProfiledDistanceDriveCommand(180, 0.25, -3.5, 0)
+            //     .withEndSpeed(0.25)
+            //     .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
+            //     .withTimeout(8.0),
+            new InstantCommand(() -> Subsystems.partIndicator.requestPart(!isCone ? PartType.Cone : PartType.Cube)),
+            new Balance().withSpeed(2.0)
             // new XWHeelLock()
         );
     }

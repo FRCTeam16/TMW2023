@@ -106,6 +106,10 @@ public class ProfiledDistanceDriveCommand extends CommandBase {
     this.currentState = new TrapezoidProfile.State(0, 0); // assume zero initial velocity
     this.goal = new TrapezoidProfile.State(startPose.getDistance(xy_trans), endSpeed);
 
+    if (!this.fieldCentric) {
+      this.angle = Subsystems.swerveSubsystem.getYaw().getDegrees();
+    }
+
     System.out.println("****************> SDDC Initialize");
     System.out.println("Current Pose: " + startPose);
     System.out.println("Target Pose : " + targetPose);
@@ -168,6 +172,8 @@ Test new
 
     double desiredRotation = MathUtil.clamp(Math.toRadians(twist), -clamp, clamp);
     var desiredTranslation = new Translation2d(vxMetersPerSecond, vyMetersPerSecond);
+
+    
 
     
     if (debug) {

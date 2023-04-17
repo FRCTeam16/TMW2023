@@ -13,6 +13,7 @@ public class PoseManager {
         StartingConfig,
         SingleSubstation,
         DoubleSubstation,
+        AutoPreGroundPickup,
         PreGroundPickup,
         GroundPickup,
         Stow,
@@ -27,6 +28,7 @@ public class PoseManager {
     private Map<Pose, Supplier<Command>> commandRegistry = new HashMap<>();
 
     public PoseManager() {
+        commandRegistry.put(Pose.AutoPreGroundPickup, MoveToAutoPreGroundPickupPose::new);
         commandRegistry.put(Pose.PreGroundPickup, MoveToPreGroundPickupPose::new);
         commandRegistry.put(Pose.GroundPickup, MoveToGroundPickupPose::new);
         commandRegistry.put(Pose.Stow, MoveToStowPose::new);

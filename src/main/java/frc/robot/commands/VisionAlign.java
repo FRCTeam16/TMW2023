@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -15,6 +16,7 @@ public class VisionAlign extends CommandBase {
     private double robotAngle = 180.0;
     private Pipeline visionPipeline = Pipeline.RetroHigh;
     private double robotSpeed = 0.25;
+    private int seenScans = 0;
 
     public VisionAlign() {
         addRequirements(Subsystems.swerveSubsystem);
@@ -60,6 +62,12 @@ public class VisionAlign extends CommandBase {
         double direction = (Math.abs(Subsystems.swerveSubsystem.getYaw().getDegrees()) < 90) ? 1 : -1;
         Translation2d translation = new Translation2d(0, direction * horizontalComponent);
 
+        if (this.helper.inPosition()) {
+           seenScans++;
+        } else {
+            seenScans = 0;
+        }
+
         Subsystems.swerveSubsystem.drive(
             translation.times(robotSpeed * Constants.Swerve.maxSpeed), 
             Math.toRadians(twist), 
@@ -69,6 +77,6 @@ public class VisionAlign extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return this.helper.inPosition();
+        return this.helper.inPosition() && seenScans > 5;
     }
 }
