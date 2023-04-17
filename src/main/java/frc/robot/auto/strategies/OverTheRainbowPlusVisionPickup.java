@@ -17,6 +17,7 @@ import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.ProfiledDistanceDriveCommand;
 import frc.robot.commands.auto.RotateToAngle;
 import frc.robot.commands.auto.ScoreHighHelper;
+import frc.robot.commands.auto.StopDrive;
 import frc.robot.commands.pose.PoseManager.Pose;
 import frc.robot.subsystems.vision.Pipeline;
 
@@ -50,14 +51,18 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
                 .withTimeout(2.0),
 
             // Over
-            new ProfiledDistanceDriveCommand(180, 0.6, 3.75, 0)
+            new ProfiledDistanceDriveCommand(180, 0.8, 3.75, 0)
                 .withEndSpeed(0.3)
                 .withStopCondition(this.driveWatcher::isFinished)
                 .withThreshold(0.1)
                 .withTimeout(8.0),
 
+            new StopDrive(),
+
             // Spin to face target
-            new RotateToAngle(0).withTimeout(2),
+            new RotateToAngle(0)
+                .withTimeout(1.5),
+
             //important
             new VisionAlign()
                 .withVisionPipeline(visionPipeline)
@@ -82,7 +87,9 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
 
             // Spin
             Commands.parallel(
-                new RotateToAngle(180).withTimeout(2),
+                new RotateToAngle(180)
+                    .withThreshold(5)
+                    .withTimeout(1.5),
                 new SchedulePose(Pose.Stow)
             ),
 

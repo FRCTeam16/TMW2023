@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -22,6 +23,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private double lastScanTime = 0;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -34,6 +37,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     
     addPeriodic(Subsystems.ledSubsystem::Report, 0.1);
+    lastScanTime = Timer.getFPGATimestamp();
   }
 
   /**
@@ -51,6 +55,10 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     m_robotContainer.periodic();
+
+    double now = Timer.getFPGATimestamp();
+    SmartDashboard.putNumber("Robot Scan Time", (now - lastScanTime));
+    lastScanTime = now;
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
