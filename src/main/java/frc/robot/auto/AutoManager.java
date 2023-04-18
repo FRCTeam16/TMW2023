@@ -19,6 +19,7 @@ import frc.robot.auto.strategies.OverTheRainbowPlusPickup;
 import frc.robot.auto.strategies.OverTheRainbowPlusVisionPickup;
 import frc.robot.auto.strategies.ScoreAndBalance;
 import frc.robot.auto.strategies.ScoredStraight;
+import frc.robot.auto.strategies.TwoScore;
 import frc.robot.auto.strategies.TwoScoreOtherSide;
 import frc.robot.subsystems.vision.Pipeline;
 
@@ -33,7 +34,7 @@ public class AutoManager {
         DoubleScore, LowConeThenLowCone,
         TryForThree, 
         OneAndAHalfBalance, OneAndAHalfBalanceOtherSide, OneAndAHalfOtherSide, OneAndAHalf,
-        TwoScoreOtherSide
+        TwoScore, TwoScoreOtherSide
     }
 
     private final SendableChooser<AutoStrategies> chooser = new SendableChooser<>();
@@ -62,6 +63,7 @@ public class AutoManager {
         registerStrategy("1.5 Balance Other", AutoStrategies.OneAndAHalfBalanceOtherSide, OneAndAHalfBalanceOtherSide::new);
         registerStrategy("1.5 Other Stop", AutoStrategies.OneAndAHalfOtherSide, OneAndAHalfOtherSide::new);
         registerStrategy("1.5 Stop", AutoStrategies.OneAndAHalf, OneAndAHalf::new);
+        registerStrategy("TwoScore", AutoStrategies.TwoScore, TwoScore::new);
         registerStrategy("TwoScore Other", AutoStrategies.TwoScoreOtherSide, TwoScoreOtherSide::new);
 
         // Send selector Dashboard.  If it doesn't show in SD, you may need to change the name here.

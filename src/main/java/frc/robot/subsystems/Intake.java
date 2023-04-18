@@ -419,14 +419,14 @@ public class Intake extends SubsystemBase implements Lifecycle {
     //puncher
     public void OpenPuncher(){
         puncherStateChanged = true;
-        punchExtend = Value.kReverse;
+        //punchExtend = Value.kReverse;
         //CloseHand();
         launchStart = true;
     }
 
     public void ClosePuncher(){
         puncherStateChanged = true;
-        punchExtend = Value.kForward;
+        //punchExtend = Value.kForward;
         IntakeState = IntakeConditions.Stop;
         launchStart = false;
     }
