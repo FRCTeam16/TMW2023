@@ -270,7 +270,7 @@ public class Intake extends SubsystemBase implements Lifecycle {
                 if (Subsystems.poseManager.getCurrentPose() != Pose.SingleSubstation &&
                     Subsystems.poseManager.getCurrentPose() != Pose.GroundPickup &&
                         Subsystems.partIndicator.requestedPartType == PartType.Cone) {
-                    CloseHand();
+                        CloseHand();
                     }
                 }
 
@@ -282,18 +282,23 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
                 if (IntakeState == IntakeConditions.Stop && hasPart) {
                     IntakeState = IntakeConditions.Hold;
-            }
+                } else if (hasPart && 
+                    // Slow intake when we pick a part of single substation
+                    // setAtSubstation causes intake to start running full speed
+                    Subsystems.poseManager.getCurrentPose() == Pose.SingleSubstation) {
+                    IntakeState = IntakeConditions.Hold;
+                }
 
-        switch (IntakeState) {
-            case Stop: left.set(ControlMode.PercentOutput, 0);
-                break;
-            case Eject: left.set(ControlMode.PercentOutput, -SmartDashboard.getNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED));
-                break;
-            case Intake: left.set(ControlMode.PercentOutput, SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED));
-                break;
-            case Hold: left.set(ControlMode.PercentOutput, SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED));
-                break;
-            case Launch: left.set(ControlMode.PercentOutput, -1.0);
+            switch (IntakeState) {
+                case Stop: left.set(ControlMode.PercentOutput, 0);
+                    break;
+                case Eject: left.set(ControlMode.PercentOutput, -SmartDashboard.getNumber("Intake/IntakeEjectSpeed", DEFAULT_OPENLOOP_INTAKE_EJECT_SPEED));
+                    break;
+                case Intake: left.set(ControlMode.PercentOutput, SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED));
+                    break;
+                case Hold: left.set(ControlMode.PercentOutput, SmartDashboard.getNumber("Intake/SlowIntakeSpeed", DEFAULT_OPENLOOP_SLOW_INTAKE_SPEED));
+                    break;
+                case Launch: left.set(ControlMode.PercentOutput, -1.0);
             }
 
         } else {
