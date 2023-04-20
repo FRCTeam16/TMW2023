@@ -77,6 +77,10 @@ public class VisionAlign extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return this.helper.inPosition() && seenScans > 5;
+        boolean finished = this.helper.inPosition() && seenScans > 5;
+        if (finished) {
+            System.out.println("*** VisionAlign finished in position ***");
+        }
+        return finished;
     }
 }

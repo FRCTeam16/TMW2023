@@ -75,7 +75,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
                 .withRobotAngle(0)
                 .withTolerance(6)
                 .withRobotSpeed(0.5)
-                .withTimeout(1.5),
+                .withTimeout(1.0),
 
             new InstantCommand(() -> Subsystems.partIndicator.requestPart(isCone ? PartType.Cone : PartType.Cube)),
             new SchedulePose(Pose.GroundPickup),
