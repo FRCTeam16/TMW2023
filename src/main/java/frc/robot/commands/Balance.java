@@ -16,7 +16,7 @@ public class Balance extends CommandBase implements Lifecycle {
     
     private final double pitchThreshold;
     private double towardsDriverStationSpeed = 1.0;
-    private double awayDriverStationSpeed = 2.5;
+    private double awayDriverStationSpeed = 1.5;
 
 
     private PIDController pidController = new PIDController(0.082, 0, 0.01);

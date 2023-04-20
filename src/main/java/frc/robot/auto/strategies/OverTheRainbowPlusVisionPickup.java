@@ -54,7 +54,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
                 .withTimeout(2.0),
 
             // Over
-            new ProfiledDistanceDriveCommand(180, 0.8, 3.75, 0)
+            new ProfiledDistanceDriveCommand(180, 0.9, 3.75, 0)
                 .withEndSpeed(0.3)
                 .withStopCondition(this.driveWatcher::isFinished)
                 .withThreshold(0.1)
@@ -104,9 +104,9 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
             ),
 
             // Drive onto ramp
-            new ProfiledDistanceDriveCommand(180, 0.4, -2.0, 0)         // 3.1 for drivethru non race pickup
+            new ProfiledDistanceDriveCommand(180, 0.5, -2.0, 0)         // 3.1 for drivethru non race pickup
                 // .withStopCondition(this::stopOPitch)
-                .withEndSpeed(0.4)
+                .withEndSpeed(0.5)
                 .withTimeout(3.0),
 
             // Drive until we see our pitch

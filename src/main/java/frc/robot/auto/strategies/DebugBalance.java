@@ -13,7 +13,7 @@ import frc.robot.commands.pose.PoseManager.Pose;
 /**
  * Measure 53" from hinge to frame of robot
  */
-public class DebugBalance extends SequentialCommandGroup {
+public class DebugBalance extends SequentialCommandGroup {                
     public DebugBalance() {
 
         //
