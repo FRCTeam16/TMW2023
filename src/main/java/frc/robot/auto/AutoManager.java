@@ -21,13 +21,14 @@ import frc.robot.auto.strategies.ScoreAndBalance;
 import frc.robot.auto.strategies.ScoredStraight;
 import frc.robot.auto.strategies.TwoScore;
 import frc.robot.auto.strategies.TwoScoreOtherSide;
+import frc.robot.auto.strategies.VisionTestStrategy;
 import frc.robot.subsystems.vision.Pipeline;
 
 public class AutoManager {
 
     public enum AutoStrategies {
         DebugAuto, DebugBalance,
-        ExampleAuto, PDistTest, TestTrajectoryFactory, VisionTest,
+        ExampleAuto, PDistTest, TestTrajectoryFactory, VisionTest, VisionTestCube,
         ScoreAndBalance, ScoreAndBalanceOtherSide, ScoredStraight, FlatOutRun, 
         OverTheRainbow, OverTheRainbowPlusPickup, OTRNext, OTRNextCube,
         ConeThenCube,
@@ -43,6 +44,7 @@ public class AutoManager {
     public AutoManager() {
         registerStrategy("Debug Auto", AutoStrategies.DebugAuto, DebugAuto::new);
         registerStrategy("Debug Balance", AutoStrategies.DebugBalance, DebugBalance::new);
+        registerStrategy("Vision Test Cube", AutoStrategies.VisionTestCube, () -> new VisionTestStrategy(Pipeline.Cube));
         // registerStrategy("Vision Test", AutoStrategies.VisionTest, VisionTestStrategy::new);
         // registerStrategy("exampleAuto", AutoStrategies.ExampleAuto, new exampleAuto(Subsystems.swerveSubsystem));
         // registerStrategy("pdist test", AutoStrategies.PDistTest, PDistTest::new);
