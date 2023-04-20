@@ -285,7 +285,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
                 } else if (hasPart && 
                     // Slow intake when we pick a part of single substation
                     // setAtSubstation causes intake to start running full speed
-                    Subsystems.poseManager.getCurrentPose() == Pose.SingleSubstation) {
+                    Subsystems.poseManager.getCurrentPose() == Pose.SingleSubstation ||
+                    Subsystems.poseManager.getCurrentPose() == Pose.DoubleSubstation) {
                     IntakeState = IntakeConditions.Hold;
                 }
 
