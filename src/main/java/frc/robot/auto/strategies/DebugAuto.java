@@ -1,5 +1,6 @@
 package frc.robot.auto.strategies;
 
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.auto.InitializeAutoState;
 import frc.robot.commands.auto.RotateToAngle;
@@ -9,7 +10,8 @@ public class DebugAuto extends SequentialCommandGroup {
     // double speed = 0.5;
     // double offset = -90.0;
     addCommands(
-      new InitializeAutoState(180)
+      new InitializeAutoState(180),
+      new PrintCommand("DEBUG AUTO")
       // new RotateToAngle(0)
       //   .withTimeout(3)
     );

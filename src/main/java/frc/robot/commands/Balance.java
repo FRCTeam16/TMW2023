@@ -18,8 +18,8 @@ public class Balance extends CommandBase implements Lifecycle {
     // private double towardsDriverStationSpeed = 1.25;
     // private double awayDriverStationSpeed = 1.35;
 
-    private double towardsDriverStationSpeed = -1.;
-    private double awayDriverStationSpeed = -1.8;
+    private double towardsDriverStationSpeed = -0.95;
+    private double awayDriverStationSpeed = -1.75;
 
     private PIDController pidController = new PIDController(0.082, 0, 0.01);
     private PIDHelper pidHelper = new PIDHelper("BalancePID");
