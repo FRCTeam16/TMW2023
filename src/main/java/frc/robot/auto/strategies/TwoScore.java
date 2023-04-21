@@ -111,6 +111,8 @@ public class TwoScore extends SequentialCommandGroup {
                 new SchedulePose(Pose.ScoreHighCone)
             ),
 
+            new InstantCommand(() -> this.visionHelper.withP(0.06)),
+
             Commands.race(
                 new ProfiledDistanceDriveCommand(180 * DIR, 0.28, -1.0, 0)
                     .withEndSpeed(0.3)

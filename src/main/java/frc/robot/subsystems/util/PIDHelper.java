@@ -77,4 +77,9 @@ public class PIDHelper {
         pid.setPID(this.kP, this.kI, this.kD);
     }
 
+    public void overrideP(double value) {
+        SmartDashboard.putNumber(name + "/kP", value);
+        this.kP = value;
+    }
+
 }

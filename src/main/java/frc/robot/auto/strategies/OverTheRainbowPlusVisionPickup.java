@@ -96,15 +96,17 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
             new PrintCommand("Finished pickup"),
 
             // Spin
-            Commands.parallel(
-                new RotateToAngle(180)
-                    .withThreshold(5)
-                    .withTimeout(1.5),
-                new SchedulePose(Pose.Stow)
-            ),
+            // Commands.parallel(
+            //     new RotateToAngle(180)
+            //         .withThreshold(5)
+            //         .withTimeout(1.5),
+            //     new SchedulePose(Pose.Stow)
+            // ),
+            new SchedulePose(Pose.Stow),
 
             // Drive onto ramp
-            new ProfiledDistanceDriveCommand(180, 0.5, -2.0, 0)         // 3.1 for drivethru non race pickup
+            new PrintCommand("Running onto ramp for balance"),
+            new ProfiledDistanceDriveCommand(0, 0.5, -2.0, 0)         // 3.1 for drivethru non race pickup
                 // .withStopCondition(this::stopOPitch)
                 .withEndSpeed(0.5)
                 .withTimeout(3.0),
@@ -115,6 +117,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
             //     .withStopCondition(this.pitchWatcher::shouldStopNoMaxWatch)
             //     .withTimeout(8.0),
             new InstantCommand(() -> Subsystems.partIndicator.requestPart(!isCone ? PartType.Cone : PartType.Cube)),
+            new PrintCommand("*** Starting balance"),
             new Balance()
             // new XWHeelLock()
         );

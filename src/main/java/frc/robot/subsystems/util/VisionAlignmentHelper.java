@@ -13,6 +13,7 @@ public class VisionAlignmentHelper {
     private double tolerance = 1.0;
     private double maxSpeed = 0.3;
 
+
     public VisionAlignmentHelper() {
         pidHelper.initialize(DEFAULT_KP, 0, 0, 0, 0, 0);
         this.pid.setTolerance(tolerance);
@@ -22,6 +23,12 @@ public class VisionAlignmentHelper {
 
     public VisionAlignmentHelper overrideMaxSpeed(double speed) {
         this.maxSpeed = speed;
+        return this;
+    }
+
+    public VisionAlignmentHelper withP(double pValue) {
+        System.out.println("visionhelper p override = " + pValue);
+        this.pidHelper.overrideP(pValue);
         return this;
     }
 
