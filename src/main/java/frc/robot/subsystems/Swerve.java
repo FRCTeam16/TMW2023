@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.ErrorCode;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -36,6 +39,25 @@ public class Swerve extends SubsystemBase {
         };
 
         swerveOdometry = new SwerveDriveOdometry(Constants.Swerve.swerveKinematics, getYaw(), getModulePositions());
+    }
+
+    public void tryForceZeroWheels() {
+        System.out.println("=========> TRY FORCE ZERO WHEELS !!!!");
+        for (int m=0;m<mSwerveMods.length;m++) {
+            for (int i=0; i < 3; i++) {
+                SwerveModule mod = mSwerveMods[m];
+                ErrorCode error = mod.forceResetToAbsoluteAngle();
+                System.out.println("*** TRY FORCE ZERO MOD[" + m + "]  Try(" + i + ") = " + error);
+                if (error == null || error.value == 0) {
+                    System.out.println("SUCCESS");
+                    continue;
+                } else if (error != null) {
+                    System.out.println("ERROR: " + error.toString() + " | " + error.value);
+                }
+                Timer.delay(0.001);
+            }
+        }
+        System.out.println("<========= TRY FORCE ZERO WHEELS !!!!");
     }
 
     public void drive(Translation2d translation, double rotation, boolean fieldRelative, boolean isOpenLoop) {
