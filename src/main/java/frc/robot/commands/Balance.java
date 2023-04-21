@@ -15,13 +15,14 @@ import frc.robot.subsystems.util.PIDHelper;
 public class Balance extends CommandBase implements Lifecycle {
     
     private final double pitchThreshold;
-    private double towardsDriverStationSpeed = 1.25;
-    private double awayDriverStationSpeed = 1.35;
+    // private double towardsDriverStationSpeed = 1.25;
+    // private double awayDriverStationSpeed = 1.35;
 
+    private double towardsDriverStationSpeed = -1.;
+    private double awayDriverStationSpeed = -1.8;
 
     private PIDController pidController = new PIDController(0.082, 0, 0.01);
     private PIDHelper pidHelper = new PIDHelper("BalancePID");
-
 
     public Balance() {
         this(3);
