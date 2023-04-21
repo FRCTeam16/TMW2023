@@ -83,4 +83,12 @@ public class VisionAlign extends CommandBase {
         }
         return finished;
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        super.end(interrupted);
+        if (interrupted) {
+            System.out.println("~~~ VisionAlignment ended due to interrupt");
+        } 
+    }
 }
