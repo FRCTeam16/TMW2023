@@ -106,7 +106,7 @@ public class OverTheRainbowPlusVisionPickup extends SequentialCommandGroup {
 
             // Drive onto ramp
             new PrintCommand("Running onto ramp for balance"),
-            new ProfiledDistanceDriveCommand(0, 0.5, -2.0, 0)         // 3.1 for drivethru non race pickup
+            new ProfiledDistanceDriveCommand(0, 0.5, -2.2, 0)         // 3.1 for drivethru non race pickup
                 // .withStopCondition(this::stopOPitch)
                 .withEndSpeed(0.5)
                 .withTimeout(3.0),
