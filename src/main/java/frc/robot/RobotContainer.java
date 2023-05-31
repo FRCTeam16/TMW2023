@@ -250,8 +250,8 @@ public class RobotContainer {
         dmsButton.whileTrue(new RunDMSCommand());
         
         /* Intake Controls */
-        intake.onTrue(new InstantCommand(()    -> Subsystems.intake.intake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
-        eject.onTrue(new InstantCommand(()     -> Subsystems.intake.eject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        intake.onTrue(new InstantCommand(()    -> Subsystems.intake.ForceIntake())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
+        eject.onTrue(new InstantCommand(()     -> Subsystems.intake.ForceEject())).onFalse(new InstantCommand(() -> Subsystems.intake.stopIntake()));
         punch.onTrue(new InstantCommand(()     -> Subsystems.intake.OpenPuncher())).onFalse(new InstantCommand(() -> Subsystems.intake.ClosePuncher()));
 
         wristOpenLoopUp.onTrue(new InstantCommand(()   -> Subsystems.intake.raiseWristOpenLoop())).onFalse(new InstantCommand(() -> Subsystems.intake.holdWrist()));

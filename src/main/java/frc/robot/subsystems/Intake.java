@@ -81,6 +81,9 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
     private IntakeConditions IntakeState = IntakeConditions.Stop;
 
+    public boolean forceIntake = false;
+    public boolean forceEject = false;
+
     boolean hasPart = false;
 
     public enum WristPosition {
@@ -198,9 +201,20 @@ public class Intake extends SubsystemBase implements Lifecycle {
         openLoopWristSpeed = -SmartDashboard.getNumber("Intake/OpenLoopWristSpeed", DEFAULT_OPENLOOP_WRIST_SPEED);
     }
 
+
+    public void ForceIntake() {
+        intake();
+        forceIntake = true;
+    }
+
     public void intake() {
         intakeSpeed = SmartDashboard.getNumber("Intake/IntakeSpeed", DEFAULT_OPENLOOP_INTAKE_SPEED);
         IntakeState = IntakeConditions.Intake;
+    }
+
+    public void ForceEject() {
+        eject();
+        forceEject = true;
     }
 
     public void eject() {
@@ -226,6 +240,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
     public void stopIntake() {
         intakeSpeed = 0.0;
         IntakeState = IntakeConditions.Stop;
+        forceIntake = false;
+        forceEject = false;
     }
 
     public void holdWrist() {
@@ -282,7 +298,8 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
                 if (IntakeState == IntakeConditions.Stop && hasPart) {
                     IntakeState = IntakeConditions.Hold;
-                } else if (hasPart && 
+                } else if ((!forceIntake || !forceEject) &&
+                    hasPart && 
                     // Slow intake when we pick a part of single substation
                     // setAtSubstation causes intake to start running full speed
                     Subsystems.poseManager.getCurrentPose() == Pose.SingleSubstation ||
