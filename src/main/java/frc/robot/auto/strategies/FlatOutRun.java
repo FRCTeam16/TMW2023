@@ -31,12 +31,12 @@ public class FlatOutRun extends SequentialCommandGroup {
             new SchedulePose(Pose.Stow),
 
 
-            new WaitCommand(5),
+            new WaitCommand(3),
             
 
             // Do drive
             new ProfiledDistanceDriveCommand(180, 0.5, 0.1, DIR * -1.25)
-                .withEndSpeed(0.5)
+                .withEndSpeed(0.3)
                 .withThreshold(0.1)
                 .withTimeout(3.0),
             new ProfiledDistanceDriveCommand(180, 0.5, 2.5, 0)
