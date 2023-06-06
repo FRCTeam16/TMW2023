@@ -298,12 +298,12 @@ public class Intake extends SubsystemBase implements Lifecycle {
 
                 if (IntakeState == IntakeConditions.Stop && hasPart) {
                     IntakeState = IntakeConditions.Hold;
-                } else if ((!forceIntake || !forceEject) &&
+                } else if (!forceIntake && !forceEject &&
                     hasPart && 
                     // Slow intake when we pick a part of single substation
                     // setAtSubstation causes intake to start running full speed
-                    Subsystems.poseManager.getCurrentPose() == Pose.SingleSubstation ||
-                    Subsystems.poseManager.getCurrentPose() == Pose.DoubleSubstation) {
+                    (Subsystems.poseManager.getCurrentPose() == Pose.SingleSubstation ||
+                    Subsystems.poseManager.getCurrentPose() == Pose.DoubleSubstation)) {
                     IntakeState = IntakeConditions.Hold;
                 }
 
