@@ -61,6 +61,8 @@ public class RobotContainer {
     // Intake
     //
     private final JoystickButton april     = new JoystickButton(left,    13);
+    private final JoystickButton jeff = new JoystickButton (right, 15);
+    private final JoystickButton jeffery = new JoystickButton (left, 15);
 
     private final JoystickButton intake    = new JoystickButton(right,    1);
     private final JoystickButton eject     = new JoystickButton(left,   1);
@@ -187,6 +189,8 @@ public class RobotContainer {
         zeroGyro.onTrue(new InstantCommand(() -> Subsystems.swerveSubsystem.zeroGyro()).ignoringDisable(true));
 
         april.onTrue(new aprilAuto(right.getX(),right.getY()));
+        jeff.onTrue(new InstantCommand(() -> subsystems.intake.OpenHand()));
+        jeffery.onTrue(new InstantCommand(() -> CommandScheduler.getInstance().schedule(Subsystems.poseManager.getPose(Pose.Stow))));
 
         lockAngle180
             .onTrue(new InstantCommand(() -> this.enableLockAngle(180)))

@@ -70,6 +70,6 @@ public class Balance extends CommandBase implements Lifecycle {
 
         Translation2d translation = new Translation2d(output, 0).times(speed);
         Subsystems.swerveSubsystem.drive(translation, 0, true, true);
-    }
+    } 
 
 }

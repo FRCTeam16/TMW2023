@@ -115,10 +115,10 @@ public class TwoScore extends SequentialCommandGroup {
 
             Commands.race(
                 new ProfiledDistanceDriveCommand(180 * DIR, 0.28, -1.0, 0)
-                    .withEndSpeed(0.3)
+                    .withEndSpeed(0.5)
                     .withThreshold(0.1)
                     .withYSupplier(() -> -1 * visionHelper.calculate())
-                    .withTimeout(2.0),
+                    .withTimeout(3.5),
                 new EjectAtTime()
             ),
 

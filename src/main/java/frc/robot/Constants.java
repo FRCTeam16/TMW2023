@@ -90,11 +90,12 @@ public final class Constants {
 
         /* Module Specific Constants */
         /* Front Left Module - Module 0 */
+        /*TODO: figure out why WPILIB shuffleboard is giving numbers 180 degrees off*/
         public static final class Mod0 { //TODO: This must be tuned to specific robot
             public static final int driveMotorID = 0;
             public static final int angleMotorID = 1;
             public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(196.1);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(196.1);//196.1 Shuffle board was being annoying, so manual tuning sorry
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -104,7 +105,7 @@ public final class Constants {
             public static final int driveMotorID = 3;
             public static final int angleMotorID = 4;
             public static final int canCoderID = 5;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(21.26);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(21.26);//21.26 
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -114,7 +115,7 @@ public final class Constants {
             public static final int driveMotorID = 6;
             public static final int angleMotorID = 7;
             public static final int canCoderID = 8;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(14.4);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(14.4);//14.4
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
@@ -124,7 +125,7 @@ public final class Constants {
             public static final int driveMotorID = 9;
             public static final int angleMotorID = 10;
             public static final int canCoderID = 11;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.3);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(344.4);//344.4
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
